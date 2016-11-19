@@ -6,6 +6,17 @@
 
 struct PhysBody3D;
 
+enum OBJECT_TYPE{
+
+	CUBE,
+	CYLINDER,
+	PLANE,
+	SPHERE,
+	CONE,
+	CAPSULE
+
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -16,16 +27,21 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
-	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
-
 public:
+
+	//Physic bodies array
+	p2DynArray<PhysBody3D*> phys_bodies;
+
+	//Graphic bodies array
+	p2DynArray<Primitive*> graph_bodies;
 
 	//Sphere Data
 	PhysBody3D* b;
 	Sphere* sphere;
 
-	//Cube Data
-	PhysBody3D* cube_phys;
-	Cube* cube;
+public:
+
+	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
+	PhysBody3D*  AddSceneObject(Primitive* object, OBJECT_TYPE object_type);
 
 };

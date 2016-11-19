@@ -125,7 +125,7 @@ update_status ModulePhysics3D::Update(float dt)
 		{
 			Sphere s(1);
 			s.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-			AddBody(s);
+			AddBody(((Primitive*)&s), SPHERE);
 		}
 
 		//Create a Cube with debug mode
@@ -133,7 +133,7 @@ update_status ModulePhysics3D::Update(float dt)
 		{
 			Cube c(0.5f,0.5f,0.5f);
 			c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-			AddBody(c);
+			AddBody(((Primitive*)&c), CUBE);
 		}
 
 		//Create a Plane with debug mode
@@ -141,7 +141,7 @@ update_status ModulePhysics3D::Update(float dt)
 		{
 			Plane p(0, 1.0f, 0,0);
 			p.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-			AddBody(p);
+			AddBody(((Primitive*)&p), PLANE);
 		}
 
 		//Create a Cylinder with debug mode
@@ -149,7 +149,7 @@ update_status ModulePhysics3D::Update(float dt)
 		{
 			Cylinder c(1.0f, 0.5f);
 			c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-			AddBody(c);
+			AddBody(((Primitive*)&c), CYLINDER);
 		}
 
 	}
@@ -210,46 +210,33 @@ bool ModulePhysics3D::CleanUp()
 }
 
 // ---------------------------------------------------------
-PhysBody3D* ModulePhysics3D::AddBody(const Sphere& sphere, float mass)
+PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE object_type, float mass)
 {
-	//Create and store body shape
-	btCollisionShape* colShape = new btSphereShape(sphere.radius);
-	shapes.add(colShape);
+	btCollisionShape* colShape = nullptr;
+	
+	switch (object_type) {
+	
+		case OBJECT_TYPE::CUBE:
+			colShape = new btBoxShape(btVector3(((Cube*)primitive)->size.x / 2.0f, ((Cube*)primitive)->size.y / 2.0f, ((Cube*)primitive)->size.z / 2.0f));
+			break;
+
+		case OBJECT_TYPE::CYLINDER:
+			colShape = new btCylinderShape(btVector3(((Cylinder*)primitive)->radius, ((Cylinder*)primitive)->height, ((Cylinder*)primitive)->radius));
+			break;
+
+		case OBJECT_TYPE::PLANE:
+			colShape = new btStaticPlaneShape(btVector3(((Plane*)primitive)->normal.x, ((Plane*)primitive)->normal.y, ((Plane*)primitive)->normal.z), ((Plane*)primitive)->constant);
+			break;
+		case OBJECT_TYPE::SPHERE:
+			colShape = new btSphereShape(((Sphere*)primitive)->radius);
+			break;
+
+	}
+
 
 	//Set body transform matrix
 	btTransform startTransform;
-	startTransform.setFromOpenGLMatrix(&sphere.transform);
-
-	//Calculate and set inertia of object have mass
-	btVector3 localInertia(0, 0, 0);
-	if(mass != 0.f)
-		colShape->calculateLocalInertia(mass, localInertia);
-
-	//Set the body motion state (used later to interpolate and sync body transforms)
-	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-
-	//Create and store the body
-	btRigidBody* body = new btRigidBody(rbInfo);
-	PhysBody3D* pbody = new PhysBody3D(body);
-	bodies.add(pbody);
-
-	//Put body pointers in user & world data
-	body->setUserPointer(pbody);
-	world->addRigidBody(body);
-
-	return pbody;
-}
-
-PhysBody3D * ModulePhysics3D::AddBody(const Cube& cube, float mass)
-{
-	//Create and store body shape
-	btCollisionShape* colShape = new btBoxShape(btVector3 (cube.size.x/2.0f, cube.size.y / 2.0f, cube.size.z / 2.0f));
-	shapes.add(colShape);
-
-	//Set body transform matrix
-	btTransform startTransform;
-	startTransform.setFromOpenGLMatrix(&cube.transform);
+	startTransform.setFromOpenGLMatrix(&primitive->transform);
 
 	//Calculate and set inertia of object have mass
 	btVector3 localInertia(0, 0, 0);
@@ -272,67 +259,6 @@ PhysBody3D * ModulePhysics3D::AddBody(const Cube& cube, float mass)
 	return pbody;
 }
 
-PhysBody3D * ModulePhysics3D::AddBody(const Plane & plane, float mass)
-{
-	//Create and store body shape
-	btCollisionShape* colShape = new btStaticPlaneShape(btVector3(plane.normal.x,plane.normal.y,plane.normal.z), plane.constant);
-	shapes.add(colShape);
-
-	//Set body transform matrix
-	btTransform startTransform;
-	startTransform.setFromOpenGLMatrix(&plane.transform);
-
-	//Calculate and set inertia of object have mass
-	btVector3 localInertia(0, 0, 0);
-	if (mass != 0.f)
-		colShape->calculateLocalInertia(mass, localInertia);
-
-	//Set the body motion state (used later to interpolate and sync body transforms)
-	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-
-	//Create and store the body
-	btRigidBody* body = new btRigidBody(rbInfo);
-	PhysBody3D* pbody = new PhysBody3D(body);
-	bodies.add(pbody);
-
-	//Put body pointers in user & world data
-	body->setUserPointer(pbody);
-	world->addRigidBody(body);
-
-	return pbody;
-}
-
-PhysBody3D * ModulePhysics3D::AddBody(const Cylinder & cylinder, float mass)
-{
-	//Create and store body shape
-	btCollisionShape* colShape = new btCylinderShape(btVector3(cylinder.radius, cylinder.height, cylinder.radius));
-	shapes.add(colShape);
-
-	//Set body transform matrix
-	btTransform startTransform;
-	startTransform.setFromOpenGLMatrix(&cylinder.transform);
-
-	//Calculate and set inertia of object have mass
-	btVector3 localInertia(0, 0, 0);
-	if (mass != 0.f)
-		colShape->calculateLocalInertia(mass, localInertia);
-
-	//Set the body motion state (used later to interpolate and sync body transforms)
-	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-
-	//Create and store the body
-	btRigidBody* body = new btRigidBody(rbInfo);
-	PhysBody3D* pbody = new PhysBody3D(body);
-	bodies.add(pbody);
-
-	//Put body pointers in user & world data
-	body->setUserPointer(pbody);
-	world->addRigidBody(body);
-
-	return pbody;
-}
 
 // =============================================
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)

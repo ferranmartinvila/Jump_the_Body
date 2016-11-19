@@ -23,17 +23,14 @@ bool ModuleSceneIntro::Start()
 	//Sphere Creation
 	sphere = new Sphere(0.5f);
 	sphere->SetPos(0, sphere->radius + 1.0f, 0);
-	b = App->physics->AddBody(*sphere);
+	b = AddSceneObject(sphere, SPHERE);
+	sphere = (Sphere*)graph_bodies[0];
 
 	//Cube Creation
-	cube = new Cube(3.0f,3.0f, 3.0f);
-	cube->SetPos(4.0f, cube->size.y + 1.0f, 4.0f);
-	cube_phys = App->physics->AddBody(*cube);
-
-	//Add this module to the list of collision listeners
-	b->collision_listeners.add(this);
-	cube_phys->collision_listeners.add(this);
-
+	Cube cube(3.0f,3.0f, 3.0f);
+	cube.SetPos(4.0f, cube.size.y + 1.0f, 4.0f);
+	AddSceneObject(&cube, CUBE);
+	
 	return ret;
 }
 
@@ -41,6 +38,8 @@ bool ModuleSceneIntro::Start()
 bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
+	phys_bodies.Clear();
+	graph_bodies.Clear();
 
 	return true;
 }
@@ -53,13 +52,15 @@ update_status ModuleSceneIntro::Update(float dt)
 	p.axis = true;
 	p.Render();
 
-	//Update sphere location and render it
-	b->GetTransform(&sphere->transform);
-	sphere->Render();
-
-	//Update cube location and render it
-	cube_phys->GetTransform(&cube->transform);
-	cube->Render();
+	//Check for the number of items (phys & graph)
+	uint scene_items_num = phys_bodies.Count();
+	assert(scene_items_num == graph_bodies.Count(), "Scene items error.");
+	
+	//Update scene items
+	for (uint k = 0; k < scene_items_num; k++) {
+		phys_bodies[k]->GetTransform(&graph_bodies[k]->transform);
+		graph_bodies[k]->Render();
+	}
 
 	return UPDATE_CONTINUE;
 }
@@ -68,8 +69,29 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 {
 
 	if (body1 == b || body2 == b)sphere->color = Red;
-	else if (body1 == cube_phys || body2 == cube_phys)cube->color = Blue;
 
+}
+
+PhysBody3D* ModuleSceneIntro::AddSceneObject(Primitive* object, OBJECT_TYPE object_type)
+{
+	Primitive* new_object = nullptr;
+	
+	switch (object_type)
+	{
+	
+	case OBJECT_TYPE::CUBE: new_object = new Cube(*(Cube*)object); break;
+	case OBJECT_TYPE::CYLINDER: new_object = new Cylinder(*(Cylinder*)object); break;
+	case OBJECT_TYPE::PLANE: new_object = new Plane(*(Plane*)object); break;
+	case OBJECT_TYPE::SPHERE: new_object = new Sphere(*(Sphere*)object); break;
+
+	}
+
+	graph_bodies.PushBack(new_object);
+	PhysBody3D* phys = App->physics->AddBody(object, object_type);
+	phys->collision_listeners.add(this);
+	phys_bodies.PushBack(phys);
+
+	return phys;
 }
 
 
