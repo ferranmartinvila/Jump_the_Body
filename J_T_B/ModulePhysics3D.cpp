@@ -109,13 +109,18 @@ update_status ModulePhysics3D::PreUpdate(float dt)
 // ---------------------------------------------------------
 update_status ModulePhysics3D::Update(float dt)
 {
+
+	//Active/Desactive collide body debug mode
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug = !debug;
+
+
 
 	if(debug == true)
 	{
 		world->debugDrawWorld();
 
+		//Create a Sphere with debug mode
 		if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 		{
 			Sphere s(1);
@@ -123,13 +128,34 @@ update_status ModulePhysics3D::Update(float dt)
 			AddBody(s);
 		}
 
+		//Create a Cube with debug mode
 		if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 		{
 			Cube c(0.5f,0.5f,0.5f);
 			c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
 			AddBody(c);
 		}
+
+		//Create a Plane with debug mode
+		if (App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
+		{
+			Plane p(0, 1.0f, 0,0);
+			p.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+			AddBody(p);
+		}
+
+		//Create a Cylinder with debug mode
+		if (App->input->GetKey(SDL_SCANCODE_4) == KEY_DOWN)
+		{
+			Cylinder c(1.0f, 0.5f);
+			c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+			AddBody(c);
+		}
+
 	}
+
+
+
 
 	return UPDATE_CONTINUE;
 }
@@ -152,7 +178,6 @@ bool ModulePhysics3D::CleanUp()
 		world->removeCollisionObject(obj);
 	}
 
-	// TODO 2: Free all collision shapes and bodies
 	
 	//Free the shapes
 	p2List_item<btCollisionShape*>* temp = shapes.getFirst();
@@ -225,6 +250,68 @@ PhysBody3D * ModulePhysics3D::AddBody(const Cube& cube, float mass)
 	//Set body transform matrix
 	btTransform startTransform;
 	startTransform.setFromOpenGLMatrix(&cube.transform);
+
+	//Calculate and set inertia of object have mass
+	btVector3 localInertia(0, 0, 0);
+	if (mass != 0.f)
+		colShape->calculateLocalInertia(mass, localInertia);
+
+	//Set the body motion state (used later to interpolate and sync body transforms)
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+
+	//Create and store the body
+	btRigidBody* body = new btRigidBody(rbInfo);
+	PhysBody3D* pbody = new PhysBody3D(body);
+	bodies.add(pbody);
+
+	//Put body pointers in user & world data
+	body->setUserPointer(pbody);
+	world->addRigidBody(body);
+
+	return pbody;
+}
+
+PhysBody3D * ModulePhysics3D::AddBody(const Plane & plane, float mass)
+{
+	//Create and store body shape
+	btCollisionShape* colShape = new btStaticPlaneShape(btVector3(plane.normal.x,plane.normal.y,plane.normal.z), plane.constant);
+	shapes.add(colShape);
+
+	//Set body transform matrix
+	btTransform startTransform;
+	startTransform.setFromOpenGLMatrix(&plane.transform);
+
+	//Calculate and set inertia of object have mass
+	btVector3 localInertia(0, 0, 0);
+	if (mass != 0.f)
+		colShape->calculateLocalInertia(mass, localInertia);
+
+	//Set the body motion state (used later to interpolate and sync body transforms)
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+
+	//Create and store the body
+	btRigidBody* body = new btRigidBody(rbInfo);
+	PhysBody3D* pbody = new PhysBody3D(body);
+	bodies.add(pbody);
+
+	//Put body pointers in user & world data
+	body->setUserPointer(pbody);
+	world->addRigidBody(body);
+
+	return pbody;
+}
+
+PhysBody3D * ModulePhysics3D::AddBody(const Cylinder & cylinder, float mass)
+{
+	//Create and store body shape
+	btCollisionShape* colShape = new btCylinderShape(btVector3(cylinder.radius, cylinder.height, cylinder.radius));
+	shapes.add(colShape);
+
+	//Set body transform matrix
+	btTransform startTransform;
+	startTransform.setFromOpenGLMatrix(&cylinder.transform);
 
 	//Calculate and set inertia of object have mass
 	btVector3 localInertia(0, 0, 0);

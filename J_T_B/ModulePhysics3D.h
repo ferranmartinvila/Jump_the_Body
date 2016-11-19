@@ -27,9 +27,9 @@ public:
 
 	//Methods to add bodies to the world
 	PhysBody3D* AddBody(const Sphere& sphere, float mass = 1.0f);
-	PhysBody3D* AddBody(const Cube& sphere, float mass = 1.0f);
-	PhysBody3D* AddBody(const Plane& sphere, float mass = 1.0f);
-	PhysBody3D* AddBody(const Cylinder& sphere, float mass = 1.0f);
+	PhysBody3D* AddBody(const Cube& cube, float mass = 1.0f);
+	PhysBody3D* AddBody(const Plane& plane, float mass = 1.0f);
+	PhysBody3D* AddBody(const Cylinder& cylinder, float mass = 1.0f);
 
 private:
 
