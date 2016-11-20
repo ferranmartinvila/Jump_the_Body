@@ -213,7 +213,7 @@ bool ModulePhysics3D::CleanUp()
 PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE object_type, float mass)
 {
 	btCollisionShape* colShape = nullptr;
-	
+
 	switch (object_type) {
 	
 		case OBJECT_TYPE::CUBE:

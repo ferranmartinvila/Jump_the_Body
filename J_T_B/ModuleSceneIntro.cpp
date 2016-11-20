@@ -31,6 +31,10 @@ bool ModuleSceneIntro::Start()
 	cube.SetPos(4.0f, cube.size.y + 1.0f, 4.0f);
 	AddSceneObject(&cube, CUBE);
 	
+	/*//Ground Creation
+	AddSceneObject(&Cube(100.0f, 2.0f, 100.0f),CUBE);*/
+	
+
 	return ret;
 }
 
@@ -38,7 +42,16 @@ bool ModuleSceneIntro::Start()
 bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
+	
+	//Phys bodies are deleted in ModulePhysics3D
 	phys_bodies.Clear();
+	
+	//Delete all the graphic bodies
+	uint k = graph_bodies.Count();
+	for (int h = k - 1; h >= 0; h--) {
+		delete graph_bodies[h];
+		graph_bodies[h] = NULL;
+	}
 	graph_bodies.Clear();
 
 	return true;
