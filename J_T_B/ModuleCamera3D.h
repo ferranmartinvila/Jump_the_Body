@@ -22,6 +22,8 @@ private:
 
 	void CalculateViewMatrix();
 
+	float camera_speed;
+
 public:
 	
 	vec3 X, Y, Z, Position, Reference;

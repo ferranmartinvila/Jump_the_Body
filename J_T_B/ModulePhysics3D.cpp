@@ -216,7 +216,11 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 
 	switch (object_type) {
 	
-		case OBJECT_TYPE::CUBE:
+		case OBJECT_TYPE::CUBE: 
+				colShape = new btBoxShape(btVector3(((Cube*)primitive)->size.x / 2.0f, ((Cube*)primitive)->size.y / 2.0f, ((Cube*)primitive)->size.z / 2.0f));
+				break;
+
+		case OBJECT_TYPE::STATIC_CUBE:
 			colShape = new btBoxShape(btVector3(((Cube*)primitive)->size.x / 2.0f, ((Cube*)primitive)->size.y / 2.0f, ((Cube*)primitive)->size.z / 2.0f));
 			break;
 
@@ -237,7 +241,7 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 	//Set body transform matrix
 	btTransform startTransform;
 	startTransform.setFromOpenGLMatrix(&primitive->transform);
-
+	
 	//Calculate and set inertia of object have mass
 	btVector3 localInertia(0, 0, 0);
 	if (mass != 0.f)
@@ -246,12 +250,24 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 	//Set the body motion state (used later to interpolate and sync body transforms)
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-
 	//Create and store the body
 	btRigidBody* body = new btRigidBody(rbInfo);
+	
+	// ======
+	body->setRestitution(0.6f);
+
+	if (object_type == STATIC_CUBE) {
+		//body->setAngl
+	}
+	/*#define ACTIVE_TAG 1
+	#define ISLAND_SLEEPING 2
+	#define WANTS_DEACTIVATION 3
+	#define DISABLE_DEACTIVATION 4
+	#define DISABLE_SIMULATION 5*/
+
+	// ======
 	PhysBody3D* pbody = new PhysBody3D(body);
 	bodies.add(pbody);
-
 	//Put body pointers in user & world data
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);

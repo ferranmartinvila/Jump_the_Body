@@ -116,6 +116,19 @@ public:
 		return ret;
 	}
 
+	tdata& operator[](uint index)const {
+
+		p2List_item<tdata>* data = start;
+		
+		for (uint k = 0; k < index; k++) {
+
+			data = data->next;
+
+		}
+
+		return data->data;
+	}
+
 	/**
 	* Deletes an item from the list
 	*/

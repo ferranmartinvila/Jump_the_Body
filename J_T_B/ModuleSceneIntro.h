@@ -9,6 +9,7 @@ struct PhysBody3D;
 enum OBJECT_TYPE{
 
 	CUBE,
+	STATIC_CUBE,
 	CYLINDER,
 	PLANE,
 	SPHERE
@@ -28,10 +29,10 @@ public:
 public:
 
 	//Physic bodies array
-	p2DynArray<PhysBody3D*> phys_bodies;
+	p2List<PhysBody3D*> phys_bodies;
 
 	//Graphic bodies array
-	p2DynArray<Primitive*> graph_bodies;
+	p2List<Primitive*> graph_bodies;
 
 	//Sphere Data
 	PhysBody3D* b;
@@ -40,6 +41,6 @@ public:
 public:
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
-	PhysBody3D*  AddSceneObject(Primitive* object, OBJECT_TYPE object_type);
+	PhysBody3D*  AddSceneObject(Primitive* object, OBJECT_TYPE object_type, float mass = 1.0f);
 
 };
