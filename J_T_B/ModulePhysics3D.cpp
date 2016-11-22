@@ -125,7 +125,7 @@ update_status ModulePhysics3D::Update(float dt)
 		{
 			Sphere s(1);
 			s.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-			AddBody(((Primitive*)&s), SPHERE);
+			AddBody(((Primitive*)&s), DINAMIC_SPHERE);
 		}
 
 		//Create a Cube with debug mode
@@ -133,7 +133,7 @@ update_status ModulePhysics3D::Update(float dt)
 		{
 			Cube c(0.5f,0.5f,0.5f);
 			c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-			AddBody(((Primitive*)&c), CUBE);
+			AddBody(((Primitive*)&c), DINAMIC_CUBE);
 		}
 
 		//Create a Plane with debug mode
@@ -141,7 +141,7 @@ update_status ModulePhysics3D::Update(float dt)
 		{
 			Plane p(0, 1.0f, 0,0);
 			p.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-			AddBody(((Primitive*)&p), PLANE);
+			AddBody(((Primitive*)&p), DINAMIC_PLANE);
 		}
 
 		//Create a Cylinder with debug mode
@@ -149,7 +149,7 @@ update_status ModulePhysics3D::Update(float dt)
 		{
 			Cylinder c(1.0f, 0.5f);
 			c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-			AddBody(((Primitive*)&c), CYLINDER);
+			AddBody(((Primitive*)&c), DINAMIC_CYLINDER);
 		}
 
 	}
@@ -216,7 +216,7 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 
 	switch (object_type) {
 	
-		case OBJECT_TYPE::CUBE: 
+		case OBJECT_TYPE::DINAMIC_CUBE: 
 				colShape = new btBoxShape(btVector3(((Cube*)primitive)->size.x / 2.0f, ((Cube*)primitive)->size.y / 2.0f, ((Cube*)primitive)->size.z / 2.0f));
 				break;
 
@@ -224,14 +224,14 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 			colShape = new btBoxShape(btVector3(((Cube*)primitive)->size.x / 2.0f, ((Cube*)primitive)->size.y / 2.0f, ((Cube*)primitive)->size.z / 2.0f));
 			break;
 
-		case OBJECT_TYPE::CYLINDER:
+		case OBJECT_TYPE::DINAMIC_CYLINDER:
 			colShape = new btCylinderShape(btVector3(((Cylinder*)primitive)->radius, ((Cylinder*)primitive)->height, ((Cylinder*)primitive)->radius));
 			break;
 
-		case OBJECT_TYPE::PLANE:
+		case OBJECT_TYPE::DINAMIC_PLANE:
 			colShape = new btStaticPlaneShape(btVector3(((Plane*)primitive)->normal.x, ((Plane*)primitive)->normal.y, ((Plane*)primitive)->normal.z), ((Plane*)primitive)->constant);
 			break;
-		case OBJECT_TYPE::SPHERE:
+		case OBJECT_TYPE::DINAMIC_SPHERE:
 			colShape = new btSphereShape(((Sphere*)primitive)->radius);
 			break;
 
@@ -241,7 +241,6 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 	//Set body transform matrix
 	btTransform startTransform;
 	startTransform.setFromOpenGLMatrix(&primitive->transform);
-	
 	//Calculate and set inertia of object have mass
 	btVector3 localInertia(0, 0, 0);
 	if (mass != 0.f)
@@ -252,18 +251,15 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
 	//Create and store the body
 	btRigidBody* body = new btRigidBody(rbInfo);
-	
-	// ======
-	body->setRestitution(0.6f);
 
+
+	// ======
+	body->setRestitution(1.1f);
+	
 	if (object_type == STATIC_CUBE) {
-		//body->setAngl
+		body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
+		body->setMassProps(0, btVector3(0, 0, 0));
 	}
-	/*#define ACTIVE_TAG 1
-	#define ISLAND_SLEEPING 2
-	#define WANTS_DEACTIVATION 3
-	#define DISABLE_DEACTIVATION 4
-	#define DISABLE_SIMULATION 5*/
 
 	// ======
 	PhysBody3D* pbody = new PhysBody3D(body);

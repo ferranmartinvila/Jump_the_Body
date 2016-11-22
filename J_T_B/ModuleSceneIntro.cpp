@@ -23,7 +23,7 @@ bool ModuleSceneIntro::Start()
 	//Sphere Creation
 	sphere = new Sphere(0.5f);
 	sphere->SetPos(0, sphere->radius + 1.0f, 8.0f);
-	b = AddSceneObject(sphere, SPHERE);
+	b = AddSceneObject(sphere, DINAMIC_SPHERE);
 	sphere = (Sphere*)graph_bodies[0];
 
 	//Cube Creation
@@ -31,7 +31,7 @@ bool ModuleSceneIntro::Start()
 	cube.SetPos(4.0f, cube.size.y + 1.0f, 4.0f);
 	AddSceneObject(&cube, CUBE);*/
 	
-	//Ground Creation
+	//Roof Creation
 	Cube roof(100.0f, 1.0f, 100.0f);
 	roof.SetPos(0.0f, 25.0f, 0.0f);
 	AddSceneObject(&roof,STATIC_CUBE);
@@ -39,22 +39,27 @@ bool ModuleSceneIntro::Start()
 
 	// =============================================
 	Cube wall_1(1.0f, 6.0f, 12.0f);
-	wall_1.SetPos(5.0f, 0.2f, 5.0f);
-	AddSceneObject(&wall_1, CUBE, 100.0f);
+	wall_1.SetPos(5.0f, wall_1.size.y/2, 5.0f);
+	AddSceneObject(&wall_1, STATIC_CUBE, 100.0f);
 
-	wall_1.SetPos(10.5f,  0.2f,11.0f);
+	wall_1.SetPos(10.5f, wall_1.size.y / 2,11.0f);
 	wall_1.SetRotation(90.0f,vec3(0, 1.0f, 0));
-	AddSceneObject(&wall_1, CUBE, 100.0f);
+	AddSceneObject(&wall_1, STATIC_CUBE, 100.0f);
 
-	wall_1.SetPos(-0.5f, 0.2f, -1.5f);
+	wall_1.SetPos(-0.5f, wall_1.size.y / 2, -1.5f);
 	wall_1.SetRotation(-90.0f, vec3(0, 1.0f, 0));
-	AddSceneObject(&wall_1, CUBE, 100.0f);
+	AddSceneObject(&wall_1, STATIC_CUBE, 100.0f);
 	
 	// =============================================
 	Cylinder jumper(1.0f, 0.2f);
 	jumper.SetPos(10.0f, 0.2f, 10.0f);
-	jumper.SetRotation(90, vec3(0, 0, 1.0f));
-	AddSceneObject(&jumper, CYLINDER, 100.0f);
+	jumper.SetRotation(-90, vec3(0, 0, 1.0f));
+	AddSceneObject(&jumper, DINAMIC_CYLINDER);
+
+	// =============================================
+	Cube floor(20.0f, 0.2f, 20.0f);
+	floor.SetPos(-20.0f,floor.size.y, 10.0f);
+	AddSceneObject(&floor, STATIC_CUBE);
 
 	return ret;
 }
@@ -113,11 +118,11 @@ PhysBody3D* ModuleSceneIntro::AddSceneObject(Primitive* object, OBJECT_TYPE obje
 	switch (object_type)
 	{
 	
-	case OBJECT_TYPE::CUBE: new_object = new Cube(*(Cube*)object); break;
+	case OBJECT_TYPE::DINAMIC_CUBE: new_object = new Cube(*(Cube*)object); break;
 	case OBJECT_TYPE::STATIC_CUBE: new_object = new Cube(*(Cube*)object); break;
-	case OBJECT_TYPE::CYLINDER: new_object = new Cylinder(*(Cylinder*)object); break;
-	case OBJECT_TYPE::PLANE: new_object = new Plane(*(Plane*)object); break;
-	case OBJECT_TYPE::SPHERE: new_object = new Sphere(*(Sphere*)object); break;
+	case OBJECT_TYPE::DINAMIC_CYLINDER: new_object = new Cylinder(*(Cylinder*)object); break;
+	case OBJECT_TYPE::DINAMIC_PLANE: new_object = new Plane(*(Plane*)object); break;
+	case OBJECT_TYPE::DINAMIC_SPHERE: new_object = new Sphere(*(Sphere*)object); break;
 
 	}
 
