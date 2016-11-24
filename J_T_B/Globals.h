@@ -18,6 +18,9 @@ void log(const char file[], int line, const char* format, ...);
 #define HAVE_M_PI
 
 
+#define GET_Y_LNG(size,angle) ((size * sinf(angle * DEGTORAD) / 2.0f)
+#define GET_X_LNG(size,angle) ((size * cosf(angle * DEGTORAD) / 2.0f)
+
 typedef unsigned int uint;
 
 enum update_status

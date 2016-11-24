@@ -25,7 +25,7 @@ bool ModuleSceneIntro::Start()
 	sphere->SetPos(0, sphere->radius + 1.0f, 8.0f);
 	b = AddSceneObject(sphere, DINAMIC_SPHERE);
 	sphere = (Sphere*)graph_bodies[0];
-
+	
 	//Cube Creation
 	/*Cube cube(3.0f,3.0f, 3.0f);
 	cube.SetPos(4.0f, cube.size.y + 1.0f, 4.0f);
@@ -38,7 +38,7 @@ bool ModuleSceneIntro::Start()
 	
 
 	// =============================================
-	Cube wall_1(1.0f, 6.0f, 12.0f);
+	/*Cube wall_1(1.0f, 6.0f, 12.0f);
 	wall_1.SetPos(5.0f, wall_1.size.y/2, 5.0f);
 	AddSceneObject(&wall_1, STATIC_CUBE, 100.0f);
 
@@ -48,7 +48,7 @@ bool ModuleSceneIntro::Start()
 
 	wall_1.SetPos(-0.5f, wall_1.size.y / 2, -1.5f);
 	wall_1.SetRotation(-90.0f, vec3(0, 1.0f, 0));
-	AddSceneObject(&wall_1, STATIC_CUBE, 100.0f);
+	AddSceneObject(&wall_1, STATIC_CUBE, 100.0f);*/
 	
 	// =============================================
 	Cylinder jumper(1.0f, 0.2f);
@@ -60,6 +60,21 @@ bool ModuleSceneIntro::Start()
 	Cube floor(20.0f, 0.2f, 50.0f);
 	floor.SetPos(0,floor.size.y, 0);
 	AddSceneObject(&floor, STATIC_CUBE);
+
+
+	float y = GET_Y_LNG(15, 20));
+	float x = GET_X_LNG(15, 20));
+
+	Cube floor_2(20.0f, 0.2f, 15.0f);
+	floor_2.SetPos(0.0f, floor_2.size.y + GET_Y_LNG(15, 20)), 20 + GET_X_LNG(15,20)));
+	floor_2.SetRotation(-20, { 1,0,0 });
+	AddSceneObject(&floor_2, STATIC_CUBE);
+
+	/*floor.SetPos(8.0f, floor.size.y, 40.0f);
+	floor.SetRotation(20, { 0,1,0 });
+	AddSceneObject(&floor, STATIC_CUBE);*/
+
+
 
 	// =============================================
 	Cube start_wall_1(20.0f, 0.3f, 2.0f);
