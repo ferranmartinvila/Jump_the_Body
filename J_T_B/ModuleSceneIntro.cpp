@@ -32,9 +32,9 @@ bool ModuleSceneIntro::Start()
 	AddSceneObject(&cube, CUBE);*/
 	
 	//Roof Creation
-	Cube roof(100.0f, 1.0f, 100.0f);
+	/*Cube roof(100.0f, 1.0f, 100.0f);
 	roof.SetPos(0.0f, 25.0f, 0.0f);
-	AddSceneObject(&roof,STATIC_CUBE);
+	AddSceneObject(&roof,STATIC_CUBE);*/
 	
 
 	// =============================================
@@ -57,9 +57,15 @@ bool ModuleSceneIntro::Start()
 	AddSceneObject(&jumper, DINAMIC_CYLINDER);
 
 	// =============================================
-	Cube floor(20.0f, 0.2f, 20.0f);
-	floor.SetPos(-20.0f,floor.size.y, 10.0f);
+	Cube floor(20.0f, 0.2f, 50.0f);
+	floor.SetPos(0,floor.size.y, 0);
 	AddSceneObject(&floor, STATIC_CUBE);
+
+	// =============================================
+	Cube start_wall_1(20.0f, 0.3f, 2.0f);
+	start_wall_1.SetPos(0, start_wall_1.size.y + 1, 0);
+	start_wall_1.SetRotation(90, { 1.0f,0.0f,0.0f });
+	AddSceneObject(&start_wall_1, STATIC_CUBE);
 
 	return ret;
 }
