@@ -1,6 +1,6 @@
 #include "PhysBody3D.h"
 #include "glmath.h"
-#include "Bullet/include/btBulletDynamicsCommon.h"
+#include "Engine/Bullet/include/btBulletDynamicsCommon.h"
 
 
 // ---------------------------------------------------------
@@ -40,4 +40,9 @@ void PhysBody3D::SetPos(float x, float y, float z)
 		trans.setOrigin(btVector3(x, y, z));
 		body->setWorldTransform(trans);
 	}
+}
+
+btRigidBody* PhysBody3D::get_rigid_body() const
+{
+	return body;
 }

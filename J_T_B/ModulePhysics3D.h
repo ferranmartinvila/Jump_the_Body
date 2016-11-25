@@ -4,7 +4,7 @@
 #include "p2List.h"
 #include "Primitive.h"
 
-#include "Bullet/include/btBulletDynamicsCommon.h"
+#include "Engine/Bullet/include/btBulletDynamicsCommon.h"
 
 // Recommended scale is 1.0f == 1 meter, no less than 0.2 objects
 #define GRAVITY btVector3(0.0f, -10.0f, 0.0f) 
@@ -28,6 +28,10 @@ public:
 	//Methods to add bodies to the world
 	PhysBody3D* AddBody(const Primitive* primitive, enum OBJECT_TYPE object_type, float mass = 1.0f);
 
+	//Methods for constrains
+	btPoint2PointConstraint* Add_P2P_Constraint(btRigidBody& rbA, btRigidBody& rbB, const btVector3& pivotInA, const btVector3& pivotInB);
+	btHingeConstraint* Add_Hinge_Constraint(btRigidBody& rbA, btRigidBody& rbB, const btVector3& pivotInA, const btVector3& pivotInB, btVector3& axisInA, btVector3& axisInB);
+
 private:
 
 	bool debug;
@@ -43,6 +47,7 @@ private:
 	//Containers for shapes & bodies
 	p2List<btCollisionShape*>			shapes;
 	p2List<PhysBody3D*>					bodies;
+	p2List<btTypedConstraint*>			constrains;
 
 };
 

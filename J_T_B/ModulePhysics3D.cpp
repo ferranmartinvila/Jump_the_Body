@@ -3,6 +3,7 @@
 #include "ModulePhysics3D.h"
 #include "PhysBody3D.h"
 #include "Primitive.h"
+#include "Engine\SDL\include\SDL.h"
 
 #ifdef _DEBUG
 #pragma comment (lib, "Bullet/libx86/BulletDynamics_debug.lib")
@@ -269,6 +270,23 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 	world->addRigidBody(body);
 
 	return pbody;
+}
+
+btPoint2PointConstraint* ModulePhysics3D::Add_P2P_Constraint(btRigidBody& rbA, btRigidBody& rbB, const btVector3& pivotInA, const btVector3& pivotInB)
+{
+
+	btPoint2PointConstraint* constrain = new btPoint2PointConstraint(rbA, rbB, pivotInA, pivotInB);
+	world->addConstraint(constrain);
+	constrains.add(constrain);
+	return constrain;
+}
+
+btHingeConstraint* ModulePhysics3D::Add_Hinge_Constraint(btRigidBody& rbA, btRigidBody& rbB, const btVector3& pivotInA, const btVector3& pivotInB, btVector3& axisInA, btVector3& axisInB)
+{
+	btHingeConstraint* constrain = new btHingeConstraint(rbA, rbB, pivotInA, pivotInB, axisInA, axisInB);
+	world->addConstraint(constrain);
+	constrains.add(constrain);
+	return constrain;
 }
 
 
