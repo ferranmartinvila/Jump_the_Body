@@ -257,7 +257,7 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 	// ======
 	body->setRestitution(1.1f);
 	
-	if (object_type == STATIC_CUBE) {
+	if (object_type == STATIC_CUBE || object_type == STATIC_SPHERE || object_type == STAIC_CYLINDER || object_type == STATIC_PLANE) {
 		body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
 		body->setMassProps(0, btVector3(0, 0, 0));
 	}

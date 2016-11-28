@@ -11,6 +11,11 @@
 Primitive::Primitive() : transform(IdentityMatrix), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
 {}
 
+Primitive::Primitive(float posX, float posY, float posZ) : transform(IdentityMatrix), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
+{
+	transform.translate(posX, posY, posZ);
+}
+
 // ------------------------------------------------------------
 PrimitiveTypes Primitive::GetType() const
 {
@@ -87,6 +92,12 @@ void Primitive::SetPos(float x, float y, float z)
 	transform.translate(x, y, z);
 }
 
+void Primitive::SetPosFrom(Primitive * origin, float x, float y, float z)
+{
+	vec3 org = origin->transform.translation();
+	transform.translate(org.x + x, org.y + y, org.z + z);
+}
+
 // ------------------------------------------------------------
 void Primitive::SetRotation(float angle, const vec3 &u)
 {
@@ -106,6 +117,11 @@ Cube::Cube() : Primitive(), size(1.0f, 1.0f, 1.0f)
 }
 
 Cube::Cube(float sizeX, float sizeY, float sizeZ) : Primitive(), size(sizeX, sizeY, sizeZ)
+{
+	type = PrimitiveTypes::Primitive_Cube;
+}
+
+Cube::Cube(float sizeX, float sizeY, float sizeZ, float posX, float posY, float posZ) : Primitive(posX,posY,posZ), size(sizeX, sizeY, sizeZ)
 {
 	type = PrimitiveTypes::Primitive_Cube;
 }
@@ -168,6 +184,11 @@ Sphere::Sphere(float radius) : Primitive(), radius(radius)
 	type = PrimitiveTypes::Primitive_Sphere;
 }
 
+Sphere::Sphere(float radius, float posX, float posY, float posZ) : Primitive(posX, posY, posZ), radius(radius)
+{
+	type = PrimitiveTypes::Primitive_Sphere;
+}
+
 void Sphere::InnerRender() const
 {
 	glutSolidSphere(radius, 25, 25);
@@ -181,6 +202,11 @@ Cylinder::Cylinder() : Primitive(), radius(1.0f), height(1.0f)
 }
 
 Cylinder::Cylinder(float radius, float height) : Primitive(), radius(radius), height(height)
+{
+	type = PrimitiveTypes::Primitive_Cylinder;
+}
+
+Cylinder::Cylinder(float radius, float height, float posX, float posY, float posZ) : Primitive(posX, posY, posZ), radius(radius), height(height)
 {
 	type = PrimitiveTypes::Primitive_Cylinder;
 }

@@ -21,10 +21,9 @@ bool ModuleSceneIntro::Start()
 	App->camera->LookAt(vec3(0, 0, 0));
 
 	//Sphere Creation
-	sphere = new Sphere(0.5f);
-	sphere->SetPos(0, sphere->radius + 1.0f, 8.0f);
+	/*sphere = new Sphere(0.5f, 0, 0.5f + 1.0f, 8.0f);
 	b = AddSceneObject(sphere, DINAMIC_SPHERE);
-	sphere = (Sphere*)graph_bodies[0];
+	sphere = (Sphere*)graph_bodies[0];*/
 	
 	//Cube Creation
 	/*Cube cube(3.0f,3.0f, 3.0f);
@@ -51,23 +50,43 @@ bool ModuleSceneIntro::Start()
 	AddSceneObject(&wall_1, STATIC_CUBE, 100.0f);*/
 	
 	// =============================================
-	Cylinder jumper(1.0f, 0.2f);
+	/*Cylinder jumper(1.0f, 0.2f);
 	jumper.SetPos(10.0f, 0.2f, 10.0f);
 	jumper.SetRotation(-90, vec3(0, 0, 1.0f));
-	AddSceneObject(&jumper, DINAMIC_CYLINDER);
+	AddSceneObject(&jumper, DINAMIC_CYLINDER);*/
 
 	// =============================================
-	Cube floor(20.0f, 0.2f, 50.0f);
-	floor.SetPos(0,floor.size.y, 0);
-	AddSceneObject(&floor, STATIC_CUBE);
 
+	// Initial Ramp ==========================================
+	Cube start_floor(20.0f, 0.2f, 30.0f);
+	start_floor.SetPos(0, start_floor.size.y + 80, 0);
+	AddSceneObject(&start_floor, STATIC_CUBE);
+	
+	Cube left_tower(15.0f, 90.0f, 15.0f);
+	left_tower.SetPos(-start_floor.size.x * 0.5f + left_tower.size.x *0.5f, left_tower.size.y*0.5, -start_floor.size.z * 0.5f - left_tower.size.z *0.5f);
+	AddSceneObject(&left_tower, STATIC_CUBE);
 
-	float y = GET_Y_LNG(15, 20));
-	float x = GET_X_LNG(15, 20));
+	Cube right_tower(15.0f, 90.0f, 15.0f);
+	right_tower.SetPos(-start_floor.size.x * 0.5f + right_tower.size.x *0.5f, right_tower.size.y*0.5, start_floor.size.z * 0.5f + right_tower.size.z *0.5f);
+	AddSceneObject(&right_tower, STATIC_CUBE);
 
-	Cube floor_2(20.0f, 0.2f, 15.0f);
-	floor_2.SetPos(0.0f, floor_2.size.y + GET_Y_LNG(15, 20)), 20 + GET_X_LNG(15,20)));
-	floor_2.SetRotation(-20, { 1,0,0 });
+	Cube ramp_wall(0.3f, 8.0f, 30.0f);
+	ramp_wall.SetPos(0 - start_floor.size.x * 0.5f + ramp_wall.size.x * 0.5f, start_floor.transform.translation().y + ramp_wall.size.y * 0.5f, 0);
+	//ramp_wall.SetRotation(90, { 1.0f,0.0f,0.0f });
+	AddSceneObject(&ramp_wall, STATIC_CUBE);
+
+	// =======================================================
+
+	/*Cube floor_b(floor);
+	floor_b.SetPosFrom((Primitive*)&floor, floor.size.x, 0, 0);
+	AddSceneObject(&floor_b, STATIC_CUBE);
+
+	/*float y = GET_Y_LNG(30, 25));
+	float x = GET_X_LNG(30, 25));
+
+	Cube floor_2(20.0f, 0.2f, 30.0f);
+	floor_2.SetPos(0.0f,  GET_Y_LNG(30, 25)) + floor_2.size.y,floor.size.z*0.5 +  GET_X_LNG(30,25)));
+	floor_2.SetRotation(-25, { 1,0,0 });
 	AddSceneObject(&floor_2, STATIC_CUBE);
 
 	/*floor.SetPos(8.0f, floor.size.y, 40.0f);
@@ -77,10 +96,7 @@ bool ModuleSceneIntro::Start()
 
 
 	// =============================================
-	Cube start_wall_1(20.0f, 0.3f, 2.0f);
-	start_wall_1.SetPos(0, start_wall_1.size.y + 1, 0);
-	start_wall_1.SetRotation(90, { 1.0f,0.0f,0.0f });
-	AddSceneObject(&start_wall_1, STATIC_CUBE);
+
 
 	return ret;
 }

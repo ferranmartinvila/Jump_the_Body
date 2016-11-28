@@ -18,10 +18,12 @@ class Primitive
 public:
 
 	Primitive();
+	Primitive(float posX, float posY, float posZ);
 
 	virtual void	Render() const;
 	virtual void	InnerRender() const;
 	void			SetPos(float x, float y, float z);
+	void			SetPosFrom(Primitive* origin, float x, float y, float z);
 	void			SetRotation(float angle, const vec3 &u);
 	void			Scale(float x, float y, float z);
 	PrimitiveTypes	GetType() const;
@@ -42,6 +44,7 @@ class Cube : public Primitive
 public :
 	Cube();
 	Cube(float sizeX, float sizeY, float sizeZ);
+	Cube(float sizeX, float sizeY, float sizeZ, float posX, float posY, float posZ);
 	void InnerRender() const;
 public:
 	vec3 size;
@@ -53,6 +56,7 @@ class Sphere : public Primitive
 public:
 	Sphere();
 	Sphere(float radius);
+	Sphere(float radius, float posX, float posY, float posZ);
 	void InnerRender() const;
 public:
 	float radius;
@@ -64,6 +68,7 @@ class Cylinder : public Primitive
 public:
 	Cylinder();
 	Cylinder(float radius, float height);
+	Cylinder(float radius, float height, float posX, float posY, float posZ);
 	void InnerRender() const;
 public:
 	float radius;
