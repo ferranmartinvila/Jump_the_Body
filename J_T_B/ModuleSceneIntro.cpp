@@ -19,46 +19,9 @@ bool ModuleSceneIntro::Start()
 
 	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
 	App->camera->LookAt(vec3(0, 0, 0));
-
-	//Sphere Creation
-	/*sphere = new Sphere(0.5f, 0, 0.5f + 1.0f, 8.0f);
-	b = AddSceneObject(sphere, DINAMIC_SPHERE);
-	sphere = (Sphere*)graph_bodies[0];*/
-	
-	//Cube Creation
-	/*Cube cube(3.0f,3.0f, 3.0f);
-	cube.SetPos(4.0f, cube.size.y + 1.0f, 4.0f);
-	AddSceneObject(&cube, CUBE);*/
-	
-	//Roof Creation
-	/*Cube roof(100.0f, 1.0f, 100.0f);
-	roof.SetPos(0.0f, 25.0f, 0.0f);
-	AddSceneObject(&roof,STATIC_CUBE);*/
-	
-
-	// =============================================
-	/*Cube wall_1(1.0f, 6.0f, 12.0f);
-	wall_1.SetPos(5.0f, wall_1.size.y/2, 5.0f);
-	AddSceneObject(&wall_1, STATIC_CUBE, 100.0f);
-
-	wall_1.SetPos(10.5f, wall_1.size.y / 2,11.0f);
-	wall_1.SetRotation(90.0f,vec3(0, 1.0f, 0));
-	AddSceneObject(&wall_1, STATIC_CUBE, 100.0f);
-
-	wall_1.SetPos(-0.5f, wall_1.size.y / 2, -1.5f);
-	wall_1.SetRotation(-90.0f, vec3(0, 1.0f, 0));
-	AddSceneObject(&wall_1, STATIC_CUBE, 100.0f);*/
-	
-	// =============================================
-	/*Cylinder jumper(1.0f, 0.2f);
-	jumper.SetPos(10.0f, 0.2f, 10.0f);
-	jumper.SetRotation(-90, vec3(0, 0, 1.0f));
-	AddSceneObject(&jumper, DINAMIC_CYLINDER);*/
-
-	// =============================================
 	
 	// Initial Ramp ============================================
-	int alpha = 35;
+	float alpha = 35;
 
 	Cube start_floor(20.0f, 0.2f, 30.0f);
 	start_floor.SetPos(0, start_floor.size.y + 80, 0);
@@ -101,29 +64,54 @@ bool ModuleSceneIntro::Start()
 	little_right_tower_2.SetPosFrom((Primitive*)&ramp_floor, ramp_floor.size.x * 0.5 - little_right_tower_2.size.x *0.5, -ramp_floor.transform.translation().y + little_right_tower_2.size.y *0.5, ramp_floor.size.z * 0.5f + little_right_tower_2.size.z *0.5);
 	AddSceneObject(&little_right_tower_2, STATIC_CUBE);
 	// =========================================================
+	
+	
+	// High Reception ==========================================
+	Cube high_reception(50.0f, 0.2f, 30.0f);
+	high_reception.SetPosFrom((Primitive*)&ramp_floor, 0 + ramp_floor.size.x * 0.5f + high_reception.size.x * 0.5f + 40.0f, 0, 0);
+	AddSceneObject(&high_reception, STATIC_CUBE);
+
+	Cube high_rec_left_tower(5.0f, 50.0f, 5.0f);
+	high_rec_left_tower.SetPosFrom((Primitive*)&high_reception, 0 - high_reception.size.x * 0.5f + high_rec_left_tower.size.x * 0.5f, - high_reception.transform.translation().y + high_rec_left_tower.size.y*0.5f, -high_reception.size.z * 0.5f - high_rec_left_tower.size.z * 0.5);
+	AddSceneObject(&high_rec_left_tower, STATIC_CUBE);
+
+	Cube high_rec_right_tower(5.0f, 50.0f, 5.0f);
+	high_rec_right_tower.SetPosFrom((Primitive*)&high_reception, 0 - high_reception.size.x * 0.5f + high_rec_right_tower.size.x * 0.5f, -high_reception.transform.translation().y + high_rec_right_tower.size.y*0.5f, high_reception.size.z * 0.5f + high_rec_right_tower.size.z * 0.5);
+	AddSceneObject(&high_rec_right_tower, STATIC_CUBE);
+
+	Cube high_rec_left_tower_2(5.0f, 50.0f, 5.0f);
+	high_rec_left_tower_2.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f - high_rec_left_tower_2.size.x * 0.5f, -high_reception.transform.translation().y + high_rec_left_tower_2.size.y*0.5f, -high_reception.size.z * 0.5f - high_rec_left_tower_2.size.z * 0.5);
+	AddSceneObject(&high_rec_left_tower_2, STATIC_CUBE);
+
+	Cube high_rec_right_tower_2(5.0f, 50.0f, 5.0f);
+	high_rec_right_tower_2.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f - high_rec_right_tower_2.size.x * 0.5f, -high_reception.transform.translation().y + high_rec_right_tower_2.size.y*0.5f, high_reception.size.z * 0.5f + high_rec_right_tower_2.size.z * 0.5);
+	AddSceneObject(&high_rec_right_tower_2, STATIC_CUBE);
+	// =========================================================
 
 
+	// Sky Curve ===============================================
+	/*alpha = 15.0f;
 
-	/*Cube floor_b(floor);
-	floor_b.SetPosFrom((Primitive*)&floor, floor.size.x, 0, 0);
-	AddSceneObject(&floor_b, STATIC_CUBE);
+	float x;
+	float y;
 
-	/*float y = GET_Y_LNG(30, 25));
-	float x = GET_X_LNG(30, 25));
+	Cube sky_curve_1(35.0f, 0.2f, 30.f);
+	sky_curve_1.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f + sky_curve_1.size.x * 0.5f + 20.0f, 10.0f, 0);
+	AddSceneObject(&sky_curve_1, STATIC_CUBE);
+	
 
-	Cube floor_2(20.0f, 0.2f, 30.0f);
-	floor_2.SetPos(0.0f,  GET_Y_LNG(30, 25)) + floor_2.size.y,floor.size.z*0.5 +  GET_X_LNG(30,25)));
-	floor_2.SetRotation(-25, { 1,0,0 });
-	AddSceneObject(&floor_2, STATIC_CUBE);
+	x = GET_CURVE_X(25.0f, alpha);
 
-	/*floor.SetPos(8.0f, floor.size.y, 40.0f);
-	floor.SetRotation(20, { 0,1,0 });
-	AddSceneObject(&floor, STATIC_CUBE);*/
+	Cube sky_curve_2(25.0f, 0.2f, 30.f);
+	sky_curve_2.SetPosFrom((Primitive*)&sky_curve_1, (sky_curve_1.size.x * 0.5f) + (sky_curve_2.size.x * 0.5f) - (GET_CURVE_X(25.0f,alpha)), 0,0);
+	sky_curve_2.SetRotation(alpha, { 0,1.0f,0 });
+	AddSceneObject(&sky_curve_2, STATIC_CUBE);
 
+	Cube sky_curve_3(25.0f, 0.2f, 30.f);
 
+	Cube sky_curve_4(25.0f, 0.2f, 30.f);*/
 
-	// =============================================
-
+	// =========================================================
 
 	return ret;
 }

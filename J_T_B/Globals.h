@@ -21,6 +21,9 @@ void log(const char file[], int line, const char* format, ...);
 #define GET_Y_LNG(size,angle) ((size * sinf(angle * DEGTORAD) / 2.0f)
 #define GET_X_LNG(size,angle) ((size * cosf(angle * DEGTORAD) / 2.0f)
 
+#define GET_CURVE_X(w_size,angle) (w_size * (sinf(angle *DEGTORAD)))
+#define GET_CURVE_Y(h_size,angle) (h_size * (sinf(angle *DEGTORAD)))
+
 typedef unsigned int uint;
 
 enum update_status
