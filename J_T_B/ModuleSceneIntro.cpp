@@ -56,8 +56,10 @@ bool ModuleSceneIntro::Start()
 	AddSceneObject(&jumper, DINAMIC_CYLINDER);*/
 
 	// =============================================
+	
+	// Initial Ramp ============================================
+	int alpha = 35;
 
-	// Initial Ramp ==========================================
 	Cube start_floor(20.0f, 0.2f, 30.0f);
 	start_floor.SetPos(0, start_floor.size.y + 80, 0);
 	AddSceneObject(&start_floor, STATIC_CUBE);
@@ -72,10 +74,35 @@ bool ModuleSceneIntro::Start()
 
 	Cube ramp_wall(0.3f, 8.0f, 30.0f);
 	ramp_wall.SetPos(0 - start_floor.size.x * 0.5f + ramp_wall.size.x * 0.5f, start_floor.transform.translation().y + ramp_wall.size.y * 0.5f, 0);
-	//ramp_wall.SetRotation(90, { 1.0f,0.0f,0.0f });
 	AddSceneObject(&ramp_wall, STATIC_CUBE);
 
-	// =======================================================
+	Cube initial_ramp(70.0f, 0.2f, 30.0f);
+	initial_ramp.SetPosFrom((Primitive*)&start_floor, 0 + start_floor.size.x *0.5f + GET_X_LNG(70, alpha)), -GET_Y_LNG(70, alpha)), 0);
+	initial_ramp.SetRotation(alpha, { 0,0,-1 });
+	AddSceneObject(&initial_ramp, STATIC_CUBE);
+
+	Cube ramp_floor(40.0f, 0.2f, 30.0f);
+	ramp_floor.SetPosFrom((Primitive*)&initial_ramp, GET_X_LNG(70, alpha)) + ramp_floor.size.x * 0.5f, -GET_Y_LNG(70, alpha)),0);
+	AddSceneObject(&ramp_floor, STATIC_CUBE);
+
+	Cube little_left_tower(5.0f, 50.0f, 5.0f);
+	little_left_tower.SetPosFrom((Primitive*)&ramp_floor, -ramp_floor.size.x * 0.5 + little_left_tower.size.x *0.5, -ramp_floor.transform.translation().y + little_left_tower.size.y *0.5, -ramp_floor.size.z * 0.5f - little_left_tower.size.z *0.5);
+	AddSceneObject(&little_left_tower, STATIC_CUBE);
+
+	Cube little_right_tower(5.0f, 50.0f, 5.0f);
+	little_right_tower.SetPosFrom((Primitive*)&ramp_floor, -ramp_floor.size.x * 0.5 + little_right_tower.size.x *0.5, -ramp_floor.transform.translation().y + little_right_tower.size.y *0.5, ramp_floor.size.z * 0.5f + little_right_tower.size.z *0.5);
+	AddSceneObject(&little_right_tower, STATIC_CUBE);
+
+	Cube little_left_tower_2(5.0f, 50.0f, 5.0f);
+	little_left_tower_2.SetPosFrom((Primitive*)&ramp_floor, ramp_floor.size.x * 0.5 - little_left_tower_2.size.x *0.5, -ramp_floor.transform.translation().y + little_left_tower_2.size.y *0.5, -ramp_floor.size.z * 0.5f - little_left_tower_2.size.z *0.5);
+	AddSceneObject(&little_left_tower_2, STATIC_CUBE);
+
+	Cube little_right_tower_2(5.0f, 50.0f, 5.0f);
+	little_right_tower_2.SetPosFrom((Primitive*)&ramp_floor, ramp_floor.size.x * 0.5 - little_right_tower_2.size.x *0.5, -ramp_floor.transform.translation().y + little_right_tower_2.size.y *0.5, ramp_floor.size.z * 0.5f + little_right_tower_2.size.z *0.5);
+	AddSceneObject(&little_right_tower_2, STATIC_CUBE);
+	// =========================================================
+
+
 
 	/*Cube floor_b(floor);
 	floor_b.SetPosFrom((Primitive*)&floor, floor.size.x, 0, 0);
