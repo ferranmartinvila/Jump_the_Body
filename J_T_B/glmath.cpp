@@ -2,6 +2,27 @@
 
 // ----------------------------------------------------------------------------------------------------------------------------
 
+//My awesone euler angles function
+mat3x3 euler_rot(float x, float y, float z) {
+
+	x = x / 180.0f * (float)M_PI;
+	y = y / 180.0f * (float)M_PI;
+	z = z / 180.0f * (float)M_PI;
+
+	mat3x3 rot_matrix;
+	rot_matrix[0] = cos(y)*cos(z);
+	rot_matrix[1] = cos(z) * sin(y) * sin(x) - cos(x) * sin(z);
+	rot_matrix[2] = cos(z) * cos(x) * sin(y) + sin(z) * sin(x);
+	rot_matrix[3] = cos(y) * sin(z);
+	rot_matrix[4] = sin(z) * sin(y) * sin(x) + cos(x) * cos(z);
+	rot_matrix[5] = sin(z) * sin(y) * cos(x) - cos(z) * sin(x);
+	rot_matrix[6] = -sin(y);
+	rot_matrix[7] = cos(y) * sin(x);
+	rot_matrix[8] = cos(y) * cos(x);
+
+	return rot_matrix;
+}
+
 float dot(const vec2 &u, const vec2 &v)
 {
 	return u.x * v.x + u.y * v.y;
