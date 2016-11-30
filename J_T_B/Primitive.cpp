@@ -104,6 +104,11 @@ void Primitive::SetRotation(float angle, const vec3 &u)
 	transform.rotate(angle, u);
 }
 
+void Primitive::Move(float x, float y, float z)
+{
+	//Do Move
+}
+
 // ------------------------------------------------------------
 void Primitive::Scale(float x, float y, float z)
 {

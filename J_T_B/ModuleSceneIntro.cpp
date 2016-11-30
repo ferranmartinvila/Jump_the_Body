@@ -99,21 +99,20 @@ bool ModuleSceneIntro::Start()
 	sky_curve_1.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f + sky_curve_1.size.x * 0.5f + 20.0f, 10.0f, 0);
 	AddSceneObject(&sky_curve_1, STATIC_CUBE);
 	
-	vec3 temp(6, 3, 0);
-	vec3 rotated = rotate(temp, -90, { 1,0,0 });
-	rotated = rotate(rotated, 0, { 0,1,0 });
-	rotated = rotate(rotated, 90, { 0,0,1 });
-
+	vec3 temp(10.0f, 0, 15.0f);
+	vec3 rotated = rotate(temp, 15, { 0,1,0 });
+	float x_dist = temp.x - rotated.x;
+	float z_dist = temp.z - rotated.z;
 	rotated = rotate(rotated, -9, { 0,0,1 });
-
-	rotated = rotate(rotated, 17.1887, { 0,1,0 });
 
 	x = GET_CURVE_X(30.0f, alpha);
 	z = GET_CURVE_Z(20, alpha);
 	float n_x = (cosf(alpha * DEGTORAD) * 30) - (sinf(alpha * DEGTORAD) * 20);
 	float n_y = (cosf(alpha * DEGTORAD) * 20) + (sinf(alpha * DEGTORAD) * 30);
+
+
 	Cube sky_curve_2(20.0f, 0.2f, 30.f);
-	sky_curve_2.SetPosFrom((Primitive*)&sky_curve_1, (sky_curve_1.size.x * 0.5f) + (sky_curve_2.size.x * 0.5f) + (20.0f - n_x), 0, +(30.0f - n_x) );
+	sky_curve_2.SetPosFrom((Primitive*)&sky_curve_1, (sky_curve_1.size.x * 0.5f) + (sky_curve_2.size.x * 0.5f) - x_dist, 0, z_dist);
 	vec3 initial_pos = sky_curve_2.transform.translation();
 	sky_curve_2.SetRotation(alpha, { 0,-1.0f,0 });
 	vec3 end_pos = sky_curve_2.transform.translation();
