@@ -22,10 +22,14 @@ public:
 
 	virtual void	Render() const;
 	virtual void	InnerRender() const;
+
+	//Map building functions ------------------------------------------------
 	void			SetPos(float x, float y, float z);
 	void			SetPosFrom(Primitive* origin, float x, float y, float z);
 	void			SetRotation(float angle, const vec3 &u);
 	void			Move(float x, float y, float z);
+	void			PutRotatedBody(Primitive* target, float angle, const vec3& axis);
+
 	void			Scale(float x, float y, float z);
 	PrimitiveTypes	GetType() const;
 

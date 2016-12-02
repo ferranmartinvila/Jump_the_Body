@@ -109,6 +109,23 @@ void Primitive::Move(float x, float y, float z)
 	//Do Move
 }
 
+void Primitive::PutRotatedBody(Primitive * target, float angle, const vec3 & axis)
+{
+	
+	//Cube case
+	if (target->type == Primitive_Cube && this->type == Primitive_Cube) {
+
+		vec3 vector(((Cube*)target)->size.x * 0.5f, 0, ((Cube*)target)->size.z * 0.5f);
+		vec3 rot_vec = rotate(vector, angle, axis);
+
+		float x_pos = (((Cube*)target)->size.x * 0.5f) + ((((Cube*)this)->size.x * 0.5f)) - (vector.x - rot_vec.x) - (((Cube*)target)->size.z * sin(angle * DEGTORAD));
+		float z_pos = (vector.z - rot_vec.z) - ((((Cube*)target)->size.z * 0.5f) * sin(angle * DEGTORAD));
+
+		target->SetPosFrom(this, x_pos, 0, z_pos);
+	}
+
+}
+
 // ------------------------------------------------------------
 void Primitive::Scale(float x, float y, float z)
 {
