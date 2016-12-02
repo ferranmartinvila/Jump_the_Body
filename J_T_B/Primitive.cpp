@@ -8,10 +8,10 @@
 #pragma comment (lib, "glut/glut32.lib")
 
 // ------------------------------------------------------------
-Primitive::Primitive() : transform(IdentityMatrix), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
+Primitive::Primitive() : transform(IdentityMatrix), color(White), wire(false), axis(false), rotations({0,0,0}),type(PrimitiveTypes::Primitive_Point)
 {}
 
-Primitive::Primitive(float posX, float posY, float posZ) : transform(IdentityMatrix), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
+Primitive::Primitive(float posX, float posY, float posZ) : transform(IdentityMatrix), color(White), wire(false), axis(false), rotations({ 0,0,0 }), type(PrimitiveTypes::Primitive_Point)
 {
 	transform.translate(posX, posY, posZ);
 }
@@ -115,15 +115,51 @@ void Primitive::PutRotatedBody(Primitive * target, float angle, const vec3 & axi
 	//Cube case
 	if (target->type == Primitive_Cube && this->type == Primitive_Cube) {
 
-		vec3 vector(((Cube*)target)->size.x * 0.5f, 0, ((Cube*)target)->size.z * 0.5f);
-		vec3 rot_vec = rotate(vector, angle, axis);
+		angle = this->rotations.y + angle;
+		target->rotations.y = angle;
+		target->transform = this->transform;
 
-		float x_pos = (((Cube*)target)->size.x * 0.5f) + ((((Cube*)this)->size.x * 0.5f)) - (vector.x - rot_vec.x) - (((Cube*)target)->size.z * sin(angle * DEGTORAD));
-		float z_pos = (vector.z - rot_vec.z) - ((((Cube*)target)->size.z * 0.5f) * sin(angle * DEGTORAD));
+		target->transform.rotate(angle,axis * - 1);
+		
+		float this_cos = cos(this->rotations.y * DEGTORAD);
+		float this_sin = sin(this->rotations.y * DEGTORAD);
+		float target_cos = cos(target->rotations.y * DEGTORAD);
+		float target_sin = sin(target->rotations.y * DEGTORAD);
 
+		//Build vector and rotate it
+		vec3 vector(((Cube*)target)->size.x * 0.5f, 0, ((Cube*)target)->size.z* 0.5f);
+		vec3 rot_vec = rotate(vector,angle, axis);
+
+
+
+		//Calculate x and y of target
+		float x_pos = (((Cube*)target)->size.x * 0.5f) + ((((Cube*)this)->size.x * 0.5f) + (((Cube*)this)->size.x * this_sin * 0.5f)) - (vector.x - rot_vec.x) - (((Cube*)target)->size.z *  sin(angle * DEGTORAD));
+		
+		float z_pos = (vector.z - rot_vec.z) - ((((Cube*)this)->size.z) - (((Cube*)target)->size.z * target_cos));
+		
+		//Set the calculated position & rotation to the target
+		
 		target->SetPosFrom(this, x_pos, 0, z_pos);
+	
 	}
 
+}
+
+void Primitive::AddAdjacentBody(Primitive * target, float angle, const vec3 & axis)
+{
+	vec3 Apoint((((Cube*)this)->size.x * 0.5f), 0.0f, - (((Cube*)this)->size.z * 0.5f));
+	Apoint = (rotate(Apoint, this->rotations.y, axis * -1));
+
+	vec3 Bpoint(Apoint.x + (((Cube*)target)->size.x * 0.5f), 0.0f, Apoint.z + (((Cube*)target)->size.z * 0.5f));
+	
+	vec3 vector(Bpoint.x - Apoint.x, Bpoint.y - Apoint.y, Bpoint.z - Apoint.z);
+
+	vector = rotate(vector, this->rotations.y + angle, axis * -1);
+
+	target->rotations.y = angle + this->rotations.y;
+
+	target->SetPosFrom(this, Apoint.x + vector.x, Apoint.y + vector.y, Apoint.z + vector.z);
+	target->SetRotation(angle + this->rotations.y, axis * -1);
 }
 
 // ------------------------------------------------------------

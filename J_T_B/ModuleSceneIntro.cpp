@@ -17,13 +17,13 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
-	App->camera->LookAt(vec3(0, 0, 0));
+	App->camera->Move(vec3(-120.0f, 150.0f, 0.0f));
+	App->camera->LookAt(vec3(0, 90, 0));
 	
 	// Initial Ramp ============================================
 	float alpha = 45;
 
-	Cube start_floor(20.0f, 0.2f, 30.0f);
+	Cube start_floor(30.0f, 0.2f, 30.0f);
 	start_floor.SetPos(0, start_floor.size.y + 80, 0);
 	AddSceneObject(&start_floor, STATIC_CUBE);
 	
@@ -90,7 +90,7 @@ bool ModuleSceneIntro::Start()
 
 
 	// Sky Curve ===============================================
-	alpha = 15.0f;
+	alpha = 10.0f;
 
 	float x;
 	float y;
@@ -99,30 +99,31 @@ bool ModuleSceneIntro::Start()
 	sky_curve_1.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f + sky_curve_1.size.x * 0.5f + 20.0f, 10.0f, 0);
 	AddSceneObject(&sky_curve_1, STATIC_CUBE);
 	
-	Cube sky_curve_2(20.0f, 0.2f, 30.f);
-	sky_curve_2.SetRotation(alpha, { 0,-1.0f,0 });
-	sky_curve_1.PutRotatedBody(&sky_curve_2, alpha, { 0,-1.0f,0 });
+	Cube sky_curve_2(30.0f, 0.2f, 30.f);
+	sky_curve_1.AddAdjacentBody(&sky_curve_2, alpha, { 0, 1.0f ,0 });
 	AddSceneObject(&sky_curve_2, STATIC_CUBE);
 
-	// Rot function
-	vec3 temp(10.0f, 0, 15.0f);
-	vec3 rotated = rotate(temp, 15, { 0,1,0 });
-	float x_dist = temp.x - rotated.x;
-	float z_dist = temp.z - rotated.z;
-	float z_del = 30 - (30 * cos(alpha * (3.14 / 180)));
-	float x_del = (30 * sin(alpha * (3.14 / 180)));
 
-
-	sky_curve_2.SetPosFrom((Primitive*)&sky_curve_1, (sky_curve_1.size.x * 0.5f) + (sky_curve_2.size.x * 0.5f) - x_dist - x_del, 0, z_dist - z_del);
+	Cube sky_curve_3(30.0f, 0.2f, 30.f);
+	sky_curve_2.AddAdjacentBody(&sky_curve_3, alpha, { 0, 1.0f ,0 });
+	AddSceneObject(&sky_curve_3, STATIC_CUBE);
 	
-	sky_curve_2.SetRotation(alpha, { 0,-1.0f,0 });
+	Cube sky_curve_4(30.0f, 0.2f, 30.f);
+	sky_curve_3.AddAdjacentBody(&sky_curve_4, alpha, { 0, 1.0f ,0 });
+	AddSceneObject(&sky_curve_4, STATIC_CUBE);
 
-	AddSceneObject(&sky_curve_2, STATIC_CUBE);
+	Cube sky_curve_5(30.0f, 0.2f, 30.f);
+	sky_curve_4.AddAdjacentBody(&sky_curve_5, alpha, { 0, 1.0f ,0 });
+	AddSceneObject(&sky_curve_5, STATIC_CUBE);
 
-	Cube sky_curve_3(25.0f, 0.2f, 30.f);
+	Cube sky_curve_6(30.0f, 0.2f, 30.f);
+	sky_curve_5.AddAdjacentBody(&sky_curve_6, alpha, { 0, 1.0f ,0 });
+	AddSceneObject(&sky_curve_6, STATIC_CUBE);
 
-	Cube sky_curve_4(25.0f, 0.2f, 30.f);
-
+	Cube sky_curve_7(30.0f, 0.2f, 30.f);
+	sky_curve_6.AddAdjacentBody(&sky_curve_7, alpha, { 0, 1.0f ,0 });
+	AddSceneObject(&sky_curve_7, STATIC_CUBE);
+	
 	// =========================================================
 
 	return ret;

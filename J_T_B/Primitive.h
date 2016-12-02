@@ -29,7 +29,7 @@ public:
 	void			SetRotation(float angle, const vec3 &u);
 	void			Move(float x, float y, float z);
 	void			PutRotatedBody(Primitive* target, float angle, const vec3& axis);
-
+	void			AddAdjacentBody(Primitive* target, float angle, const vec3& axis);
 	void			Scale(float x, float y, float z);
 	PrimitiveTypes	GetType() const;
 
@@ -37,6 +37,7 @@ public:
 	
 	Color color;
 	mat4x4 transform;
+	vec3 rotations;
 	bool axis,wire;
 
 protected:
