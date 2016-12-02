@@ -11,6 +11,8 @@
 
 class DebugDrawer;
 struct PhysBody3D;
+struct PhysVehicle3D;
+struct VehicleInfo;
 
 class ModulePhysics3D : public Module
 {
@@ -27,6 +29,7 @@ public:
 
 	//Methods to add bodies to the world
 	PhysBody3D* AddBody(const Primitive* primitive, enum OBJECT_TYPE object_type, float mass = 1.0f);
+	PhysVehicle3D* AddVehicle(const VehicleInfo& info);
 
 	//Methods for constrains
 	btPoint2PointConstraint* Add_P2P_Constraint(btRigidBody& rbA, btRigidBody& rbB, const btVector3& pivotInA, const btVector3& pivotInB);
@@ -36,18 +39,19 @@ private:
 
 	bool debug;
 
-	btDefaultCollisionConfiguration*	collision_conf;
-	btCollisionDispatcher*				dispatcher;
-	btBroadphaseInterface*				broad_phase;
-	btSequentialImpulseConstraintSolver* solver;
-	btDiscreteDynamicsWorld*			world;
-	DebugDrawer*						debug_draw;
+	btDefaultCollisionConfiguration*		collision_conf;
+	btCollisionDispatcher*					dispatcher;
+	btBroadphaseInterface*					broad_phase;
+	btSequentialImpulseConstraintSolver*	solver;
+	btDiscreteDynamicsWorld*				world;
+	btDefaultVehicleRaycaster*				vehicle_raycaster;
+	DebugDrawer*							debug_draw;
 
-	// TODO 1
-	//Containers for shapes & bodies
 	p2List<btCollisionShape*>			shapes;
 	p2List<PhysBody3D*>					bodies;
 	p2List<btTypedConstraint*>			constrains;
+	p2List<PhysVehicle3D*>				vehicles;
+	p2List<btDefaultMotionState*>		motions;
 
 };
 

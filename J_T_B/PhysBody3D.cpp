@@ -11,6 +11,11 @@ PhysBody3D::PhysBody3D(btRigidBody* body):body(body)
 PhysBody3D::~PhysBody3D()
 {}
 
+void PhysBody3D::Push(float x, float y, float z)
+{
+	body->applyCentralImpulse(btVector3(x, y, z));
+}
+
 // ---------------------------------------------------------
 void PhysBody3D::GetTransform(float* matrix) const
 {
