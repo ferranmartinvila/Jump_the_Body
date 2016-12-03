@@ -110,7 +110,7 @@ bool ModuleSceneIntro::Start()
 	sky_curve_8.AddAdjacentBody(&low_raception, 0, Y, 50, -15);
 	AddCentralColumns(&low_raception, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&low_raception, STATIC_CUBE);
-
+	
 	Cube half(30.0f, 0.2f, 30.f);
 	low_raception.AddAdjacentBody(&half, 25, Z);
 	AddCentralColumns(&half, 5.0f, 5.0f, 5.0f);
@@ -121,6 +121,19 @@ bool ModuleSceneIntro::Start()
 	AddCentralColumns(&half_2, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&half_2, STATIC_CUBE);
 
+
+	Cube half_3(30.0f, 0.2f, 30.f);
+	half_2.AddAdjacentBody(&half_3, -55.0f, Z);
+	AddCentralColumns(&half_3, 5.0f, 5.0f, 5.0f);
+	AddSceneObject(&half_3, STATIC_CUBE);
+
+	Cube half_4(30.0f, 0.2f, 30.f);
+	half_3.AddAdjacentBody(&half_4, 55.0f, Z);
+	AddCentralColumns(&half_4, 5.0f, 5.0f, 5.0f);
+	AddSceneObject(&half_4, STATIC_CUBE);
+
+
+	// =========================================================
 	return ret;
 }
 
