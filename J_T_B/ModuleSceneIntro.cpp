@@ -90,32 +90,31 @@ bool ModuleSceneIntro::Start()
 
 
 	// Low Reception ===========================================
-	Cube low_raception(30.0f, 0.2f, 30.f);
-	cube.AddAdjacentBody(&low_raception, 0, Y, 50, -15);
-	AddCentralColumns(&low_raception, 5.0f, 5.0f, 5.0f);
+
+	/*
+	cube.SetRotation(0, { 0,0,1 });
+	cube.rotations = { 0,0,0 };
+	cube.ReSize(20.0f, 0.2f, 60.f);
+	cube_2 = cube;
+
+
+	alpha = 90.0f;
+
+	cube.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f + cube.size.x * 0.5f, 10.0f, 0);
+	AddCentralColumns(&cube, 5.0f, 5.0f, 5.0f);
+	AddSceneObject(&cube, STATIC_CUBE);
+
+	Cube low_raception(45.0f, 0.2f, 60.f);
+	cube.AddAdjacentBody(&low_raception, 0, Y, 0, -15, -30);
+	AddExternalColumns(&low_raception, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&low_raception, STATIC_CUBE);
-	
-	Cube half(30.0f, 0.2f, 30.f);
-	low_raception.AddAdjacentBody(&half, 25, Z);
-	AddCentralColumns(&half, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&half, STATIC_CUBE);
 
-	Cube half_2(30.0f, 0.2f, 30.f);
-	half.AddAdjacentBody(&half_2, -25.0f, Z);
-	AddCentralColumns(&half_2, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&half_2, STATIC_CUBE);
-
-
-	Cube half_3(30.0f, 0.2f, 30.f);
-	half_2.AddAdjacentBody(&half_3, -55.0f, Z);
-	AddCentralColumns(&half_3, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&half_3, STATIC_CUBE);
-
-	Cube half_4(30.0f, 0.2f, 30.f);
-	half_3.AddAdjacentBody(&half_4, 55.0f, Z);
-	AddCentralColumns(&half_4, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&half_4, STATIC_CUBE);
-
+	for (uint k = 0; k < 10; k++) {
+		cube.AddAdjacentBody(&cube_2, alpha * 0.12f, Y);
+		AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
+		AddSceneObject(&cube, STATIC_CUBE);
+		cube = cube_2;
+	}*/
 
 	// =========================================================
 	return ret;
