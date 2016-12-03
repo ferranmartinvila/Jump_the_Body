@@ -44,6 +44,8 @@ public:
 public:
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
+	void	AddCentralColumns(Primitive* target, float x, float y, float z);
+	void	AddExternalColumns(Primitive* target, float x, float y, float z);
 	PhysBody3D*  AddSceneObject(Primitive* object, OBJECT_TYPE object_type, float mass = 1.0f);
 
 };

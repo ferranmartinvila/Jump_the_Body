@@ -17,114 +17,99 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	App->camera->Move(vec3(-120.0f, 150.0f, 0.0f));
-	App->camera->LookAt(vec3(0, 90, 0));
+	App->camera->Move(vec3(0.0f, 0.0f, 0.0f));
+	App->camera->LookAt(vec3(0, 1, 0));
 	
 	// Initial Ramp ============================================
 	float alpha = 45;
-
+	Cube cube;
+	
 	Cube start_floor(30.0f, 0.2f, 30.0f);
-	start_floor.SetPos(0, start_floor.size.y + 80, 0);
+	start_floor.SetPos(0, start_floor.size.y + 70, 0);
 	AddSceneObject(&start_floor, STATIC_CUBE);
 	
-	Cube left_tower(15.0f, 90.0f, 15.0f);
-	left_tower.SetPos(-start_floor.size.x * 0.5f + left_tower.size.x *0.5f, left_tower.size.y*0.5, -start_floor.size.z * 0.5f - left_tower.size.z *0.5f);
-	AddSceneObject(&left_tower, STATIC_CUBE);
+	//Left big column
+	cube.ReSize(15.0f, start_floor.transform.translation().y + 10.0f , 15.0f);
+	cube.SetPos(-start_floor.size.x * 0.5f + cube.size.x *0.5f, cube.size.y*0.5, -start_floor.size.z * 0.5f - cube.size.z *0.5f);
+	AddSceneObject(&cube, STATIC_CUBE);
 
-	Cube right_tower(15.0f, 90.0f, 15.0f);
-	right_tower.SetPos(-start_floor.size.x * 0.5f + right_tower.size.x *0.5f, right_tower.size.y*0.5, start_floor.size.z * 0.5f + right_tower.size.z *0.5f);
-	AddSceneObject(&right_tower, STATIC_CUBE);
+	//Right big column
+	cube.ReSize(15.0f, start_floor.transform.translation().y + 10.0f, 15.0f);
+	cube.SetPos(-start_floor.size.x * 0.5f + cube.size.x *0.5f, cube.size.y*0.5, start_floor.size.z * 0.5f + cube.size.z *0.5f);
+	AddSceneObject(&cube, STATIC_CUBE);
 
 	Cube ramp_wall(0.3f, 8.0f, 30.0f);
 	ramp_wall.SetPos(0 - start_floor.size.x * 0.5f + ramp_wall.size.x * 0.5f, start_floor.transform.translation().y + ramp_wall.size.y * 0.5f, 0);
 	AddSceneObject(&ramp_wall, STATIC_CUBE);
 
 	Cube initial_ramp(70.0f, 0.2f, 30.0f);
-	initial_ramp.SetPosFrom((Primitive*)&start_floor, 0 + start_floor.size.x *0.5f + GET_X_LNG(70, alpha)) - initial_ramp.size.y * 0.5, -GET_Y_LNG(70, alpha)), 0);
+	initial_ramp.SetPosFrom((Primitive*)&start_floor, 0 + start_floor.size.x *0.5f + GET_X_LNG(70, alpha)) - initial_ramp.size.y * 0.5, - GET_Y_LNG(70, alpha)), 0);
 	initial_ramp.SetRotation(alpha, { 0,0,-1 });
 	AddSceneObject(&initial_ramp, STATIC_CUBE);
 
 	Cube ramp_floor(40.0f, 0.2f, 30.0f);
 	ramp_floor.SetPosFrom((Primitive*)&initial_ramp, GET_X_LNG(70, alpha)) + ramp_floor.size.x * 0.5f, -GET_Y_LNG(70, alpha)),0);
+	AddExternalColumns(&ramp_floor, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&ramp_floor, STATIC_CUBE);
-
-	Cube little_left_tower(5.0f, 50.0f, 5.0f);
-	little_left_tower.SetPosFrom((Primitive*)&ramp_floor, -ramp_floor.size.x * 0.5 + little_left_tower.size.x *0.5, -ramp_floor.transform.translation().y + little_left_tower.size.y *0.5, -ramp_floor.size.z * 0.5f - little_left_tower.size.z *0.5);
-	AddSceneObject(&little_left_tower, STATIC_CUBE);
-
-	Cube little_right_tower(5.0f, 50.0f, 5.0f);
-	little_right_tower.SetPosFrom((Primitive*)&ramp_floor, -ramp_floor.size.x * 0.5 + little_right_tower.size.x *0.5, -ramp_floor.transform.translation().y + little_right_tower.size.y *0.5, ramp_floor.size.z * 0.5f + little_right_tower.size.z *0.5);
-	AddSceneObject(&little_right_tower, STATIC_CUBE);
-
-	Cube little_left_tower_2(5.0f, 50.0f, 5.0f);
-	little_left_tower_2.SetPosFrom((Primitive*)&ramp_floor, ramp_floor.size.x * 0.5 - little_left_tower_2.size.x *0.5, -ramp_floor.transform.translation().y + little_left_tower_2.size.y *0.5, -ramp_floor.size.z * 0.5f - little_left_tower_2.size.z *0.5);
-	AddSceneObject(&little_left_tower_2, STATIC_CUBE);
-
-	Cube little_right_tower_2(5.0f, 50.0f, 5.0f);
-	little_right_tower_2.SetPosFrom((Primitive*)&ramp_floor, ramp_floor.size.x * 0.5 - little_right_tower_2.size.x *0.5, -ramp_floor.transform.translation().y + little_right_tower_2.size.y *0.5, ramp_floor.size.z * 0.5f + little_right_tower_2.size.z *0.5);
-	AddSceneObject(&little_right_tower_2, STATIC_CUBE);
 	// =========================================================
 	
 	
 	// High Reception ==========================================
 	Cube high_reception(50.0f, 0.2f, 30.0f);
 	high_reception.SetPosFrom((Primitive*)&ramp_floor, 0 + ramp_floor.size.x * 0.5f + high_reception.size.x * 0.5f + 40.0f, 0, 0);
+	AddExternalColumns(&high_reception, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&high_reception, STATIC_CUBE);
-
-	Cube high_rec_left_tower(5.0f, 50.0f, 5.0f);
-	high_rec_left_tower.SetPosFrom((Primitive*)&high_reception, 0 - high_reception.size.x * 0.5f + high_rec_left_tower.size.x * 0.5f, - high_reception.transform.translation().y + high_rec_left_tower.size.y*0.5f, -high_reception.size.z * 0.5f - high_rec_left_tower.size.z * 0.5);
-	AddSceneObject(&high_rec_left_tower, STATIC_CUBE);
-
-	Cube high_rec_right_tower(5.0f, 50.0f, 5.0f);
-	high_rec_right_tower.SetPosFrom((Primitive*)&high_reception, 0 - high_reception.size.x * 0.5f + high_rec_right_tower.size.x * 0.5f, -high_reception.transform.translation().y + high_rec_right_tower.size.y*0.5f, high_reception.size.z * 0.5f + high_rec_right_tower.size.z * 0.5);
-	AddSceneObject(&high_rec_right_tower, STATIC_CUBE);
-
-	Cube high_rec_left_tower_2(5.0f, 50.0f, 5.0f);
-	high_rec_left_tower_2.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f - high_rec_left_tower_2.size.x * 0.5f, -high_reception.transform.translation().y + high_rec_left_tower_2.size.y*0.5f, -high_reception.size.z * 0.5f - high_rec_left_tower_2.size.z * 0.5);
-	AddSceneObject(&high_rec_left_tower_2, STATIC_CUBE);
-
-	Cube high_rec_right_tower_2(5.0f, 50.0f, 5.0f);
-	high_rec_right_tower_2.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f - high_rec_right_tower_2.size.x * 0.5f, -high_reception.transform.translation().y + high_rec_right_tower_2.size.y*0.5f, high_reception.size.z * 0.5f + high_rec_right_tower_2.size.z * 0.5);
-	AddSceneObject(&high_rec_right_tower_2, STATIC_CUBE);
 	// =========================================================
 
 
 	// Sky Curve ===============================================
-	alpha = 10.0f;
+	alpha = 12.0f;
 
-	float x;
-	float y;
-	float z;
 	Cube sky_curve_1(40.0f, 0.2f, 30.f);
 	sky_curve_1.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f + sky_curve_1.size.x * 0.5f + 20.0f, 10.0f, 0);
+	AddCentralColumns(&sky_curve_1, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_1, STATIC_CUBE);
 	
 	Cube sky_curve_2(30.0f, 0.2f, 30.f);
 	sky_curve_1.AddAdjacentBody(&sky_curve_2, alpha, { 0, 1.0f ,0 });
+	AddCentralColumns(&sky_curve_2, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_2, STATIC_CUBE);
-
-
+	
 	Cube sky_curve_3(30.0f, 0.2f, 30.f);
 	sky_curve_2.AddAdjacentBody(&sky_curve_3, alpha, { 0, 1.0f ,0 });
+	AddCentralColumns(&sky_curve_3, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_3, STATIC_CUBE);
 	
 	Cube sky_curve_4(30.0f, 0.2f, 30.f);
 	sky_curve_3.AddAdjacentBody(&sky_curve_4, alpha, { 0, 1.0f ,0 });
+	AddCentralColumns(&sky_curve_4, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_4, STATIC_CUBE);
 
 	Cube sky_curve_5(30.0f, 0.2f, 30.f);
 	sky_curve_4.AddAdjacentBody(&sky_curve_5, alpha, { 0, 1.0f ,0 });
+	AddCentralColumns(&sky_curve_5, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_5, STATIC_CUBE);
 
 	Cube sky_curve_6(30.0f, 0.2f, 30.f);
 	sky_curve_5.AddAdjacentBody(&sky_curve_6, alpha, { 0, 1.0f ,0 });
+	AddCentralColumns(&sky_curve_6, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_6, STATIC_CUBE);
 
 	Cube sky_curve_7(30.0f, 0.2f, 30.f);
 	sky_curve_6.AddAdjacentBody(&sky_curve_7, alpha, { 0, 1.0f ,0 });
+	AddCentralColumns(&sky_curve_7, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_7, STATIC_CUBE);
-	
+
+	Cube sky_curve_8(30.0f, 0.2f, 30.f);
+	sky_curve_7.AddAdjacentBody(&sky_curve_8, alpha, { 0, 1.0f ,0 });
+	AddCentralColumns(&sky_curve_8, 5.0f, 5.0f, 5.0f);
+	AddSceneObject(&sky_curve_8, STATIC_CUBE);
 	// =========================================================
+
+	Cube low_raception(30.0f, 0.2f, 30.f);
+	sky_curve_8.AddAdjacentBody(&low_raception, 0, { 0, 1.0f ,0 }, 20);
+	AddCentralColumns(&low_raception, 5.0f, 5.0f, 5.0f);
+	AddSceneObject(&low_raception, STATIC_CUBE);
 
 	return ret;
 }
@@ -174,6 +159,54 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 
 	if (body1 == b || body2 == b)sphere->color = Red;
 
+}
+
+void ModuleSceneIntro::AddCentralColumns(Primitive * target, float x, float y, float z)
+{
+	//Get the target position
+	vec3 target_pos = ((Cube*)target)->transform.translation();
+
+	//Calculate the vector from the position to the center of the sides
+	vec3 Apoint(0.0f, 0.0f, -(((Cube*)target)->size.z * 0.5f) - z * 0.5f);
+	Apoint = (rotate(Apoint, target->rotations.y, {0,-1.0f,0}));
+	
+	//Create the columns whit the data calculated
+	Cube col_r(x, target_pos.y + y, z, target_pos.x + Apoint.x, ((target_pos.y + y) * 0.5f) + Apoint.y, target_pos.z + Apoint.z);
+	Cube col_l(x, target_pos.y + y, z, target_pos.x - Apoint.x, ((target_pos.y + y) * 0.5f) + Apoint.y, target_pos.z - Apoint.z);
+	//Rotate the new columns
+	col_r.SetRotation(target->rotations.y, { 0,-1.0f,0 });
+	col_l.SetRotation(target->rotations.y, { 0,-1.0f,0 });
+	//Add it to the scene
+	AddSceneObject(&col_r,STATIC_CUBE);
+	AddSceneObject(&col_l, STATIC_CUBE);
+}
+
+void ModuleSceneIntro::AddExternalColumns(Primitive * target, float x, float y, float z)
+{
+	//Get the target position
+	vec3 target_pos = ((Cube*)target)->transform.translation();
+
+	vec3 Apoint_up((((Cube*)target)->size.x * 0.5f) + x*0.5f, 0.0f, -(((Cube*)target)->size.z * 0.5f) - z * 0.5f);
+	vec3 Apoint_down((((Cube*)target)->size.x * 0.5f) + x*0.5f, 0.0f, +(((Cube*)target)->size.z * 0.5f) + z * 0.5f);
+
+	Apoint_up = (rotate(Apoint_up, target->rotations.y, { 0,-1.0f,0 }));
+	Apoint_down = (rotate(Apoint_down, target->rotations.y, { 0,-1.0f,0 }));
+
+	Cube col_r_up(x, target_pos.y + y, z, target_pos.x + Apoint_up.x, ((target_pos.y + y) * 0.5f) + Apoint_up.y, target_pos.z + Apoint_up.z);
+	Cube col_r_down(x, target_pos.y + y, z, target_pos.x + Apoint_down.x, ((target_pos.y + y) * 0.5f) + Apoint_down.y, target_pos.z + Apoint_down.z);
+	Cube col_l_up(x, target_pos.y + y, z, target_pos.x - Apoint_up.x, ((target_pos.y + y) * 0.5f) + Apoint_up.y, target_pos.z - Apoint_up.z);
+	Cube col_l_down(x, target_pos.y + y, z, target_pos.x - Apoint_down.x, ((target_pos.y + y) * 0.5f) + Apoint_down.y, target_pos.z - Apoint_down.z);
+
+	//Rotate the new columns
+	col_r_up.SetRotation(target->rotations.y, { 0,-1.0f,0 });
+	col_r_down.SetRotation(target->rotations.y, { 0,-1.0f,0 });
+	col_l_up.SetRotation(target->rotations.y, { 0,-1.0f,0 });
+	col_l_down.SetRotation(target->rotations.y, { 0,-1.0f,0 });
+	//Add it to the scene
+	AddSceneObject(&col_r_up, STATIC_CUBE);
+	AddSceneObject(&col_r_down, STATIC_CUBE);
+	AddSceneObject(&col_l_up, STATIC_CUBE);
+	AddSceneObject(&col_l_down, STATIC_CUBE);
 }
 
 PhysBody3D* ModuleSceneIntro::AddSceneObject(Primitive* object, OBJECT_TYPE object_type, float mass)

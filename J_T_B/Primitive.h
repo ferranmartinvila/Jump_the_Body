@@ -27,9 +27,7 @@ public:
 	void			SetPos(float x, float y, float z);
 	void			SetPosFrom(Primitive* origin, float x, float y, float z);
 	void			SetRotation(float angle, const vec3 &u);
-	void			Move(float x, float y, float z);
-	void			PutRotatedBody(Primitive* target, float angle, const vec3& axis);
-	void			AddAdjacentBody(Primitive* target, float angle, const vec3& axis);
+	void			AddAdjacentBody(Primitive* target, float angle, const vec3& axis, float x = 0, float y = 0, float z = 0);
 	void			Scale(float x, float y, float z);
 	PrimitiveTypes	GetType() const;
 
@@ -51,7 +49,11 @@ public :
 	Cube();
 	Cube(float sizeX, float sizeY, float sizeZ);
 	Cube(float sizeX, float sizeY, float sizeZ, float posX, float posY, float posZ);
+
 	void InnerRender() const;
+
+	void	ReSize(float x, float y, float z);
+
 public:
 	vec3 size;
 };
