@@ -123,11 +123,16 @@ void Primitive::AddAdjacentBody(Primitive * target, float angle, AXIS axis, floa
 
 	Apoint = (rotate(Apoint, this->rotations.y, { 0,-1.0f,0 }));
 	Apoint = (rotate(Apoint, this->rotations.z, { 0,0,-1.0f }));		
-	
+	Apoint = (rotate(Apoint, this->rotations.x, { -1.0f,0,0 }));
 
 	//Calculate the point in the child object(whitout rotate)
 	vec3 Bpoint(Apoint.x + (((Cube*)target)->size.x * 0.5f) + x, 0.0f + y, Apoint.z + (((Cube*)target)->size.z * 0.5f) + z);
-	
+	if (this->rotations.z != 0) { 
+		
+		Bpoint.y = Apoint.y;
+		Bpoint = rotate(Bpoint, this->rotations.z + angle, { 0,0,1 });
+
+	}
 	//Vector form A to B
 	vec3 vector(Bpoint.x - Apoint.x, Bpoint.y - Apoint.y, Bpoint.z - Apoint.z);
 
@@ -149,10 +154,7 @@ void Primitive::AddAdjacentBody(Primitive * target, float angle, AXIS axis, floa
 		target->rotations.z = angle + this->rotations.z;
 		target->rotations.y = this->rotations.y;
 
-		target->SetMultiRotation(0, this->rotations.y, angle + this->rotations.z);
-		//target->SetRotation(this->rotations.y, { 0,-1.0f,0 });
-		
-		//target->SetRotation(angle + this->rotations.z, { 0,0,-1.0f });
+		target->SetMultiRotation(this->rotations.x, this->rotations.y, angle + this->rotations.z);
 		break;
 
 	}

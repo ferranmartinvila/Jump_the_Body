@@ -116,6 +116,11 @@ bool ModuleSceneIntro::Start()
 	AddCentralColumns(&half, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&half, STATIC_CUBE);
 
+	Cube half_2(30.0f, 0.2f, 30.f);
+	half.AddAdjacentBody(&half_2, -25.0f, Z);
+	AddCentralColumns(&half_2, 5.0f, 5.0f, 5.0f);
+	AddSceneObject(&half_2, STATIC_CUBE);
+
 	return ret;
 }
 
