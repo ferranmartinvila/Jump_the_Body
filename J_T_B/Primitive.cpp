@@ -6,6 +6,7 @@
 #include "Primitive.h"
 #include "glut/glut.h"
 
+
 #pragma comment (lib, "glut/glut32.lib")
 
 // ------------------------------------------------------------
@@ -103,13 +104,26 @@ void Primitive::SetPosFrom(Primitive * origin, float x, float y, float z)
 void Primitive::SetRotation(float angle, const vec3 &u)
 {
 	transform.rotate(angle, u);
+
 }
 
-void Primitive::AddAdjacentBody(Primitive * target, float angle, const vec3 & axis, float x, float y, float z)
+void Primitive::SetMultiRotation(float x, float y, float z)
+{
+
+	mat4x4 rot_x = transform.rotate(x, { -1,0,0 });
+	mat4x4 rot_y = transform.rotate(y, { 0,-1,0 });
+	mat4x4 rot_z = transform.rotate(z, { 0,0,-1 });
+	transform = rot_x* rot_y *rot_z;
+}
+
+void Primitive::AddAdjacentBody(Primitive * target, float angle, AXIS axis, float x, float y, float z)
 {
 	//Calculate the point of the parent object
 	vec3 Apoint((((Cube*)this)->size.x * 0.5f), 0.0f, - (((Cube*)this)->size.z * 0.5f));
-	Apoint = (rotate(Apoint, this->rotations.y, axis * -1));
+
+	Apoint = (rotate(Apoint, this->rotations.y, { 0,-1.0f,0 }));
+	Apoint = (rotate(Apoint, this->rotations.z, { 0,0,-1.0f }));		
+	
 
 	//Calculate the point in the child object(whitout rotate)
 	vec3 Bpoint(Apoint.x + (((Cube*)target)->size.x * 0.5f) + x, 0.0f + y, Apoint.z + (((Cube*)target)->size.z * 0.5f) + z);
@@ -118,13 +132,33 @@ void Primitive::AddAdjacentBody(Primitive * target, float angle, const vec3 & ax
 	vec3 vector(Bpoint.x - Apoint.x, Bpoint.y - Apoint.y, Bpoint.z - Apoint.z);
 
 	//Rotate the entered angle
-	vector = rotate(vector, this->rotations.y + angle, axis * -1);
-	//Update the body angle
-	target->rotations.y = angle + this->rotations.y;
+	switch (axis) {
 
+	case AXIS::Y:
+		vector = rotate(vector, this->rotations.z, { 0,0,-1.0f });
+		vector = rotate(vector, this->rotations.y + angle, { 0,-1.0f,0 });
+		//Update the body angle
+		target->rotations.y = angle + this->rotations.y;
+		target->SetRotation(angle + this->rotations.y, { 0,-1.0f,0 });
+		break;
+
+	case AXIS::Z:
+		vector = rotate(vector, this->rotations.z + angle, { 0,0,-1.0f });
+		vector = rotate(vector, this->rotations.y, { 0,-1.0f,0 });
+		//Update the body angle
+		target->rotations.z = angle + this->rotations.z;
+		target->rotations.y = this->rotations.y;
+
+		target->SetMultiRotation(0, this->rotations.y, angle + this->rotations.z);
+		//target->SetRotation(this->rotations.y, { 0,-1.0f,0 });
+		
+		//target->SetRotation(angle + this->rotations.z, { 0,0,-1.0f });
+		break;
+
+	}
 	//Set the data calculated
 	target->SetPosFrom(this, Apoint.x + vector.x, Apoint.y + vector.y, Apoint.z + vector.z);
-	target->SetRotation(angle + this->rotations.y, axis * -1);
+	
 }
 
 // ------------------------------------------------------------

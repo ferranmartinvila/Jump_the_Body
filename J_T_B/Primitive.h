@@ -13,6 +13,16 @@ enum PrimitiveTypes
 	Primitive_Cylinder
 };
 
+enum AXIS {
+
+	X,
+	Y,
+	Z,
+	NEG_X,
+	NEG_Y,
+	NEG_Z
+};
+
 class Primitive
 {
 public:
@@ -27,7 +37,8 @@ public:
 	void			SetPos(float x, float y, float z);
 	void			SetPosFrom(Primitive* origin, float x, float y, float z);
 	void			SetRotation(float angle, const vec3 &u);
-	void			AddAdjacentBody(Primitive* target, float angle, const vec3& axis, float x = 0, float y = 0, float z = 0);
+	void			SetMultiRotation(float x, float y, float z);
+	void			AddAdjacentBody(Primitive* target, float angle, AXIS, float x = 0, float y = 0, float z = 0);
 	void			Scale(float x, float y, float z);
 	PrimitiveTypes	GetType() const;
 

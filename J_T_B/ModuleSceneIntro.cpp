@@ -71,45 +71,50 @@ bool ModuleSceneIntro::Start()
 	AddSceneObject(&sky_curve_1, STATIC_CUBE);
 	
 	Cube sky_curve_2(30.0f, 0.2f, 30.f);
-	sky_curve_1.AddAdjacentBody(&sky_curve_2, alpha, { 0, 1.0f ,0 });
+	sky_curve_1.AddAdjacentBody(&sky_curve_2, alpha,Y);
 	AddCentralColumns(&sky_curve_2, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_2, STATIC_CUBE);
 	
 	Cube sky_curve_3(30.0f, 0.2f, 30.f);
-	sky_curve_2.AddAdjacentBody(&sky_curve_3, alpha, { 0, 1.0f ,0 });
+	sky_curve_2.AddAdjacentBody(&sky_curve_3, alpha, Y);
 	AddCentralColumns(&sky_curve_3, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_3, STATIC_CUBE);
 	
 	Cube sky_curve_4(30.0f, 0.2f, 30.f);
-	sky_curve_3.AddAdjacentBody(&sky_curve_4, alpha, { 0, 1.0f ,0 });
+	sky_curve_3.AddAdjacentBody(&sky_curve_4, alpha, Y);
 	AddCentralColumns(&sky_curve_4, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_4, STATIC_CUBE);
 
 	Cube sky_curve_5(30.0f, 0.2f, 30.f);
-	sky_curve_4.AddAdjacentBody(&sky_curve_5, alpha, { 0, 1.0f ,0 });
+	sky_curve_4.AddAdjacentBody(&sky_curve_5, alpha, Y);
 	AddCentralColumns(&sky_curve_5, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_5, STATIC_CUBE);
 
 	Cube sky_curve_6(30.0f, 0.2f, 30.f);
-	sky_curve_5.AddAdjacentBody(&sky_curve_6, alpha, { 0, 1.0f ,0 });
+	sky_curve_5.AddAdjacentBody(&sky_curve_6, alpha, Y);
 	AddCentralColumns(&sky_curve_6, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_6, STATIC_CUBE);
 
 	Cube sky_curve_7(30.0f, 0.2f, 30.f);
-	sky_curve_6.AddAdjacentBody(&sky_curve_7, alpha, { 0, 1.0f ,0 });
+	sky_curve_6.AddAdjacentBody(&sky_curve_7, alpha, Y);
 	AddCentralColumns(&sky_curve_7, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_7, STATIC_CUBE);
 
 	Cube sky_curve_8(30.0f, 0.2f, 30.f);
-	sky_curve_7.AddAdjacentBody(&sky_curve_8, alpha, { 0, 1.0f ,0 });
+	sky_curve_7.AddAdjacentBody(&sky_curve_8, alpha, Y);
 	AddCentralColumns(&sky_curve_8, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&sky_curve_8, STATIC_CUBE);
 	// =========================================================
 
 	Cube low_raception(30.0f, 0.2f, 30.f);
-	sky_curve_8.AddAdjacentBody(&low_raception, 0, { 0, 1.0f ,0 }, 20);
+	sky_curve_8.AddAdjacentBody(&low_raception, 0, Y, 50, -15);
 	AddCentralColumns(&low_raception, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&low_raception, STATIC_CUBE);
+
+	Cube half(30.0f, 0.2f, 30.f);
+	low_raception.AddAdjacentBody(&half, 25, Z);
+	AddCentralColumns(&half, 5.0f, 5.0f, 5.0f);
+	AddSceneObject(&half, STATIC_CUBE);
 
 	return ret;
 }

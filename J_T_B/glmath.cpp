@@ -651,6 +651,23 @@ mat4x4& mat4x4::rotate(float angle, const vec3 &u)
 	return *this;
 }
 
+mat4x4& mat4x4::MultiRotate(float x, float y, float z)
+{
+	mat3x3 euler_mat = euler_rot(x, y, z);
+
+	M[0] = euler_mat.M[0];
+	M[1] = euler_mat.M[1];
+	M[2] = euler_mat.M[2];
+	M[4] = euler_mat.M[4];
+	M[5] = euler_mat.M[5];
+	M[6] = euler_mat.M[6];
+	M[8] = euler_mat.M[8];
+	M[9] = euler_mat.M[9];
+	M[10] = euler_mat.M[10];
+
+	return *this;
+}
+
 mat4x4& mat4x4::scale(float x, float y, float z)
 {
 	M[0] = x;

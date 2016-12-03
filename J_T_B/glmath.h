@@ -284,7 +284,6 @@ vec3 normalize(const vec3 &u);
 vec3 reflect(const vec3 &i, const vec3 &n);
 vec3 refract(const vec3 &i, const vec3 &n, float eta);
 vec3 rotate(const vec3 &u, float angle, const vec3 &v);
-
 // ----------------------------------------------------------------------------------------------------------------------------
 
 class vec4
@@ -468,7 +467,7 @@ public:
 
 mat3x3 inverse(const mat3x3 &Matrix);
 mat3x3 transpose(const mat3x3 &Matrix);
-
+mat3x3 euler_rot(float x, float y, float z);
 // ----------------------------------------------------------------------------------------------------------------------------
 
 class mat4x4
@@ -494,6 +493,7 @@ public:
 	mat4x4& ortho(float left, float right, float bottom, float top, float n, float f);
 	mat4x4& perspective(float fovy, float aspect, float n, float f);
 	mat4x4& rotate(float angle, const vec3 &u);
+	mat4x4& MultiRotate(float x, float y, float z);
 	mat4x4& scale(float x, float y, float z);
 	mat4x4& translate(float x, float y, float z);
 	mat4x4& transpose();
