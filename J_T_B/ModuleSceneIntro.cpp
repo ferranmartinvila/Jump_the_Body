@@ -21,93 +21,77 @@ bool ModuleSceneIntro::Start()
 	App->camera->LookAt(vec3(0, 1, 0));
 	
 	// Initial Ramp ============================================
-	float alpha = 45;
+	float alpha = 0;
 	Cube cube;
-	
+	Cube cube_2;
+
+	//Start Floor
 	Cube start_floor(30.0f, 0.2f, 30.0f);
-	start_floor.SetPos(0, start_floor.size.y + 70, 0);
+	start_floor.SetPos(0, start_floor.size.y + 120, 0);
+	AddCentralColumns(&start_floor, start_floor.size.x, 12.0f, 10.0f);
 	AddSceneObject(&start_floor, STATIC_CUBE);
-	
-	//Left big column
-	cube.ReSize(15.0f, start_floor.transform.translation().y + 10.0f , 15.0f);
-	cube.SetPos(-start_floor.size.x * 0.5f + cube.size.x *0.5f, cube.size.y*0.5, -start_floor.size.z * 0.5f - cube.size.z *0.5f);
-	AddSceneObject(&cube, STATIC_CUBE);
 
-	//Right big column
-	cube.ReSize(15.0f, start_floor.transform.translation().y + 10.0f, 15.0f);
-	cube.SetPos(-start_floor.size.x * 0.5f + cube.size.x *0.5f, cube.size.y*0.5, start_floor.size.z * 0.5f + cube.size.z *0.5f);
-	AddSceneObject(&cube, STATIC_CUBE);
-
+	//Start Sec Wall
 	Cube ramp_wall(0.3f, 8.0f, 30.0f);
 	ramp_wall.SetPos(0 - start_floor.size.x * 0.5f + ramp_wall.size.x * 0.5f, start_floor.transform.translation().y + ramp_wall.size.y * 0.5f, 0);
 	AddSceneObject(&ramp_wall, STATIC_CUBE);
 
-	Cube initial_ramp(70.0f, 0.2f, 30.0f);
-	initial_ramp.SetPosFrom((Primitive*)&start_floor, 0 + start_floor.size.x *0.5f + GET_X_LNG(70, alpha)) - initial_ramp.size.y * 0.5, - GET_Y_LNG(70, alpha)), 0);
-	initial_ramp.SetRotation(alpha, { 0,0,-1 });
-	AddSceneObject(&initial_ramp, STATIC_CUBE);
+	//Start Ramp
+	alpha = 40;
+	cube.ReSize(10.0f, .02f, 30.0f);
+	cube_2.ReSize(10.0f, .02f, 30.0f);
+	start_floor.AddAdjacentBody(&cube, alpha, Z);
+	AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
+	AddSceneObject(&cube, STATIC_CUBE);
+	
+	for (uint k = 0; k < 6; k++) {
+		cube.AddAdjacentBody(&cube_2, alpha * 0.15f, Z);
+		AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
+		AddSceneObject(&cube, STATIC_CUBE);
+		cube = cube_2;
+	}
 
-	Cube ramp_floor(40.0f, 0.2f, 30.0f);
-	ramp_floor.SetPosFrom((Primitive*)&initial_ramp, GET_X_LNG(70, alpha)) + ramp_floor.size.x * 0.5f, -GET_Y_LNG(70, alpha)),0);
-	AddExternalColumns(&ramp_floor, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&ramp_floor, STATIC_CUBE);
+	for (uint k = 0; k < 10; k++) {
+		cube.AddAdjacentBody(&cube_2, -alpha * 0.3f, Z);
+		AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
+		AddSceneObject(&cube, STATIC_CUBE);
+		cube = cube_2;
+	}
 	// =========================================================
 	
 	
 	// High Reception ==========================================
-	Cube high_reception(50.0f, 0.2f, 30.0f);
-	high_reception.SetPosFrom((Primitive*)&ramp_floor, 0 + ramp_floor.size.x * 0.5f + high_reception.size.x * 0.5f + 40.0f, 0, 0);
+	Cube high_reception(80.0f, 0.2f, 30.0f);
+	high_reception.SetPosFrom((Primitive*)&cube, 0 + cube.size.x * 0.5f + high_reception.size.x * 0.5f + 50.0f, 0, 0);
 	AddExternalColumns(&high_reception, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&high_reception, STATIC_CUBE);
 	// =========================================================
 
 
 	// Sky Curve ===============================================
-	alpha = 12.0f;
+	cube.SetRotation(0, { 0,0,1 });
+	cube.rotations = { 0,0,0 };
+	cube.ReSize(40.0f, 0.2f, 30.f);
+	cube_2 = cube;
 
-	Cube sky_curve_1(40.0f, 0.2f, 30.f);
-	sky_curve_1.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f + sky_curve_1.size.x * 0.5f + 20.0f, 10.0f, 0);
-	AddCentralColumns(&sky_curve_1, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&sky_curve_1, STATIC_CUBE);
-	
-	Cube sky_curve_2(30.0f, 0.2f, 30.f);
-	sky_curve_1.AddAdjacentBody(&sky_curve_2, alpha,Y);
-	AddCentralColumns(&sky_curve_2, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&sky_curve_2, STATIC_CUBE);
-	
-	Cube sky_curve_3(30.0f, 0.2f, 30.f);
-	sky_curve_2.AddAdjacentBody(&sky_curve_3, alpha, Y);
-	AddCentralColumns(&sky_curve_3, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&sky_curve_3, STATIC_CUBE);
-	
-	Cube sky_curve_4(30.0f, 0.2f, 30.f);
-	sky_curve_3.AddAdjacentBody(&sky_curve_4, alpha, Y);
-	AddCentralColumns(&sky_curve_4, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&sky_curve_4, STATIC_CUBE);
+	alpha = 90.0f;
 
-	Cube sky_curve_5(30.0f, 0.2f, 30.f);
-	sky_curve_4.AddAdjacentBody(&sky_curve_5, alpha, Y);
-	AddCentralColumns(&sky_curve_5, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&sky_curve_5, STATIC_CUBE);
+	cube.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f + cube.size.x * 0.5f + 20.0f, 10.0f, 0);
+	AddCentralColumns(&cube, 5.0f, 5.0f, 5.0f);
+	AddSceneObject(&cube, STATIC_CUBE);
 
-	Cube sky_curve_6(30.0f, 0.2f, 30.f);
-	sky_curve_5.AddAdjacentBody(&sky_curve_6, alpha, Y);
-	AddCentralColumns(&sky_curve_6, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&sky_curve_6, STATIC_CUBE);
-
-	Cube sky_curve_7(30.0f, 0.2f, 30.f);
-	sky_curve_6.AddAdjacentBody(&sky_curve_7, alpha, Y);
-	AddCentralColumns(&sky_curve_7, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&sky_curve_7, STATIC_CUBE);
-
-	Cube sky_curve_8(30.0f, 0.2f, 30.f);
-	sky_curve_7.AddAdjacentBody(&sky_curve_8, alpha, Y);
-	AddCentralColumns(&sky_curve_8, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&sky_curve_8, STATIC_CUBE);
+	for (uint k = 0; k < 10; k++) {
+		cube.AddAdjacentBody(&cube_2, alpha * 0.12f, Y);
+		AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
+		AddSceneObject(&cube, STATIC_CUBE);
+		cube = cube_2;
+	}
 	// =========================================================
 
+
+	// Low Reception ===========================================
 	Cube low_raception(30.0f, 0.2f, 30.f);
-	sky_curve_8.AddAdjacentBody(&low_raception, 0, Y, 50, -15);
+	cube.AddAdjacentBody(&low_raception, 0, Y, 50, -15);
 	AddCentralColumns(&low_raception, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&low_raception, STATIC_CUBE);
 	
