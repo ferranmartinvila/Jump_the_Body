@@ -164,6 +164,37 @@ bool ModuleSceneIntro::Start()
 	}
 	// =========================================================
 
+
+	// Post Stairs Curve Base ==================================
+	Cube stairs_curve_start = cube;
+	stairs_curve_start.ReSize(35.0f, cube.size.y, cube.size.z);
+	cube.AddAdjacentBody(&stairs_curve_start, 0, Z, -50, 0, 0);
+	AddExternalColumns(&stairs_curve_start, 5.0f, 0.0f, 5.0f);
+	AddSceneObject(&stairs_curve_start, STATIC_CUBE);
+	// =========================================================
+
+
+	// Post Stairs Curve =======================================
+	alpha = -180.0f;
+	cube.ReSize(20.0f, cube.size.y, cube.size.z);
+	cube_2 = cube;
+
+	stairs_curve_start.AddAdjacentBody(&cube, 0, Y, 0, 0, 0);
+	AddSceneObject(&cube, STATIC_CUBE);
+
+	for (int k = 0; k < 50; k++) {
+		cube.AddAdjacentBody(&cube_2, alpha * 0.02f, Y);
+		AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
+		AddSceneObject(&cube, STATIC_CUBE);
+		cube = cube_2;
+	}
+	// =========================================================
+
+
+	// Two Ways Base ===========================================
+
+
+	// =========================================================
 	return ret;
 }
 
