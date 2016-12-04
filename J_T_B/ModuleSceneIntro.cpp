@@ -185,16 +185,41 @@ bool ModuleSceneIntro::Start()
 	for (int k = 0; k < 50; k++) {
 		cube.AddAdjacentBody(&cube_2, alpha * 0.02f, Y);
 		AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
-		AddSceneObject(&cube, STATIC_CUBE);
 		cube = cube_2;
+		AddSceneObject(&cube, STATIC_CUBE);
 	}
 	// =========================================================
 
 
-	// Two Ways Base ===========================================
+	// Two Ways Ramp ===========================================
+	alpha = -20;
 
+	Cube two_ways_ramp = cube;
+	cube.AddAdjacentBody(&two_ways_ramp, alpha * 0.1f, Z, 0, 0, 0);
+	AddSceneObject(&two_ways_ramp, STATIC_CUBE);
 
+	for (int k = 0; k < 9; k++) {
+
+		cube_2.ReSize(cube_2.size.x, cube_2.size.y, cube_2.size.z + k * 2);
+		cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z, 0.0f, 0.0f, -k);
+		AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
+		cube = cube_2;
+		AddSceneObject(&cube_2, STATIC_CUBE);
+
+	}
+	AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
 	// =========================================================
+
+
+
+
+
+
+
+
+
+
+
 	return ret;
 }
 
