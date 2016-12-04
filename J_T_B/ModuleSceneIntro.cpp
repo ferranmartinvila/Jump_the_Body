@@ -46,14 +46,14 @@ bool ModuleSceneIntro::Start()
 	
 	for (uint k = 0; k < 6; k++) {
 		cube.AddAdjacentBody(&cube_2, alpha * 0.15f, Z);
-		AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
+		if(k != 4)AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
 		AddSceneObject(&cube, STATIC_CUBE);
 		cube = cube_2;
 	}
 
 	for (uint k = 0; k < 10; k++) {
 		cube.AddAdjacentBody(&cube_2, -alpha * 0.3f, Z);
-		AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
+		if(k != 0)AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
 		AddSceneObject(&cube, STATIC_CUBE);
 		cube = cube_2;
 	}
@@ -124,6 +124,8 @@ bool ModuleSceneIntro::Start()
 	AddSceneObject(&cube, STATIC_CUBE);
 	cube_2 = cube;
 
+	Cube stairs_base = cube;
+
 	for (int k = 0; k < 20; k++) {
 		cube_2.ReSize(15.0f, 0.2f, 60.0f + k * 3.0f);
 		cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z, 0.0f, 0.0f,0);
@@ -133,6 +135,34 @@ bool ModuleSceneIntro::Start()
 	}
 	// =========================================================
 
+
+	// Super Base ==============================================
+	stairs_base.rotations.y += 180;
+	cube.rotations = stairs_base.rotations;
+	cube.ReSize(stairs_base.size.x + 65.0f, stairs_base.size.y, stairs_base.size.z);
+	stairs_base.AddAdjacentBody(&cube, 0, Y, 0, 0, 0);
+	AddCentralColumns(&cube, 5.0f, 33.0f, 5.0f);
+	AddCentralColumns(&stairs_base, 5.0f, 25.0f, 5.0f);
+	AddSceneObject(&cube, STATIC_CUBE);
+	cube_2 = cube;
+	// =========================================================
+
+
+	// Super Stairs ============================================
+	cube_2.ReSize(20.0f, cube_2.size.y, cube_2.size.z);
+
+	for (int k = 0; k < 4; k++) {
+
+		cube.AddAdjacentBody(&cube_2, 90, Z, 0, 0, 0);
+		AddSceneObject(&cube_2, STATIC_CUBE);
+		cube_2.ReSize(cube_2.size.x, cube_2.size.y, cube_2.size.z - 7.5f);
+		cube.ReSize(cube.size.x, cube.size.y, cube.size.z - 7.5f);
+		cube_2.AddAdjacentBody(&cube, -90, Z, 0, 0, 0);
+		AddCentralColumns(&cube_2, 5.0f, 35.0f, 5.0f);
+		AddSceneObject(&cube, STATIC_CUBE);
+		
+	}
+	// =========================================================
 
 	return ret;
 }

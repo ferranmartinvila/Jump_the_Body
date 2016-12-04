@@ -120,33 +120,78 @@ void Primitive::AddAdjacentBody(Primitive * target, float angle, AXIS axis, floa
 {
 	//Calculate the point of the parent object
 	vec3 Apoint;
-	if (angle < -1 && axis == Y) {
+
+	/*
+	AA		AB
+	0.......0
+	.		.
+	.		.
+	.		.
+	0.......0
+	BA		BB
+
+	*/
+	
+	//Apoint = AB
+	if (angle < -1 && axis == Y && this->rotations.y < 180) {
 		Apoint.x = ((Cube*)this)->size.x * 0.5f;
 		Apoint.y = 0.0f;
 		Apoint.z = ((Cube*)this)->size.z * 0.5f;
 	}
-	else {
+	//Apoint = AA
+	else if(this->rotations.y < 180){
 		Apoint.x = (((Cube*)this)->size.x * 0.5f);
 		Apoint.y = 0.0f;
 		Apoint.z = -(((Cube*)this)->size.z * 0.5f);
 	}
+	//Apoint = BA
+	else if (angle < -1 && axis == Y && this->rotations.y >= 180) {
+		Apoint.x = -((Cube*)this)->size.x * 0.5f;
+		Apoint.y = 0.0f;
+		Apoint.z = -((Cube*)this)->size.z * 0.5f;
+	}
+	//Apoint = BB
+	else {
+		Apoint.x = -(((Cube*)this)->size.x * 0.5f);
+		Apoint.y = 0.0f;
+		Apoint.z = (((Cube*)this)->size.z * 0.5f);
+	}
 
-	Apoint = (rotate(Apoint, this->rotations.z, { 0,0,-1.0f }));
-	Apoint = (rotate(Apoint, this->rotations.y, { 0,-1.0f,0 }));
+	if(this->rotations.z < 180)Apoint = (rotate(Apoint, this->rotations.z, { 0,0,-1.0f }));
+	else Apoint = (rotate(Apoint, this->rotations.z - 180, { 0,0,-1.0f }));
+	
+	if(this->rotations.y < 180)Apoint = (rotate(Apoint, this->rotations.y, { 0,-1.0f,0 }));
+	else Apoint = (rotate(Apoint, this->rotations.y - 180, { 0,-1.0f,0 }));
+	
 	Apoint = (rotate(Apoint, this->rotations.x, { -1.0f,0,0 }));
 
-	//Calculate the point in the child object(whitout rotate)
+	//Calculate the point in the child object(rotate parent y)
 	vec3 Bpoint;
-	if (angle < -1 && axis == Y) {
+	//Bpoint from AB
+	if (angle < -1 && axis == Y && this->rotations.y < 180) {
 		Bpoint.x = Apoint.x + (((Cube*)target)->size.x * 0.5f) + x;
-		Bpoint.y = 0.0f + y * cos(this->rotations.z * DEGTORAD);
+		Bpoint.y = y * cos(this->rotations.z * DEGTORAD);
 		Bpoint.z = Apoint.z - (((Cube*)target)->size.z * 0.5f) + z;
 	}
-	else {
+	//Bpoint from AA
+	else if(this->rotations.y < 180){
 		Bpoint.x = Apoint.x + (((Cube*)target)->size.x * 0.5f) + x;
-		Bpoint.y = 0.0f + y * cos(this->rotations.z * DEGTORAD);
+		Bpoint.y = y * cos(this->rotations.z * DEGTORAD);
 		Bpoint.z = Apoint.z + (((Cube*)target)->size.z * 0.5f) + z;
 	}
+	//Bpoint from BA
+	else if (angle < -1 && axis == Y && this->rotations.y > 180) {
+		Bpoint.x = Apoint.x - (((Cube*)target)->size.x * 0.5f) + x;
+		Bpoint.y = y * cos(this->rotations.z * DEGTORAD);
+		Bpoint.z = Apoint.z + (((Cube*)target)->size.z * 0.5f) + z;
+	}
+	//Bpoint from BB
+	else {
+		Bpoint.x = Apoint.x - (((Cube*)target)->size.x * 0.5f) + x;
+		Bpoint.y = y * cos(this->rotations.z * DEGTORAD);
+		Bpoint.z = Apoint.z - (((Cube*)target)->size.z * 0.5f) + z;
+	}
+
 
 
 	if (this->rotations.z != 0) { 
@@ -162,21 +207,33 @@ void Primitive::AddAdjacentBody(Primitive * target, float angle, AXIS axis, floa
 	switch (axis) {
 
 	case AXIS::Y:
-		vector = rotate(vector, this->rotations.z, { 0,0,-1.0f });
-		vector = rotate(vector, this->rotations.y + angle, { 0,-1.0f,0 });
+		
+		if (this->rotations.z < 180)vector = rotate(vector, this->rotations.z, { 0,0,-1.0f });
+		else vector = rotate(vector, this->rotations.z - 180, { 0,0,-1.0f });
+		if (this->rotations.y < 180)vector = rotate(vector, this->rotations.y + angle, { 0,-1.0f,0 });
+		else vector = rotate(vector, this->rotations.y - 180 + angle, { 0,-1.0f,0 });
+		
+		
 		//Update the body angle
+		target->rotations.x = this->rotations.x;
 		target->rotations.y = angle + this->rotations.y;
+		target->rotations.z = this->rotations.z;
 
 		target->SetMultiRotation(this->rotations.x, angle + this->rotations.y, this->rotations.z);
 		break;
 
 	case AXIS::Z:
-		vector = rotate(vector, this->rotations.z + angle , { 0,0,-1.0f });
 		
-		vector = rotate(vector, this->rotations.y, { 0,-1.0f,0 });
+		if(this->rotations.z < 180)vector = rotate(vector, this->rotations.z + angle , { 0,0,-1.0f });
+		else vector = rotate(vector, this->rotations.z - 180 + angle, { 0,0,-1.0f });
+		if (this->rotations.y < 180)vector = rotate(vector, this->rotations.y, { 0,-1.0f,0 });
+		else vector = rotate(vector, this->rotations.y - 180, { 0,-1.0f,0 });
+		
+		
 		//Update the body angle
-		target->rotations.z = angle + this->rotations.z;
+		target->rotations.x = this->rotations.x;
 		target->rotations.y = this->rotations.y;
+		target->rotations.z = angle + this->rotations.z;
 
 		target->SetMultiRotation(this->rotations.x, this->rotations.y, angle + this->rotations.z);
 		break;
