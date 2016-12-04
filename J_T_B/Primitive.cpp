@@ -119,14 +119,36 @@ void Primitive::SetMultiRotation(float x, float y, float z)
 void Primitive::AddAdjacentBody(Primitive * target, float angle, AXIS axis, float x, float y, float z)
 {
 	//Calculate the point of the parent object
-	vec3 Apoint((((Cube*)this)->size.x * 0.5f), 0.0f, - (((Cube*)this)->size.z * 0.5f));
+	vec3 Apoint;
+	if (angle < -1 && axis == Y) {
+		Apoint.x = ((Cube*)this)->size.x * 0.5f;
+		Apoint.y = 0.0f;
+		Apoint.z = ((Cube*)this)->size.z * 0.5f;
+	}
+	else {
+		Apoint.x = (((Cube*)this)->size.x * 0.5f);
+		Apoint.y = 0.0f;
+		Apoint.z = -(((Cube*)this)->size.z * 0.5f);
+	}
 
 	Apoint = (rotate(Apoint, this->rotations.z, { 0,0,-1.0f }));
 	Apoint = (rotate(Apoint, this->rotations.y, { 0,-1.0f,0 }));
 	Apoint = (rotate(Apoint, this->rotations.x, { -1.0f,0,0 }));
 
 	//Calculate the point in the child object(whitout rotate)
-	vec3 Bpoint(Apoint.x + (((Cube*)target)->size.x * 0.5f) + x, 0.0f + y * cos(this->rotations.z * DEGTORAD), Apoint.z + (((Cube*)target)->size.z * 0.5f) + z);
+	vec3 Bpoint;
+	if (angle < -1 && axis == Y) {
+		Bpoint.x = Apoint.x + (((Cube*)target)->size.x * 0.5f) + x;
+		Bpoint.y = 0.0f + y * cos(this->rotations.z * DEGTORAD);
+		Bpoint.z = Apoint.z - (((Cube*)target)->size.z * 0.5f) + z;
+	}
+	else {
+		Bpoint.x = Apoint.x + (((Cube*)target)->size.x * 0.5f) + x;
+		Bpoint.y = 0.0f + y * cos(this->rotations.z * DEGTORAD);
+		Bpoint.z = Apoint.z + (((Cube*)target)->size.z * 0.5f) + z;
+	}
+
+
 	if (this->rotations.z != 0) { 
 		
 		Bpoint.y = Apoint.y;
@@ -150,6 +172,7 @@ void Primitive::AddAdjacentBody(Primitive * target, float angle, AXIS axis, floa
 
 	case AXIS::Z:
 		vector = rotate(vector, this->rotations.z + angle , { 0,0,-1.0f });
+		
 		vector = rotate(vector, this->rotations.y, { 0,-1.0f,0 });
 		//Update the body angle
 		target->rotations.z = angle + this->rotations.z;

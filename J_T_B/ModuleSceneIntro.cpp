@@ -90,33 +90,50 @@ bool ModuleSceneIntro::Start()
 
 
 	// Low Reception ===========================================
+	Cube low_reception(45.0f, 0.2f, 60.f);
+	low_reception.SetMultiRotation(cube.rotations.x, cube.rotations.y, cube.rotations.z);
+	cube.AddAdjacentBody(&low_reception, 0, Y, 0, -15, -30);
+	AddExternalColumns(&low_reception, 5.0f, 5.0f, 5.0f);
+	AddSceneObject(&low_reception, STATIC_CUBE);
+	// =========================================================
+	
+	
+	// Up Half =================================================
+	alpha = -45.0f;
 
-	/*
-	cube.SetRotation(0, { 0,0,1 });
-	cube.rotations = { 0,0,0 };
-	cube.ReSize(20.0f, 0.2f, 60.f);
+	cube.ReSize(15.0f, 0.2f, 60.0f);
+	low_reception.AddAdjacentBody(&cube, 0, Y, 0, 0, 0);
+	AddSceneObject(&cube, STATIC_CUBE);
+	cube_2 = cube;
+	
+	for (int k = 0; k < 20; k++) {
+		if (k < 15)cube_2.ReSize(cube_2.size.x, cube_2.size.y, cube_2.size.z + k*0.5f);
+		if (k < 15)cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z,0.0f,0.0f,-k);
+		else cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z, 0.0f, 0.0f, 0.0f);
+		if(k % 2 == 0 && k < 15)AddCentralColumns(&cube_2, 5.0f, 4.0f, 5.0f);
+		AddSceneObject(&cube_2, STATIC_CUBE);
+		cube = cube_2;
+	}
+	// =========================================================
+
+
+	// Down Half ================================================
+	cube.ReSize(35.0f, 0.2f, 60.0f);
+	cube.rotations = low_reception.rotations;
+	low_reception.AddAdjacentBody(&cube, 0, Y, -20 * cos(alpha * 0.1 * DEGTORAD), 0, -cube.size.z - cube_2.size.z - low_reception.size.z);
+	AddSceneObject(&cube, STATIC_CUBE);
 	cube_2 = cube;
 
-
-	alpha = 90.0f;
-
-	cube.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f + cube.size.x * 0.5f, 10.0f, 0);
-	AddCentralColumns(&cube, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&cube, STATIC_CUBE);
-
-	Cube low_raception(45.0f, 0.2f, 60.f);
-	cube.AddAdjacentBody(&low_raception, 0, Y, 0, -15, -30);
-	AddExternalColumns(&low_raception, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&low_raception, STATIC_CUBE);
-
-	for (uint k = 0; k < 10; k++) {
-		cube.AddAdjacentBody(&cube_2, alpha * 0.12f, Y);
-		AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
-		AddSceneObject(&cube, STATIC_CUBE);
+	for (int k = 0; k < 20; k++) {
+		cube_2.ReSize(15.0f, 0.2f, 60.0f + k * 3.0f);
+		cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z, 0.0f, 0.0f,0);
+		if (k % 2 == 0 && k < 15)AddCentralColumns(&cube_2, 5.0f, 4.0f, 5.0f);
+		AddSceneObject(&cube_2, STATIC_CUBE);
 		cube = cube_2;
-	}*/
-
+	}
 	// =========================================================
+
+
 	return ret;
 }
 
