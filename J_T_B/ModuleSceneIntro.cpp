@@ -37,7 +37,7 @@ bool ModuleSceneIntro::Start()
 	AddSceneObject(&ramp_wall, STATIC_CUBE);
 
 	//Start Ramp
-	alpha = 40;
+	alpha = 25;
 	cube.ReSize(10.0f, .02f, 30.0f);
 	cube_2.ReSize(10.0f, .02f, 30.0f);
 	start_floor.AddAdjacentBody(&cube, alpha, Z);
@@ -46,14 +46,14 @@ bool ModuleSceneIntro::Start()
 	
 	for (uint k = 0; k < 6; k++) {
 		cube.AddAdjacentBody(&cube_2, alpha * 0.15f, Z);
-		if(k != 4)AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
+		AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
 		AddSceneObject(&cube, STATIC_CUBE);
 		cube = cube_2;
 	}
 
 	for (uint k = 0; k < 10; k++) {
 		cube.AddAdjacentBody(&cube_2, -alpha * 0.3f, Z);
-		if(k != 0)AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
+		AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
 		AddSceneObject(&cube, STATIC_CUBE);
 		cube = cube_2;
 	}
@@ -62,7 +62,7 @@ bool ModuleSceneIntro::Start()
 	
 	// High Reception ==========================================
 	Cube high_reception(80.0f, 0.2f, 30.0f);
-	high_reception.SetPosFrom((Primitive*)&cube, 0 + cube.size.x * 0.5f + high_reception.size.x * 0.5f + 50.0f, 0, 0);
+	high_reception.SetPosFrom((Primitive*)&cube, 0 + cube.size.x * 0.5f + high_reception.size.x * 0.5f + 90.0f, 0, 0);
 	AddExternalColumns(&high_reception, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&high_reception, STATIC_CUBE);
 	// =========================================================
@@ -192,7 +192,7 @@ bool ModuleSceneIntro::Start()
 
 
 	// Two Ways Ramp ===========================================
-	alpha = -20;
+	alpha = 20;
 
 	Cube two_ways_ramp = cube;
 	cube.AddAdjacentBody(&two_ways_ramp, alpha * 0.1f, Z, 0, 0, 0);
@@ -208,9 +208,80 @@ bool ModuleSceneIntro::Start()
 
 	}
 	AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
+	Cube ramp_base = cube;
 	// =========================================================
 
 
+	// Left Ramp Base ==========================================
+	Cube left_ramp_base = cube;
+	left_ramp_base.ReSize(cube.size.x, cube.size.y, cube.size.z * 0.5f);
+	ramp_base.AddAdjacentBody(&left_ramp_base, -15, Z, 40, -25, cube.size.z * 0.7);
+	AddSceneObject(&left_ramp_base, STATIC_CUBE);
+	// =========================================================
+
+	// Left Ramp ===============================================
+	alpha = 50;
+	cube = cube_2 = left_ramp_base;
+
+	for (int k = 0; k < 5; k++) {
+
+		cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z,0,0,+k * 0.25f);
+		cube_2.ReSize(cube.size.x, cube.size.y, cube.size.z - k * 0.5f );
+		AddCentralColumns(&cube, cube.size.x * 0.5f, 15.0f, 0.4f);
+		cube = cube_2;
+		AddSceneObject(&cube_2, STATIC_CUBE);
+
+	}
+
+	for (int k = 0; k < 5; k++) {
+
+		cube.AddAdjacentBody(&cube_2, -alpha * 0.1, Z, 0, 0, 0);
+		AddCentralColumns(&cube, cube.size.x * 0.5f, 15.0f, 0.4f);
+		cube = cube_2;
+		AddSceneObject(&cube_2, STATIC_CUBE);
+
+	}
+
+	cube.AddAdjacentBody(&cube_2, -cube.rotations.z, Z, 0, 0, 0);
+	AddCentralColumns(&cube, cube.size.x * 0.5f, 15.0f, 0.4f);
+	cube = cube_2;
+	AddSceneObject(&cube_2, STATIC_CUBE);
+	// =========================================================
+	
+	
+	// Left Zig Zag ============================================
+	alpha = -65;
+	cube.ReSize(cube.size.x * 0.5, cube.size.y, cube.size.z);
+	cube_2 = cube;
+	
+	for (int k = 0; k < 12; k++) {
+
+		cube.AddAdjacentBody(&cube_2, alpha * 0.0833, Y, 0, 0, 0);
+		AddCentralColumns(&cube, 2.0f, 15.0f, 2.0f);
+		cube = cube_2;
+		AddSceneObject(&cube_2, STATIC_CUBE);
+
+	}
+	alpha = 5+alpha*-1;
+	for (int k = 0; k < 12; k++) {
+
+		cube.AddAdjacentBody(&cube_2, alpha * 0.0833, Y, 0, 0, 0);
+		AddCentralColumns(&cube, 2.0f, 15.0f, 2.0f);
+		cube = cube_2;
+		AddSceneObject(&cube_2, STATIC_CUBE);
+
+	}
+	AddCentralColumns(&cube_2, 2.0f, 15.0f, 2.0f);
+	// =========================================================
+
+
+	// Right Ramp Base =========================================
+	Cube right_ramp_base = left_ramp_base;
+	right_ramp_base.ReSize(cube.size.x, cube.size.y, cube.size.z * 0.5f);
+	ramp_base.AddAdjacentBody(&right_ramp_base, -20, Z, 35, 0, -cube.size.z * 0.1);
+	AddCentralColumns(&right_ramp_base, right_ramp_base.size.x, 15.0f, 0.4f);
+	AddSceneObject(&right_ramp_base, STATIC_CUBE);
+	// =========================================================
 
 
 

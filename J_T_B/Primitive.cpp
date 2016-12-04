@@ -170,25 +170,25 @@ void Primitive::AddAdjacentBody(Primitive * target, float angle, AXIS axis, floa
 	//Bpoint from AB
 	if (angle < -1 && axis == Y && this->rotations.y < 180) {
 		Bpoint.x = Apoint.x + (((Cube*)target)->size.x * 0.5f) + x;
-		Bpoint.y = y * cos(this->rotations.z * DEGTORAD);
+		Bpoint.y = y;
 		Bpoint.z = Apoint.z - (((Cube*)target)->size.z * 0.5f) + z;
 	}
 	//Bpoint from AA
 	else if(this->rotations.y < 180){
 		Bpoint.x = Apoint.x + (((Cube*)target)->size.x * 0.5f) + x;
-		Bpoint.y = y * cos(this->rotations.z * DEGTORAD);
+		Bpoint.y = y;
 		Bpoint.z = Apoint.z + (((Cube*)target)->size.z * 0.5f) + z;
 	}
 	//Bpoint from BA
 	else if (angle < -1 && axis == Y && this->rotations.y > 180) {
 		Bpoint.x = Apoint.x - (((Cube*)target)->size.x * 0.5f) + x;
-		Bpoint.y = y * cos(this->rotations.z * DEGTORAD);
+		Bpoint.y = y;
 		Bpoint.z = Apoint.z + (((Cube*)target)->size.z * 0.5f) + z;
 	}
 	//Bpoint from BB
 	else {
 		Bpoint.x = Apoint.x - (((Cube*)target)->size.x * 0.5f) + x;
-		Bpoint.y = y * cos(this->rotations.z * DEGTORAD);
+		Bpoint.y = y;
 		Bpoint.z = Apoint.z - (((Cube*)target)->size.z * 0.5f) + z;
 	}
 
@@ -196,7 +196,7 @@ void Primitive::AddAdjacentBody(Primitive * target, float angle, AXIS axis, floa
 
 	if (this->rotations.z != 0) { 
 		
-		Bpoint.y = Apoint.y;
+		Bpoint.y = Apoint.y + y;
 
 	}
 
