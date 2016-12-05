@@ -40,21 +40,18 @@ bool ModuleSceneIntro::Start()
 	alpha = 25;
 	cube.ReSize(10.0f, .02f, 30.0f);
 	cube_2.ReSize(10.0f, .02f, 30.0f);
-	start_floor.AddAdjacentBody(&cube, alpha, Z);
+	AddAdjacentBody(&start_floor,&cube, alpha, Z);
 	AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
-	AddSceneObject(&cube, STATIC_CUBE);
 	
 	for (uint k = 0; k < 6; k++) {
-		cube.AddAdjacentBody(&cube_2, alpha * 0.15f, Z);
+		AddAdjacentBody(&cube,&cube_2, alpha * 0.15f, Z);
 		AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
-		AddSceneObject(&cube, STATIC_CUBE);
 		cube = cube_2;
 	}
 
 	for (uint k = 0; k < 10; k++) {
-		cube.AddAdjacentBody(&cube_2, -alpha * 0.3f, Z);
+		AddAdjacentBody(&cube,&cube_2, -alpha * 0.3f, Z);
 		AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
-		AddSceneObject(&cube, STATIC_CUBE);
 		cube = cube_2;
 	}
 	// =========================================================
@@ -81,9 +78,8 @@ bool ModuleSceneIntro::Start()
 	AddSceneObject(&cube, STATIC_CUBE);
 
 	for (uint k = 0; k < 10; k++) {
-		cube.AddAdjacentBody(&cube_2, alpha * 0.12f, Y);
+		AddAdjacentBody(&cube,&cube_2, alpha * 0.12f, Y);
 		AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
-		AddSceneObject(&cube, STATIC_CUBE);
 		cube = cube_2;
 	}
 	// =========================================================
@@ -92,9 +88,8 @@ bool ModuleSceneIntro::Start()
 	// Low Reception ===========================================
 	Cube low_reception(45.0f, 0.2f, 60.f);
 	low_reception.SetMultiRotation(cube.rotations.x, cube.rotations.y, cube.rotations.z);
-	cube.AddAdjacentBody(&low_reception, 0, Y, 0, -15, -30);
+	AddAdjacentBody(&cube,&low_reception, 0, Y, 0, -15, -30);
 	AddExternalColumns(&low_reception, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&low_reception, STATIC_CUBE);
 	// =========================================================
 	
 	
@@ -102,16 +97,14 @@ bool ModuleSceneIntro::Start()
 	alpha = -45.0f;
 
 	cube.ReSize(15.0f, 0.2f, 60.0f);
-	low_reception.AddAdjacentBody(&cube, 0, Y, 0, 0, 0);
-	AddSceneObject(&cube, STATIC_CUBE);
+	AddAdjacentBody(&low_reception,&cube, 0, Y, 0, 0, 0);
 	cube_2 = cube;
 	
 	for (int k = 0; k < 20; k++) {
 		if (k < 15)cube_2.ReSize(cube_2.size.x, cube_2.size.y, cube_2.size.z + k*0.5f);
-		if (k < 15)cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z,0.0f,0.0f,-k);
-		else cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z, 0.0f, 0.0f, 0.0f);
+		if (k < 15)AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z,0.0f,0.0f,-k);
+		else AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z, 0.0f, 0.0f, 0.0f);
 		if(k % 2 == 0 && k < 15)AddCentralColumns(&cube_2, 5.0f, 4.0f, 5.0f);
-		AddSceneObject(&cube_2, STATIC_CUBE);
 		cube = cube_2;
 	}
 	// =========================================================
@@ -120,17 +113,15 @@ bool ModuleSceneIntro::Start()
 	// Down Half ================================================
 	cube.ReSize(35.0f, 0.2f, 60.0f);
 	cube.rotations = low_reception.rotations;
-	low_reception.AddAdjacentBody(&cube, 0, Y, -20 * cos(alpha * 0.1 * DEGTORAD), 0, -cube.size.z - cube_2.size.z - low_reception.size.z);
-	AddSceneObject(&cube, STATIC_CUBE);
+	AddAdjacentBody(&low_reception,&cube, 0, Y, -20 * cos(alpha * 0.1 * DEGTORAD), 0, -cube.size.z - cube_2.size.z - low_reception.size.z);
 	cube_2 = cube;
 
 	Cube stairs_base = cube;
 
 	for (int k = 0; k < 20; k++) {
 		cube_2.ReSize(15.0f, 0.2f, 60.0f + k * 3.0f);
-		cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z, 0.0f, 0.0f,0);
+		AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z, 0.0f, 0.0f,0);
 		if (k % 2 == 0 && k < 15)AddCentralColumns(&cube_2, 5.0f, 4.0f, 5.0f);
-		AddSceneObject(&cube_2, STATIC_CUBE);
 		cube = cube_2;
 	}
 	// =========================================================
@@ -140,10 +131,9 @@ bool ModuleSceneIntro::Start()
 	stairs_base.rotations.y += 180;
 	cube.rotations = stairs_base.rotations;
 	cube.ReSize(stairs_base.size.x + 65.0f, stairs_base.size.y, stairs_base.size.z);
-	stairs_base.AddAdjacentBody(&cube, 0, Y, 0, 0, 0);
+	AddAdjacentBody(&stairs_base,&cube, 0, Y, 0, 0, 0);
 	AddCentralColumns(&cube, 5.0f, 33.0f, 5.0f);
 	AddCentralColumns(&stairs_base, 5.0f, 25.0f, 5.0f);
-	AddSceneObject(&cube, STATIC_CUBE);
 	cube_2 = cube;
 	// =========================================================
 
@@ -153,13 +143,11 @@ bool ModuleSceneIntro::Start()
 
 	for (int k = 0; k < 4; k++) {
 
-		cube.AddAdjacentBody(&cube_2, 90, Z, 0, 0, 0);
-		AddSceneObject(&cube_2, STATIC_CUBE);
+		AddAdjacentBody(&cube,&cube_2, 90, Z, 0, 0, 0);
 		cube_2.ReSize(cube_2.size.x, cube_2.size.y, cube_2.size.z - 7.5f);
 		cube.ReSize(cube.size.x, cube.size.y, cube.size.z - 7.5f);
-		cube_2.AddAdjacentBody(&cube, -90, Z, 0, 0, 0);
+		AddAdjacentBody(&cube_2,&cube, -90, Z, 0, 0, 0);
 		AddCentralColumns(&cube_2, 5.0f, 35.0f, 5.0f);
-		AddSceneObject(&cube, STATIC_CUBE);
 		
 	}
 	// =========================================================
@@ -168,9 +156,8 @@ bool ModuleSceneIntro::Start()
 	// Post Stairs Curve Base ==================================
 	Cube stairs_curve_start = cube;
 	stairs_curve_start.ReSize(35.0f, cube.size.y, cube.size.z);
-	cube.AddAdjacentBody(&stairs_curve_start, 0, Z, -50, 0, 0);
+	AddAdjacentBody(&cube,&stairs_curve_start, 0, Z, -50, 0, 0);
 	AddExternalColumns(&stairs_curve_start, 5.0f, 0.0f, 5.0f);
-	AddSceneObject(&stairs_curve_start, STATIC_CUBE);
 	// =========================================================
 
 
@@ -179,14 +166,12 @@ bool ModuleSceneIntro::Start()
 	cube.ReSize(20.0f, cube.size.y, cube.size.z);
 	cube_2 = cube;
 
-	stairs_curve_start.AddAdjacentBody(&cube, 0, Y, 0, 0, 0);
-	AddSceneObject(&cube, STATIC_CUBE);
+	AddAdjacentBody(&stairs_curve_start,&cube, 0, Y, 0, 0, 0);
 
 	for (int k = 0; k < 50; k++) {
-		cube.AddAdjacentBody(&cube_2, alpha * 0.02f, Y);
-		AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
+		AddAdjacentBody(&cube,&cube_2, alpha * 0.02f, Y);
+		if(k % 4 == 0)AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
 		cube = cube_2;
-		AddSceneObject(&cube, STATIC_CUBE);
 	}
 	// =========================================================
 
@@ -195,16 +180,14 @@ bool ModuleSceneIntro::Start()
 	alpha = 20;
 
 	Cube two_ways_ramp = cube;
-	cube.AddAdjacentBody(&two_ways_ramp, alpha * 0.1f, Z, 0, 0, 0);
-	AddSceneObject(&two_ways_ramp, STATIC_CUBE);
+	AddAdjacentBody(&cube,&two_ways_ramp, alpha * 0.1f, Z, 0, 0, 0);
 
 	for (int k = 0; k < 9; k++) {
 
 		cube_2.ReSize(cube_2.size.x, cube_2.size.y, cube_2.size.z + k * 2);
-		cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z, 0.0f, 0.0f, -k);
+		AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z, 0.0f, 0.0f, -k);
 		AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
 		cube = cube_2;
-		AddSceneObject(&cube_2, STATIC_CUBE);
 
 	}
 	AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
@@ -225,27 +208,24 @@ bool ModuleSceneIntro::Start()
 
 	for (int k = 0; k < 5; k++) {
 
-		cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z,0,0,+k * 0.25f);
+		AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z,0,0,+k * 0.25f);
 		cube_2.ReSize(cube.size.x, cube.size.y, cube.size.z - k * 0.5f );
 		AddCentralColumns(&cube, cube.size.x * 0.5f, 15.0f, 0.4f);
 		cube = cube_2;
-		AddSceneObject(&cube_2, STATIC_CUBE);
 
 	}
 
 	for (int k = 0; k < 5; k++) {
 
-		cube.AddAdjacentBody(&cube_2, -alpha * 0.1, Z, 0, 0, 0);
+		AddAdjacentBody(&cube,&cube_2, -alpha * 0.1, Z, 0, 0, 0);
 		AddCentralColumns(&cube, cube.size.x * 0.5f, 15.0f, 0.4f);
 		cube = cube_2;
-		AddSceneObject(&cube_2, STATIC_CUBE);
 
 	}
 
-	cube.AddAdjacentBody(&cube_2, -cube.rotations.z, Z, 0, 0, 0);
+	AddAdjacentBody(&cube,&cube_2, -cube.rotations.z, Z, 0, 0, 0);
 	AddCentralColumns(&cube, cube.size.x * 0.5f, 15.0f, 0.4f);
 	cube = cube_2;
-	AddSceneObject(&cube_2, STATIC_CUBE);
 	// =========================================================
 	
 	
@@ -256,28 +236,27 @@ bool ModuleSceneIntro::Start()
 	
 	for (int k = 0; k < 12; k++) {
 
-		cube.AddAdjacentBody(&cube_2, alpha * 0.0833, Y, 0, 0, 0);
-		AddCentralColumns(&cube, 2.0f, 15.0f, 2.0f);
+		AddAdjacentBody(&cube,&cube_2, alpha * 0.0833, Y, 0, 0, 0);
+		if(k % 2 == 0 || k == 1)AddCentralColumns(&cube, 2.0f, 15.0f, 2.0f);
 		cube = cube_2;
-		AddSceneObject(&cube_2, STATIC_CUBE);
 
 	}
+	
 	alpha = 5+alpha*-1;
 	for (int k = 0; k < 12; k++) {
 
-		cube.AddAdjacentBody(&cube_2, alpha * 0.0833, Y, 0, 0, 0);
-		AddCentralColumns(&cube, 2.0f, 15.0f, 2.0f);
+		AddAdjacentBody(&cube,&cube_2, alpha * 0.0833, Y, 0, 0, 0);
+		if (k % 2 == 0)AddCentralColumns(&cube, 2.0f, 15.0f, 2.0f);
 		cube = cube_2;
-		AddSceneObject(&cube_2, STATIC_CUBE);
 
 	}
+	
 	alpha = -15;
 	for (int k = 0; k < 10; k++) {
 
-		cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z, 0, 0, 0);
-		AddCentralColumns(&cube, 2.0f, 15.0f, 2.0f);
+		AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z, 0, 0, 0);
+		if (k % 2 == 0)AddCentralColumns(&cube, 2.0f, 15.0f, 2.0f);
 		cube = cube_2;
-		AddSceneObject(&cube_2, STATIC_CUBE);
 
 	}
 	AddCentralColumns(&cube_2, 2.0f, 15.0f, 2.0f);
@@ -288,8 +267,7 @@ bool ModuleSceneIntro::Start()
 
 	// Right Ramp Base =========================================
 	Cube right_ramp_base = left_ramp_base;
-	ramp_base.AddAdjacentBody(&right_ramp_base, -30, Z, 40, -10, -cube.size.z * 0.1);
-	AddSceneObject(&right_ramp_base, STATIC_CUBE);
+	AddAdjacentBody(&ramp_base,&right_ramp_base, -30, Z, 40, -10, -cube.size.z * 0.1);
 	// =========================================================
 
 
@@ -299,10 +277,9 @@ bool ModuleSceneIntro::Start()
 
 	for (int k = 0; k < 15; k++) {
 
-		cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z, 0, 0,0);
+		AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z, 0, 0,0);
 		if(k < 6 || (k > 8 && k < 12) )AddCentralColumns(&cube, cube.size.x * 0.5f, 15.0f, 0.4f);
 		cube = cube_2;
-		AddSceneObject(&cube_2, STATIC_CUBE);
 
 	}
 	// =========================================================
@@ -310,8 +287,7 @@ bool ModuleSceneIntro::Start()
 
 	// Post Ramps Base =========================================
 	
-	post_ramp_base.AddAdjacentBody(&cube, 0, Y, 25, 0, 0);
-	AddSceneObject(&cube, STATIC_CUBE);
+	AddAdjacentBody(&post_ramp_base,&cube, 0, Y, 25, 0, 0);
 
 	// =========================================================
 
@@ -349,12 +325,22 @@ update_status ModuleSceneIntro::Update(float dt)
 
 	//Check for the number of items (phys & graph)
 	uint scene_items_num = phys_bodies.count();
-	assert(scene_items_num == graph_bodies.count(), "Scene items error.");
 	
 	//Update scene items
 	for (uint k = 0; k < scene_items_num; k++) {
 		phys_bodies[k]->GetTransform(&graph_bodies[k]->transform);
 		graph_bodies[k]->Render();
+	}
+
+
+
+	//Check for the number of items (phys & graph)
+	uint map_items_num = map_bodies.Count();
+
+	//Update scene items
+	for (uint k = 0; k < map_items_num; k++) {
+		map_bodies[k]->GetTransform(&graph_bodies[k]->transform);
+		map_graphs[k]->Render();
 	}
 
 	return UPDATE_CONTINUE;
@@ -436,6 +422,158 @@ PhysBody3D* ModuleSceneIntro::AddSceneObject(Primitive* object, OBJECT_TYPE obje
 	phys_bodies.add(phys);
 
 	return phys;
+}
+
+PhysBody3D * ModuleSceneIntro::AddMapObject(Primitive * object, OBJECT_TYPE object_type, float mass)
+{
+	Primitive* new_object = nullptr;
+
+	switch (object_type)
+	{
+
+	case OBJECT_TYPE::DINAMIC_CUBE: new_object = new Cube(*(Cube*)object); break;
+	case OBJECT_TYPE::STATIC_CUBE: new_object = new Cube(*(Cube*)object); break;
+	case OBJECT_TYPE::DINAMIC_CYLINDER: new_object = new Cylinder(*(Cylinder*)object); break;
+	case OBJECT_TYPE::DINAMIC_PLANE: new_object = new Plane(*(Plane*)object); break;
+	case OBJECT_TYPE::DINAMIC_SPHERE: new_object = new Sphere(*(Sphere*)object); break;
+
+	}
+
+	map_graphs.PushBack(new_object);
+	PhysBody3D* phys = App->physics->AddBody(object, object_type, mass);
+	phys->collision_listeners.add(this);
+	map_bodies.PushBack(phys);
+
+	return phys;
+}
+
+void ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * target, float angle, AXIS axis, float x, float y, float z)
+{
+	//Calculate the point of the parent object
+	vec3 Apoint;
+
+	/*
+	AA		AB
+	0.......0
+	.		.
+	.		.
+	.		.
+	0.......0
+	BA		BB
+
+	*/
+
+	//Apoint = AB
+	if (angle < -1 && axis == Y && origin->rotations.y < 180) {
+		Apoint.x = ((Cube*)origin)->size.x * 0.5f;
+		Apoint.y = 0.0f;
+		Apoint.z = ((Cube*)origin)->size.z * 0.5f;
+	}
+	//Apoint = AA
+	else if (origin->rotations.y < 180) {
+		Apoint.x = (((Cube*)origin)->size.x * 0.5f);
+		Apoint.y = 0.0f;
+		Apoint.z = -(((Cube*)origin)->size.z * 0.5f);
+	}
+	//Apoint = BA
+	else if (angle < -1 && axis == Y && origin->rotations.y >= 180) {
+		Apoint.x = -((Cube*)origin)->size.x * 0.5f;
+		Apoint.y = 0.0f;
+		Apoint.z = -((Cube*)origin)->size.z * 0.5f;
+	}
+	//Apoint = BB
+	else {
+		Apoint.x = -(((Cube*)origin)->size.x * 0.5f);
+		Apoint.y = 0.0f;
+		Apoint.z = (((Cube*)origin)->size.z * 0.5f);
+	}
+
+	if (origin->rotations.z < 180)Apoint = (rotate(Apoint, origin->rotations.z, { 0,0,-1.0f }));
+	else Apoint = (rotate(Apoint, origin->rotations.z - 180, { 0,0,-1.0f }));
+
+	if (origin->rotations.y < 180)Apoint = (rotate(Apoint, origin->rotations.y, { 0,-1.0f,0 }));
+	else Apoint = (rotate(Apoint, origin->rotations.y - 180, { 0,-1.0f,0 }));
+
+	Apoint = (rotate(Apoint, origin->rotations.x, { -1.0f,0,0 }));
+
+	//Calculate the point in the child object(rotate parent y)
+	vec3 Bpoint;
+	//Bpoint from AB
+	if (angle < -1 && axis == Y && origin->rotations.y < 180) {
+		Bpoint.x = Apoint.x + (((Cube*)target)->size.x * 0.5f) + x;
+		Bpoint.y = y;
+		Bpoint.z = Apoint.z - (((Cube*)target)->size.z * 0.5f) + z;
+	}
+	//Bpoint from AA
+	else if (origin->rotations.y < 180) {
+		Bpoint.x = Apoint.x + (((Cube*)target)->size.x * 0.5f) + x;
+		Bpoint.y = y;
+		Bpoint.z = Apoint.z + (((Cube*)target)->size.z * 0.5f) + z;
+	}
+	//Bpoint from BA
+	else if (angle < -1 && axis == Y && origin->rotations.y > 180) {
+		Bpoint.x = Apoint.x - (((Cube*)target)->size.x * 0.5f) + x;
+		Bpoint.y = y;
+		Bpoint.z = Apoint.z + (((Cube*)target)->size.z * 0.5f) + z;
+	}
+	//Bpoint from BB
+	else {
+		Bpoint.x = Apoint.x - (((Cube*)target)->size.x * 0.5f) + x;
+		Bpoint.y = y;
+		Bpoint.z = Apoint.z - (((Cube*)target)->size.z * 0.5f) + z;
+	}
+
+
+
+	if (origin->rotations.z != 0) {
+
+		Bpoint.y = Apoint.y + y;
+
+	}
+
+	//Vector form A to B
+	vec3 vector(Bpoint.x - Apoint.x, Bpoint.y - Apoint.y, Bpoint.z - Apoint.z);
+
+	//Rotate the entered angle
+	switch (axis) {
+
+	case AXIS::Y:
+
+		if (origin->rotations.z < 180)vector = rotate(vector, origin->rotations.z, { 0,0,-1.0f });
+		else vector = rotate(vector, origin->rotations.z - 180, { 0,0,-1.0f });
+		if (origin->rotations.y < 180)vector = rotate(vector, origin->rotations.y + angle, { 0,-1.0f,0 });
+		else vector = rotate(vector, origin->rotations.y - 180 + angle, { 0,-1.0f,0 });
+
+
+		//Update the body angle
+		target->rotations.x = origin->rotations.x;
+		target->rotations.y = angle + origin->rotations.y;
+		target->rotations.z = origin->rotations.z;
+
+		target->SetMultiRotation(origin->rotations.x, angle + origin->rotations.y, origin->rotations.z);
+		break;
+
+	case AXIS::Z:
+
+		if (origin->rotations.z < 180)vector = rotate(vector, origin->rotations.z + angle, { 0,0,-1.0f });
+		else vector = rotate(vector, origin->rotations.z - 180 + angle, { 0,0,-1.0f });
+		if (origin->rotations.y < 180)vector = rotate(vector, origin->rotations.y, { 0,-1.0f,0 });
+		else vector = rotate(vector, origin->rotations.y - 180, { 0,-1.0f,0 });
+
+
+		//Update the body angle
+		target->rotations.x = origin->rotations.x;
+		target->rotations.y = origin->rotations.y;
+		target->rotations.z = angle + origin->rotations.z;
+
+		target->SetMultiRotation(origin->rotations.x, origin->rotations.y, angle + origin->rotations.z);
+		break;
+
+	}
+	//Set the data calculated
+	target->SetPosFrom(origin, Apoint.x + vector.x, Apoint.y + vector.y, Apoint.z + vector.z);
+
+	AddMapObject(target, STATIC_CUBE);
 }
 
 
