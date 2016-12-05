@@ -250,7 +250,7 @@ bool ModuleSceneIntro::Start()
 	
 	
 	// Left Zig Zag ============================================
-	alpha = -65;
+	alpha = -60;
 	cube.ReSize(cube.size.x * 0.5, cube.size.y, cube.size.z);
 	cube_2 = cube;
 	
@@ -271,23 +271,49 @@ bool ModuleSceneIntro::Start()
 		AddSceneObject(&cube_2, STATIC_CUBE);
 
 	}
+	alpha = -15;
+	for (int k = 0; k < 10; k++) {
+
+		cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z, 0, 0, 0);
+		AddCentralColumns(&cube, 2.0f, 15.0f, 2.0f);
+		cube = cube_2;
+		AddSceneObject(&cube_2, STATIC_CUBE);
+
+	}
 	AddCentralColumns(&cube_2, 2.0f, 15.0f, 2.0f);
+
+	Cube post_ramp_base = cube;
 	// =========================================================
 
 
 	// Right Ramp Base =========================================
 	Cube right_ramp_base = left_ramp_base;
-	right_ramp_base.ReSize(cube.size.x, cube.size.y, cube.size.z * 0.5f);
-	ramp_base.AddAdjacentBody(&right_ramp_base, -20, Z, 35, 0, -cube.size.z * 0.1);
-	AddCentralColumns(&right_ramp_base, right_ramp_base.size.x, 15.0f, 0.4f);
+	ramp_base.AddAdjacentBody(&right_ramp_base, -30, Z, 40, -10, -cube.size.z * 0.1);
 	AddSceneObject(&right_ramp_base, STATIC_CUBE);
 	// =========================================================
 
 
+	// Right Ramp ==============================================
+	alpha = 15;
+	cube = cube_2 = right_ramp_base;
+
+	for (int k = 0; k < 15; k++) {
+
+		cube.AddAdjacentBody(&cube_2, alpha * 0.1, Z, 0, 0,0);
+		if(k < 6 || (k > 8 && k < 12) )AddCentralColumns(&cube, cube.size.x * 0.5f, 15.0f, 0.4f);
+		cube = cube_2;
+		AddSceneObject(&cube_2, STATIC_CUBE);
+
+	}
+	// =========================================================
 
 
+	// Post Ramps Base =========================================
+	
+	post_ramp_base.AddAdjacentBody(&cube, 0, Y, 25, 0, 0);
+	AddSceneObject(&cube, STATIC_CUBE);
 
-
+	// =========================================================
 
 
 
