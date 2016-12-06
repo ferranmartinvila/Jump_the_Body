@@ -3,6 +3,10 @@
 #include "Globals.h"
 #include "glmath.h"
 
+#define Z_DIST 26
+
+struct PhysVehicle3D;
+
 class ModuleCamera3D : public Module
 {
 public:
@@ -27,6 +31,13 @@ private:
 public:
 	
 	vec3 X, Y, Z, Position, Reference;
+
+private:
+
+	PhysVehicle3D*	Target;
+	vec3			CameraLocation;
+	vec3			ViewVector;
+	vec3			VehicleLocation;
 
 private:
 

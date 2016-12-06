@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleCamera3D.h"
+#include "PhysVehicle3D.h"
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -12,6 +13,10 @@ ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(ap
 
 	Position = vec3(0.0f, 0.0f, 5.0f);
 	Reference = vec3(0.0f, 0.0f, 0.0f);
+	
+	Target = nullptr;
+	CameraLocation = vec3(0.0f, 0.0f, 0.0f);
+	ViewVector = vec3(0.0f, 0.0f, 0.0f);
 }
 
 ModuleCamera3D::~ModuleCamera3D()
@@ -24,6 +29,10 @@ bool ModuleCamera3D::Start()
 	bool ret = true;
 
 	camera_speed = 6.0f;
+
+	Target = App->player->vehicle;
+	CameraLocation = vec3(0.0f, 15.0f, 0.0f);
+	ViewVector = vec3(0.0f,10.05f, 0.0f);
 
 	return ret;
 }
@@ -39,9 +48,8 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
-	// Implement a debug camera with keys and mouse
-	// Now we can make this movememnt frame rate independant!
 
+	// Free Camera =============================================
 	vec3 newPos(0,0,0);
 	float speed = camera_speed* 20 * dt;
 	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
@@ -63,8 +71,7 @@ update_status ModuleCamera3D::Update(float dt)
 	Position += newPos;
 	Reference += newPos;
 
-	// Mouse motion ----------------
-
+	// Mouse motion ============================================
 	if(App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 	{
 		int dx = -App->input->GetMouseXMotion();
@@ -100,6 +107,38 @@ update_status ModuleCamera3D::Update(float dt)
 		Position = Reference + Z * length(Position);
 	}
 
+	// Follow the Car ==========================================
+	else
+	{
+
+		//16 element array (12 rotation(row major padded on the right by 1), and 3 translation 
+		mat4x4 vehicle_array;
+		Target->GetTransform(&vehicle_array);
+		
+		
+		//Data In array:
+		//X Vector -- [0][1][2]
+		//Y Vector -- [4][5][6]
+		//Z Vector -- [8][9][10]
+		
+		// -> Z Axis is the parallel to the camera view
+		
+		//Body Location -- [12][13][14]
+		
+		//In the right cells ([3][7][11][15]) there are value 1
+		
+		//Vehicle Axis
+		X = vec3(vehicle_array[0], vehicle_array[1], vehicle_array[2]);
+		Y = vec3(vehicle_array[4], vehicle_array[5], vehicle_array[6]);
+		Z = vec3(vehicle_array[8], vehicle_array[9], vehicle_array[10]);
+
+		//Body Location
+		VehicleLocation = vehicle_array.translation();
+
+		//Look the vehicle body with the CameraLocation & the ViewVector & the Z_DIST defined
+		App->camera->Look((CameraLocation + VehicleLocation) - Z * Z_DIST, ViewVector + VehicleLocation, true);
+	}
+	
 	// Recalculate matrix -------------
 	CalculateViewMatrix();
 

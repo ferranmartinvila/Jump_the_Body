@@ -17,7 +17,6 @@ Application::Application()
 
 	// Main Modules
 	AddModule(window);
-	AddModule(camera);
 	AddModule(input);
 	AddModule(audio);
 	AddModule(physics);
@@ -25,6 +24,7 @@ Application::Application()
 	// Scenes
 	AddModule(scene_intro);
 	AddModule(player);
+	AddModule(camera);
 
 	// Renderer last!
 	AddModule(renderer3D);
