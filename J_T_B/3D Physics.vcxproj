@@ -40,8 +40,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>C:\Users\ferranmv2\Desktop\Jump_the_Body\J_T_B\Engine;C:\Users\ferra\Desktop\Jump_the_Body\J_T_B\Engine;/Engine;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\ferranmv2\Desktop\Jump_the_Body\J_T_B\Engine;C:\Users\ferra\Desktop\Jump_the_Body\J_T_B\Engine;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\Users\ferra\Desktop\Jump_the_Body\J_T_B\Engine;$(IncludePath)</IncludePath>

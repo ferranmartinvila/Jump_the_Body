@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "SDL\include\SDL.h"
 
+
 class Timer
 {
 public:
