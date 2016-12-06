@@ -97,8 +97,7 @@ bool ModulePlayer::Start()
 	car.wheels[3].steering = false;
 
 	vehicle = App->physics->AddVehicle(car);
-	//vehicle->SetPos(0, 130, 10);
-	vehicle->SetPos(0, 0, 0);
+	vehicle->SetPos(0, 150, -10);
 
 	print_cabine.ReSize(6, 2, 1);
 	print_cabine.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x(), vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() + 3.5f);
