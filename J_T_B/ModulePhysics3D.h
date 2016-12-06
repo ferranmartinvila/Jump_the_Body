@@ -34,6 +34,7 @@ public:
 	//Methods for constrains
 	btPoint2PointConstraint* Add_P2P_Constraint(btRigidBody& rbA, btRigidBody& rbB, const btVector3& pivotInA, const btVector3& pivotInB);
 	btHingeConstraint* Add_Hinge_Constraint(btRigidBody& rbA, btRigidBody& rbB, const btVector3& pivotInA, const btVector3& pivotInB, btVector3& axisInA, btVector3& axisInB);
+	btFixedConstraint* Add_Fixed_Constraint(btRigidBody& rbA, btRigidBody& rbB, const btTransform& frameA, const btTransform& frameB);
 
 private:
 

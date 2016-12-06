@@ -119,7 +119,7 @@ update_status ModulePhysics3D::Update(float dt)
 
 
 
-	if(debug == true)
+	if(!debug == true)
 	{
 		world->debugDrawWorld();
 
@@ -353,6 +353,15 @@ btPoint2PointConstraint* ModulePhysics3D::Add_P2P_Constraint(btRigidBody& rbA, b
 btHingeConstraint* ModulePhysics3D::Add_Hinge_Constraint(btRigidBody& rbA, btRigidBody& rbB, const btVector3& pivotInA, const btVector3& pivotInB, btVector3& axisInA, btVector3& axisInB)
 {
 	btHingeConstraint* constrain = new btHingeConstraint(rbA, rbB, pivotInA, pivotInB, axisInA, axisInB);
+	world->addConstraint(constrain);
+	constrains.add(constrain);
+	return constrain;
+}
+
+btFixedConstraint * ModulePhysics3D::Add_Fixed_Constraint(btRigidBody & rbA, btRigidBody & rbB, const btTransform & frameA, const btTransform & frameB)
+{
+
+	btFixedConstraint* constrain = new btFixedConstraint(rbA, rbB, frameA, frameB);
 	world->addConstraint(constrain);
 	constrains.add(constrain);
 	return constrain;

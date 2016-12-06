@@ -21,9 +21,9 @@ bool ModulePlayer::Start()
 	VehicleInfo car;
 
 	// Car properties ----------------------------------------
-	car.chassis_size.Set(4, 2, 6);
-	car.chassis_offset.Set(0, 1.5, 0);
-	car.mass = 2500.0f;
+	car.chassis_size.Set(6, 1, 8);
+	car.chassis_offset.Set(0, 1.5f, 0);
+	car.mass = 500.0f;
 	car.suspensionStiffness = 5.88f;
 	car.suspensionCompression = 1.6f;
 	car.suspensionDamping = 6.88f;
@@ -97,7 +97,48 @@ bool ModulePlayer::Start()
 	car.wheels[3].steering = false;
 
 	vehicle = App->physics->AddVehicle(car);
-	vehicle->SetPos(0, 130, 10);
+	//vehicle->SetPos(0, 130, 10);
+	vehicle->SetPos(0, 0, 0);
+
+	print_cabine.ReSize(6, 2, 1);
+	print_cabine.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x(), vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() + 3.5f);
+
+	print_door_1.ReSize(1, 2, 3);
+	print_door_1.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() + 1.0f);
+
+	print_door_2.ReSize(1, 2, 3);
+	print_door_2.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x() - 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() + 1.0f);
+
+	print_Back.ReSize(6, 4, 3);
+	print_Back.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x(), vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 1.0f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() - 2.5f);
+
+	print_roof.ReSize(6, 0.25, 8);
+	print_roof.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x(), vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 4.6f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z());
+
+
+	//Setting up the car elements
+	cabine = App->physics->AddBody(&print_cabine, OBJECT_TYPE::DINAMIC_CUBE);
+	door_1 = App->physics->AddBody(&print_door_1, OBJECT_TYPE::DINAMIC_CUBE);
+	door_2 = App->physics->AddBody(&print_door_2, OBJECT_TYPE::DINAMIC_CUBE);
+	Back = App->physics->AddBody(&print_Back, OBJECT_TYPE::DINAMIC_CUBE);
+	roof = App->physics->AddBody(&print_roof, OBJECT_TYPE::DINAMIC_CUBE);
+	
+	//Setting hinges
+	cabine_to_vehicle =  App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *cabine->get_rigid_body(), { 0,3.0f,3.5f }, { 0,0,0 },  btVector3(0,1,0), btVector3(0, 1, 0));
+	cabine_to_vehicle->setLimit(0, ((2*3.1416)/360));
+
+	door_1_constrain = App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *door_1->get_rigid_body(), { 2.5f, 3.0f, 2.5f }, { 0,0,-1.5f }, btVector3(0, 1, 0), btVector3(0, 1, 0));
+	door_1_constrain->setLimit(-3.1416, 0);
+
+	door_2_constrain = App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *door_2->get_rigid_body(), { -2.5f, 3.0f, 2.5f }, { 0,0,-1.5f }, btVector3(0, 1, 0), btVector3(0, 1, 0));
+	door_2_constrain->setLimit(0, 3.1416);
+
+	Back_constrain = App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *Back->get_rigid_body(), { 0, 4.0f, -2.5f }, { 0,0,0 }, btVector3(0, 1, 0), btVector3(0, 1, 0));
+	Back_constrain->setLimit(0, ((2 * 3.1416) / 360));
+
+	roof_constrain = App->physics->Add_Hinge_Constraint(*Back->get_rigid_body(), *roof->get_rigid_body(), { 0, 2, 0 }, { 0, -0.125f,-2.5f }, btVector3(0, 1, 0), btVector3(0, 1, 0));
+	roof_constrain->setLimit(0, ((2 * 3.1416) / 360));
+
 
 	return true;
 }
@@ -152,6 +193,19 @@ update_status ModulePlayer::Update(float dt)
 	char title[80];
 	sprintf_s(title, "%.1f Km/h", vehicle->GetKmh());
 	App->window->SetTitle(title);
+
+
+	cabine->GetTransform(print_cabine.transform.M);
+	door_1->GetTransform(print_door_1.transform.M);
+	door_2->GetTransform(print_door_2.transform.M);
+	Back->GetTransform(print_Back.transform.M);
+	roof->GetTransform(print_roof.transform.M);
+
+	print_cabine.Render();
+	print_door_1.Render();
+	print_door_2.Render();
+	print_Back.Render();
+	print_roof.Render();
 
 	return UPDATE_CONTINUE;
 }
