@@ -74,7 +74,6 @@ bool ModuleSceneIntro::Start()
 	alpha = 90.0f;
 
 	cube.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f + cube.size.x * 0.5f + 20.0f, 10.0f, 0);
-	AddCentralColumns(&cube, 5.0f, 5.0f, 5.0f);
 	AddSceneObject(&cube, STATIC_CUBE);
 
 	for (uint k = 0; k < 10; k++) {
@@ -186,11 +185,10 @@ bool ModuleSceneIntro::Start()
 
 		cube_2.ReSize(cube_2.size.x, cube_2.size.y, cube_2.size.z + k * 2);
 		AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z, 0.0f, 0.0f, -k);
-		AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
+		if(k % 2 == 0)AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
 		cube = cube_2;
 
 	}
-	AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
 	Cube ramp_base = cube;
 	// =========================================================
 
@@ -272,13 +270,13 @@ bool ModuleSceneIntro::Start()
 
 
 	// Right Ramp ==============================================
-	alpha = 15;
+	alpha = 10;
 	cube = cube_2 = right_ramp_base;
 
-	for (int k = 0; k < 15; k++) {
+	for (int k = 0; k < 17; k++) {
 
 		AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z, 0, 0,0);
-		if(k < 6 || (k > 8 && k < 12) )AddCentralColumns(&cube, cube.size.x * 0.5f, 15.0f, 0.4f);
+		if(k < 6 || (k > 8 && k < 13) )AddCentralColumns(&cube, cube.size.x * 0.5f, 15.0f, 0.4f);
 		cube = cube_2;
 
 	}
@@ -286,11 +284,94 @@ bool ModuleSceneIntro::Start()
 
 
 	// Post Ramps Base =========================================
-	
-	AddAdjacentBody(&post_ramp_base,&cube, 0, Y, 25, 0, 0);
-
+	cube.ReSize(cube.size.x * 1.5, cube.size.y, cube.size.z * 1.5f);
+	AddAdjacentBody(&post_ramp_base,&cube, 15, Z, 75, 0, -cube.size.z * 0.2f);
+	cube_2 = cube;
 	// =========================================================
 
+
+	// Pre Curve ===============================================
+	alpha = 35;
+	for (int k = 0; k < 10; k++) {
+
+		AddAdjacentBody(&cube, &cube_2, alpha * 0.1, Y, 0, 0, 0);
+		if (k % 3)AddCentralColumns(&cube, 2.0f, 2.0f, 2.0f);
+		cube = cube_2;
+
+	}
+	// =========================================================
+
+
+	//Super Slalon =============================================
+	alpha = 125;
+	for (int k = 0; k < 15; k++) {
+
+		AddAdjacentBody(&cube, &cube_2, alpha * 0.0666, Y, 0, 0, 0);
+		if (k % 3)AddCentralColumns(&cube, 2.0f, 2.0f, 2.0f);
+		cube = cube_2;
+
+	}
+	alpha = -125;
+	cube_2.ReSize(cube_2.size.x * 0.8f, cube_2.size.y, cube_2.size.z);
+	for (int k = 0; k < 15; k++) {
+
+		AddAdjacentBody(&cube, &cube_2, alpha * 0.0666, Y, 0, 0, 0);
+		if (k % 3)AddCentralColumns(&cube, 2.0f, 2.0f, 2.0f);
+		cube = cube_2;
+
+	}
+	alpha = 125;
+	for (int k = 0; k < 15; k++) {
+
+		AddAdjacentBody(&cube, &cube_2, alpha * 0.0666, Y, 0, 0, 0);
+		if (k % 3)AddCentralColumns(&cube, 2.0f, 2.0f, 2.0f);
+		cube = cube_2;
+
+	}
+	alpha = -125;
+	for (int k = 0; k < 15; k++) {
+
+		AddAdjacentBody(&cube, &cube_2, alpha * 0.0666, Y, 0, 0, 0);
+		if (k % 3)AddCentralColumns(&cube, 2.0f, 2.0f, 2.0f);
+		cube = cube_2;
+
+	}
+	alpha = 217;
+	cube_2.ReSize(cube_2.size.x * 1.4f, cube.size.y, cube.size.z);
+	for (int k = 0; k < 15; k++) {
+
+		AddAdjacentBody(&cube, &cube_2, alpha * 0.0666, Y, 0, 0, 0);
+		if (k % 3)AddCentralColumns(&cube, 2.0f, 2.0f, 2.0f);
+		cube = cube_2;
+
+	}
+	// =========================================================
+
+	if(cube_2.rotations.y > 360)cube_2.rotations.y -= 360;
+	cube = cube_2;
+
+	//Super Ramp ==========================================
+	alpha = -15;
+	int mark = (cube_2.size.z - start_floor.size.z + 18) * 0.06666;
+	cube_2.ReSize(cube_2.size.x * 0.8f, cube.size.y, cube.size.z);
+	for (int k = 0; k < 15; k++) {
+
+		cube_2.ReSize(cube.size.x, cube.size.y, cube.size.z - mark);
+		AddAdjacentBody(&cube, &cube_2, alpha * 0.0666, Z, 0, 0, +mark * 0.5f);
+		if (k % 3)AddCentralColumns(&cube, 2.0f, 2.0f, 2.0f);
+		cube = cube_2;
+
+	}
+	alpha = 25;
+	cube_2.ReSize(cube_2.size.x * 0.8f, cube.size.y, cube.size.z);
+	for (int k = 0; k < 11; k++) {
+
+		AddAdjacentBody(&cube, &cube_2, alpha * 0.0555, Z, 0, 0, 0);
+		if (k % 3)AddCentralColumns(&cube, 2.0f, 2.0f, 2.0f);
+		cube = cube_2;
+
+	}
+	// =========================================================
 
 
 	return ret;
