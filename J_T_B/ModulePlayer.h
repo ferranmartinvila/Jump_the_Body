@@ -45,6 +45,11 @@ public:
 	float turn;
 	float acceleration;
 	float brake;
+
+public:
+
+	uint hydraulic_suspension_fx;
+
 };
 
 #endif;

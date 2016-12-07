@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleCamera3D.h"
 #include "PhysVehicle3D.h"
+#include "ModuleAudio.h"
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -33,7 +34,8 @@ bool ModuleCamera3D::Start()
 	Target = App->player->vehicle;
 	CameraLocation = vec3(0.0f, 15.0f, 0.0f);
 	ViewVector = vec3(0.0f,10.05f, 0.0f);
-
+	camera_dist = 27;
+	camera_fx = App->audio->LoadFx("../Game/camera_fx.wav");
 	return ret;
 }
 
@@ -48,68 +50,93 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
-
-	// Free Camera =============================================
-	vec3 newPos(0,0,0);
-	float speed = camera_speed* 20 * dt;
-	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-		speed = camera_speed * 20  * dt;
-
-	if(App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += speed;
-	if(App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= speed;
-
-	if(App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
-	if(App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
-
-
-	if(App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= X * speed;
-	if(App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += X * speed;
-
-	if (App->input->GetKey(SDL_SCANCODE_KP_8) == KEY_DOWN) camera_speed+=6.0f;
-	if ((App->input->GetKey(SDL_SCANCODE_KP_2) == KEY_DOWN) && camera_speed > 10.0f) camera_speed-=6.0f;
-
-	Position += newPos;
-	Reference += newPos;
-
-	// Mouse motion ============================================
-	if(App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
-	{
-		int dx = -App->input->GetMouseXMotion();
-		int dy = -App->input->GetMouseYMotion();
-
-		float Sensitivity = 0.25f;
-
-		Position -= Reference;
-
-		if(dx != 0)
-		{
-			float DeltaX = (float)dx * Sensitivity;
-
-			X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-			Y = rotate(Y, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-			Z = rotate(Z, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-		}
-
-		if(dy != 0)
-		{
-			float DeltaY = (float)dy * Sensitivity;
-
-			Y = rotate(Y, DeltaY, X);
-			Z = rotate(Z, DeltaY, X);
-
-			if(Y.y < 0.0f)
-			{
-				Z = vec3(0.0f, Z.y > 0.0f ? 1.0f : -1.0f, 0.0f);
-				Y = cross(Z, X);
-			}
-		}
-
-		Position = Reference + Z * length(Position);
+	//Change Camera Mode =======================================
+	if (App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN) {
+		camera_debug = !camera_debug;
+		App->audio->PlayFx(camera_fx);
 	}
+	// Free Camera =============================================
+	if (camera_debug) {
+		vec3 newPos(0, 0, 0);
+		float speed = camera_speed * 20 * dt;
+		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+			speed = camera_speed * 20 * dt;
 
+		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += speed;
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= speed;
+
+		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
+		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
+
+
+		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= X * speed;
+		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += X * speed;
+
+		if (App->input->GetKey(SDL_SCANCODE_KP_8) == KEY_DOWN) camera_speed += 6.0f;
+		if ((App->input->GetKey(SDL_SCANCODE_KP_2) == KEY_DOWN) && camera_speed > 10.0f) camera_speed -= 6.0f;
+
+		Position += newPos;
+		Reference += newPos;
+
+		// Mouse motion ============================================
+		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+		{
+			int dx = -App->input->GetMouseXMotion();
+			int dy = -App->input->GetMouseYMotion();
+
+			float Sensitivity = 0.25f;
+
+			Position -= Reference;
+
+			if (dx != 0)
+			{
+				float DeltaX = (float)dx * Sensitivity;
+
+				X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
+				Y = rotate(Y, DeltaX, vec3(0.0f, 1.0f, 0.0f));
+				Z = rotate(Z, DeltaX, vec3(0.0f, 1.0f, 0.0f));
+			}
+
+			if (dy != 0)
+			{
+				float DeltaY = (float)dy * Sensitivity;
+
+				Y = rotate(Y, DeltaY, X);
+				Z = rotate(Z, DeltaY, X);
+
+				if (Y.y < 0.0f)
+				{
+					Z = vec3(0.0f, Z.y > 0.0f ? 1.0f : -1.0f, 0.0f);
+					Y = cross(Z, X);
+				}
+			}
+
+			Position = Reference + Z * length(Position);
+		}
+	}
 	// Follow the Car ==========================================
 	else
 	{
+		// Change Camera Prespective ===============================
+		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN) {
+
+			if (camera_dist == 3) {
+				CameraLocation = vec3(0.0f, 15.0f, 0.0f);
+				ViewVector = vec3(0.0f, 10.05f, 0.0f);
+			}
+
+			if (camera_dist < 50)camera_dist += 24;
+
+			else{
+
+				CameraLocation = vec3(0.0f, 5.5f, 0.0f);
+				ViewVector = vec3(0.0f, 5.5f, 0.0f);
+				camera_dist = 3;
+			}
+
+			App->audio->PlayFx(camera_fx);
+
+		}
 
 		//16 element array (12 rotation(row major padded on the right by 1), and 3 translation 
 		mat4x4 vehicle_array;
@@ -136,7 +163,7 @@ update_status ModuleCamera3D::Update(float dt)
 		VehicleLocation = vehicle_array.translation();
 
 		//Look the vehicle body with the CameraLocation & the ViewVector & the Z_DIST defined
-		App->camera->Look((CameraLocation + VehicleLocation) - Z * Z_DIST, ViewVector + VehicleLocation, true);
+		App->camera->Look((CameraLocation + VehicleLocation) - Z * camera_dist, ViewVector + VehicleLocation, true);
 	}
 	
 	// Recalculate matrix -------------

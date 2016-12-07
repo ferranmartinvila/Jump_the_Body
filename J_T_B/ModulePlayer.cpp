@@ -4,6 +4,7 @@
 #include "Primitive.h"
 #include "PhysVehicle3D.h"
 #include "PhysBody3D.h"
+#include "ModuleAudio.h"
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled), vehicle(NULL)
 {
@@ -17,6 +18,12 @@ ModulePlayer::~ModulePlayer()
 bool ModulePlayer::Start()
 {
 	LOG("Loading player");
+
+	hydraulic_suspension_fx = App->audio->LoadFx("../Game/hydraulic_suspension_fx.wav");
+
+
+
+
 
 	VehicleInfo car;
 
@@ -97,7 +104,7 @@ bool ModulePlayer::Start()
 	car.wheels[3].steering = false;
 
 	vehicle = App->physics->AddVehicle(car);
-	vehicle->SetPos(0, 150, -10);
+	vehicle->SetPos(0, 0, 0);
 
 	print_cabine.ReSize(6, 2, 1);
 	print_cabine.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x(), vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() + 3.5f);
@@ -155,6 +162,7 @@ update_status ModulePlayer::Update(float dt)
 {
 	turn = acceleration = brake = 0.0f;
 
+	//Car Mechanics --------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
 		acceleration = MAX_ACCELERATION;
@@ -177,11 +185,18 @@ update_status ModulePlayer::Update(float dt)
 		if (turn > -TURN_DEGREES)
 			turn -= TURN_DEGREES;
 	}
+
+	// Car Jump ------------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
-		bool kk = vehicle->vehicle->m_wheelInfo[0].m_raycastInfo.m_isInContact;
-		if(kk)vehicle->Push(0, 2000, 0);
+		bool contact = vehicle->vehicle->m_wheelInfo[0].m_raycastInfo.m_isInContact;
+		if (contact) {
+			vehicle->Push(0, 2000, 0);
+			App->audio->PlayFx(hydraulic_suspension_fx);
+		}
 	}
+
+
 
 	vehicle->ApplyEngineForce(acceleration);
 	vehicle->Turn(turn);
