@@ -138,7 +138,7 @@ bool ModuleSceneIntro::Start()
 
 
 	// Super Stairs ============================================
-	cube_2.ReSize(20.0f, cube_2.size.y, cube_2.size.z);
+	cube_2.ReSize(15.0f, cube_2.size.y, cube_2.size.z);
 
 	for (int k = 0; k < 4; k++) {
 
@@ -155,7 +155,7 @@ bool ModuleSceneIntro::Start()
 	// Post Stairs Curve Base ==================================
 	Cube stairs_curve_start = cube;
 	stairs_curve_start.ReSize(35.0f, cube.size.y, cube.size.z);
-	AddAdjacentBody(&cube,&stairs_curve_start, 0, Z, -50, 0, 0);
+	AddAdjacentBody(&cube,&stairs_curve_start, 0, Z, -50, 15, 0);
 	AddExternalColumns(&stairs_curve_start, 5.0f, 0.0f, 5.0f);
 	// =========================================================
 
@@ -505,7 +505,7 @@ PhysBody3D* ModuleSceneIntro::AddSceneObject(Primitive* object, OBJECT_TYPE obje
 	return phys;
 }
 
-PhysBody3D * ModuleSceneIntro::AddMapObject(Primitive * object, OBJECT_TYPE object_type, float mass)
+PhysBody3D * ModuleSceneIntro::AddMapObject(Primitive * object, OBJECT_TYPE object_type, float mass, bool is_sensor)
 {
 	Primitive* new_object = nullptr;
 
@@ -522,6 +522,10 @@ PhysBody3D * ModuleSceneIntro::AddMapObject(Primitive * object, OBJECT_TYPE obje
 
 	map_graphs.PushBack(new_object);
 	PhysBody3D* phys = App->physics->AddBody(object, object_type, mass);
+
+	if (is_sensor)
+		phys->SetAsSensor(is_sensor);
+
 	phys->collision_listeners.add(this);
 	map_bodies.PushBack(phys);
 

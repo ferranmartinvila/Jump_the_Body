@@ -30,7 +30,7 @@ bool ModulePlayer::Start()
 	// Car properties ----------------------------------------
 	car.chassis_size.Set(6, 1, 8);
 	car.chassis_offset.Set(0, 1.5f, 0);
-	car.mass = 500.0f;
+	car.mass = 1000.0f;
 	car.suspensionStiffness = 5.88f;
 	car.suspensionCompression = 1.6f;
 	car.suspensionDamping = 6.88f;
@@ -104,7 +104,7 @@ bool ModulePlayer::Start()
 	car.wheels[3].steering = false;
 
 	vehicle = App->physics->AddVehicle(car);
-	vehicle->SetPos(0, 0, 0);
+	vehicle->SetPos(0, 130, 0);
 
 	print_cabine.ReSize(6, 2, 1);
 	print_cabine.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x(), vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() + 3.5f);
@@ -128,6 +128,12 @@ bool ModulePlayer::Start()
 	door_2 = App->physics->AddBody(&print_door_2, OBJECT_TYPE::DINAMIC_CUBE);
 	Back = App->physics->AddBody(&print_Back, OBJECT_TYPE::DINAMIC_CUBE);
 	roof = App->physics->AddBody(&print_roof, OBJECT_TYPE::DINAMIC_CUBE);
+
+	cabine->get_rigid_body()->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+	door_1->get_rigid_body()->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+	door_2->get_rigid_body()->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+	Back->get_rigid_body()->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+	roof->get_rigid_body()->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 	
 	//Setting hinges
 	cabine_to_vehicle =  App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *cabine->get_rigid_body(), { 0,3.0f,3.5f }, { 0,0,0 },  btVector3(0,1,0), btVector3(0, 1, 0));
@@ -191,7 +197,7 @@ update_status ModulePlayer::Update(float dt)
 	{
 		bool contact = vehicle->vehicle->m_wheelInfo[0].m_raycastInfo.m_isInContact;
 		if (contact) {
-			vehicle->Push(0, 2000, 0);
+			vehicle->Push(0, 25000, 0);
 			App->audio->PlayFx(hydraulic_suspension_fx);
 		}
 	}

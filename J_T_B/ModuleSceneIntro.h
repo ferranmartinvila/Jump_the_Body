@@ -3,21 +3,9 @@
 #include "p2DynArray.h"
 #include "Globals.h"
 #include "Primitive.h"
+#include "PhysBody3D.h"
 
 struct PhysBody3D;
-
-enum OBJECT_TYPE{
-
-	DINAMIC_CUBE,
-	STATIC_CUBE,
-	DINAMIC_CYLINDER,
-	STAIC_CYLINDER,
-	DINAMIC_PLANE,
-	STATIC_PLANE,
-	DINAMIC_SPHERE,
-	STATIC_SPHERE
-
-};
 
 class ModuleSceneIntro : public Module
 {
@@ -52,6 +40,6 @@ public:
 	void			AddExternalColumns(Primitive* target, float x, float y, float z);
 	
 	PhysBody3D*		AddSceneObject(Primitive* object, OBJECT_TYPE object_type, float mass = 1.0f);
-	PhysBody3D*		AddMapObject(Primitive* object, OBJECT_TYPE object_type, float mass = 1.0f);
+	PhysBody3D*		AddMapObject(Primitive* object, OBJECT_TYPE object_type, float mass = 1.0f, bool is_sensor = false);
 	void			AddAdjacentBody(Primitive* origin, Primitive* target, float angle, AXIS axis, float x = 0, float y = 0, float z = 0);
 };

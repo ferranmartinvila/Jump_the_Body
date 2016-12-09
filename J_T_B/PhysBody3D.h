@@ -6,6 +6,18 @@
 class btRigidBody;
 class Module;
 
+enum OBJECT_TYPE
+{
+	DINAMIC_CUBE,
+	STATIC_CUBE,
+	DINAMIC_CYLINDER,
+	STAIC_CYLINDER,
+	DINAMIC_PLANE,
+	STATIC_PLANE,
+	DINAMIC_SPHERE,
+	STATIC_SPHERE
+};
+
 struct PhysBody3D
 {
 public:
@@ -18,9 +30,13 @@ public:
 	void SetPos(float x, float y, float z);
 	btRigidBody* get_rigid_body() const;
 
+	void SetAsSensor(bool is_sensor);
+	bool IsSensor() const;
+
 private:
 
-	btRigidBody* body;
+	btRigidBody* body = nullptr;
+	bool is_sensor = false;
 
 public:
 
