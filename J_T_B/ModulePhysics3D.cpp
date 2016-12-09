@@ -123,13 +123,13 @@ update_status ModulePhysics3D::Update(float dt)
 	{
 		world->debugDrawWorld();
 
-		// Render vehicles
+		/*// Render vehicles
 		p2List_item<PhysVehicle3D*>* item = vehicles.getFirst();
 		while (item)
 		{
 			item->data->Render();
 			item = item->next;
-		}
+		}*/
 
 		//Create a Sphere with debug mode
 		if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)

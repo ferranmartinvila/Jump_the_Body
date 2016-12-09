@@ -1,4 +1,3 @@
-
 #pragma once
 
 struct Color
@@ -25,8 +24,15 @@ struct Color
 	}
 };
 
+
 extern Color Red;
+extern Color Pink;
+extern Color Orange;
+extern Color Yellow;
 extern Color Green;
 extern Color Blue;
 extern Color Black;
+extern Color Gray;
 extern Color White;
+extern Color Column_Color;
+extern Color Checkpoint_Color;

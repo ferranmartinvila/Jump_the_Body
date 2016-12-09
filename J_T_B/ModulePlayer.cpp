@@ -128,12 +128,12 @@ bool ModulePlayer::Start()
 	door_2 = App->physics->AddBody(&print_door_2, OBJECT_TYPE::DINAMIC_CUBE);
 	Back = App->physics->AddBody(&print_Back, OBJECT_TYPE::DINAMIC_CUBE);
 	roof = App->physics->AddBody(&print_roof, OBJECT_TYPE::DINAMIC_CUBE);
-
+	/*
 	cabine->get_rigid_body()->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 	door_1->get_rigid_body()->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 	door_2->get_rigid_body()->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 	Back->get_rigid_body()->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
-	roof->get_rigid_body()->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+	roof->get_rigid_body()->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);*/
 	
 	//Setting hinges
 	cabine_to_vehicle =  App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *cabine->get_rigid_body(), { 0,3.0f,3.5f }, { 0,0,0 },  btVector3(0,1,0), btVector3(0, 1, 0));
@@ -197,13 +197,28 @@ update_status ModulePlayer::Update(float dt)
 	{
 		bool contact = vehicle->vehicle->m_wheelInfo[0].m_raycastInfo.m_isInContact;
 		if (contact) {
-			vehicle->Push(0, 25000, 0);
+			mat4x4 trans;
+			this->vehicle->GetTransform(&trans);
+			vec3 PushVector(trans[4], trans[5], trans[6]);
+			PushVector *= 24000;
+			vehicle->Push(PushVector.x, PushVector.y, PushVector.z);
 			App->audio->PlayFx(hydraulic_suspension_fx);
 		}
 	}
 
+	//Good Mode ------------------------------------------------
+	if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)god = !god;
+
+	if (god) {
+
+		//Reset the vehicle position
+		if(App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+		{
+			vehicle->SetTransform(&App->scene_intro->GetCheckpoint(2));
+		}
 
 
+	}
 	vehicle->ApplyEngineForce(acceleration);
 	vehicle->Turn(turn);
 	vehicle->Brake(brake);

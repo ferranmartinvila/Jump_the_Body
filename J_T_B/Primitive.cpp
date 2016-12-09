@@ -250,6 +250,11 @@ void Primitive::Scale(float x, float y, float z)
 	transform.scale(x, y, z);
 }
 
+void Primitive::SetColor(const Color & color)
+{
+	this->color = color;
+}
+
 // CUBE ============================================
 Cube::Cube() : Primitive(), size(1.0f, 1.0f, 1.0f)
 {

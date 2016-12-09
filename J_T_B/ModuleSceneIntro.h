@@ -29,11 +29,13 @@ public:
 	//Map grahics array
 	p2DynArray<Primitive*>		map_graphs;
 
-	//Sphere Data
-	PhysBody3D* b;
-	Sphere* sphere;
+	//Scene Checkpoints
+	p2DynArray<mat4x4> checkpoints;
 
 public:
+
+	mat4x4			GetCheckpoint(uint index)const;
+
 
 	void			OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 	void			AddCentralColumns(Primitive* target, float x, float y, float z);

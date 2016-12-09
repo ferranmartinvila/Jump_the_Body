@@ -20,6 +20,15 @@ bool ModuleSceneIntro::Start()
 	App->camera->Move(vec3(0.0f, 0.0f, 0.0f));
 	App->camera->LookAt(vec3(0, 1, 0));
 	
+	//Scene Checkpoints ========================================
+	checkpoints.PushBack({ -0.04f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,-0.04f,0.0f,		-0.3f,122.0f,0.4f,1.0f });
+	checkpoints.PushBack({ 0.95f,0.0f,0.32f,0.0f,		0.0f,1.0f,0.0f,0.0f,		-0.32f,0.0f,0.95f,0.0f,		575.5f,63.0f,290.5f,1.0f });
+	checkpoints.PushBack({ -0.95f,0.0f,-0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		0.3f,0.0f,-0.95f,0.0f,		772.0f,63.0f,404.5f,1.0f });
+	
+	
+	
+	
+	//Scene Objects ============================================
 	// Initial Ramp ============================================
 	float alpha = 0;
 	Cube cube;
@@ -28,18 +37,22 @@ bool ModuleSceneIntro::Start()
 	//Start Floor
 	Cube start_floor(30.0f, 0.2f, 30.0f);
 	start_floor.SetPos(0, start_floor.size.y + 120, 0);
+	start_floor.SetColor(Checkpoint_Color);
 	AddCentralColumns(&start_floor, start_floor.size.x, 12.0f, 10.0f);
 	AddSceneObject(&start_floor, STATIC_CUBE);
 
 	//Start Sec Wall
 	Cube ramp_wall(0.3f, 8.0f, 30.0f);
 	ramp_wall.SetPos(0 - start_floor.size.x * 0.5f + ramp_wall.size.x * 0.5f, start_floor.transform.translation().y + ramp_wall.size.y * 0.5f, 0);
+	ramp_wall.SetColor(Gray);
 	AddSceneObject(&ramp_wall, STATIC_CUBE);
 
 	//Start Ramp
 	alpha = 25;
 	cube.ReSize(10.0f, .02f, 30.0f);
 	cube_2.ReSize(10.0f, .02f, 30.0f);
+	cube.SetColor(Gray);
+	cube_2.SetColor(Gray);
 	AddAdjacentBody(&start_floor,&cube, alpha, Z);
 	AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
 	
@@ -112,9 +125,11 @@ bool ModuleSceneIntro::Start()
 	// Down Half ================================================
 	cube.ReSize(35.0f, 0.2f, 60.0f);
 	cube.rotations = low_reception.rotations;
+	cube.SetColor(White);
 	AddAdjacentBody(&low_reception,&cube, 0, Y, -20 * cos(alpha * 0.1 * DEGTORAD), 0, -cube.size.z - cube_2.size.z - low_reception.size.z);
+	cube.SetColor(Gray);
 	cube_2 = cube;
-
+	
 	Cube stairs_base = cube;
 
 	for (int k = 0; k < 20; k++) {
@@ -427,10 +442,15 @@ update_status ModuleSceneIntro::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
+mat4x4 ModuleSceneIntro::GetCheckpoint(uint index) const
+{
+	return checkpoints[index];
+}
+
 void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 {
 
-	if (body1 == b || body2 == b)sphere->color = Red;
+	//if (body1 == b || body2 == b)sphere->color = Red;
 
 }
 
@@ -449,6 +469,9 @@ void ModuleSceneIntro::AddCentralColumns(Primitive * target, float x, float y, f
 	//Rotate the new columns
 	col_r.SetRotation(target->rotations.y, { 0,-1.0f,0 });
 	col_l.SetRotation(target->rotations.y, { 0,-1.0f,0 });
+	//Set Columns Color
+	col_r.SetColor(Column_Color);
+	col_l.SetColor(Column_Color);
 	//Add it to the scene
 	AddSceneObject(&col_r,STATIC_CUBE);
 	AddSceneObject(&col_l, STATIC_CUBE);

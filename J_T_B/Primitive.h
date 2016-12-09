@@ -40,6 +40,7 @@ public:
 	void			SetMultiRotation(float x, float y, float z);
 	void			AddAdjacentBody(Primitive* target, float angle, AXIS, float x = 0, float y = 0, float z = 0);
 	void			Scale(float x, float y, float z);
+	void			SetColor(const Color& color);
 	PrimitiveTypes	GetType() const;
 
 public:
