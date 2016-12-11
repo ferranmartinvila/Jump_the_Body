@@ -32,19 +32,28 @@ public:
 	PhysBody3D* cabine;
 	PhysBody3D* door_1;
 	PhysBody3D* door_2;
+	PhysBody3D* Back_Door;
 	PhysBody3D* Back;
+	PhysBody3D* Back_1;
+	PhysBody3D* Back_2;
 	PhysBody3D* roof;
 
 	Cube print_cabine;
 	Cube print_door_1;
 	Cube print_door_2;
+	Cube print_Back_Door;
 	Cube print_Back;
+	Cube print_Back_1;
+	Cube print_Back_2;
 	Cube print_roof;
 
 	btHingeConstraint* cabine_to_vehicle;
 	btHingeConstraint* door_1_constrain;
 	btHingeConstraint* door_2_constrain;
+	btHingeConstraint* Back_Door_constrain;
 	btHingeConstraint* Back_constrain;
+	btHingeConstraint* Back_1_constrain;
+	btHingeConstraint* Back_2_constrain;
 	btHingeConstraint* roof_constrain;
 
 	float turn;
