@@ -30,7 +30,9 @@ public:
 	p2DynArray<Primitive*>		map_graphs;
 
 	//Scene Checkpoints
-	p2DynArray<mat4x4> checkpoints;
+	p2DynArray<mat4x4>			checkpoints;
+	//p2DynArray<PhysBody3D*>		check_bodies;
+	//p2DynArray<Primitive*>		check_graph;
 
 public:
 

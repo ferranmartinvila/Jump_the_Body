@@ -58,7 +58,7 @@ bool ModulePhysics3D::Start()
 
 	// Big rectangle as ground
 	{
-		btCollisionShape* colShape = new btBoxShape(btVector3(100.0f, 2.0f, 100.0f));
+		btCollisionShape* colShape = new btBoxShape(btVector3(10.0f, 2.0f, 10.0f));
 
 		btDefaultMotionState* myMotionState = new btDefaultMotionState();
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(0.0f, myMotionState, colShape);

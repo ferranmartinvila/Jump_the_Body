@@ -49,6 +49,16 @@ void PhysBody3D::SetPos(float x, float y, float z)
 	}
 }
 
+vec3 PhysBody3D::GetPos() const
+{
+	if (body != NULL) {
+		mat4x4 matrix;
+		body->getWorldTransform().getOpenGLMatrix(&matrix);
+		return vec3(matrix[12], matrix[13], matrix[14]);
+	}
+	else return vec3(0, 0, 0);
+}
+
 btRigidBody* PhysBody3D::get_rigid_body() const
 {
 	return body;

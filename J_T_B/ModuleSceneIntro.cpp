@@ -3,6 +3,8 @@
 #include "ModuleSceneIntro.h"
 #include "Primitive.h"
 #include "PhysBody3D.h"
+#include "ModuleAudio.h"
+#include "PhysVehicle3D.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -16,10 +18,10 @@ bool ModuleSceneIntro::Start()
 {
 	LOG("Loading Intro assets");
 	bool ret = true;
+	//Regge Rock Hip Hop Music
+	int k = Mix_Volume(-1, 128);
+	App->audio->PlayMusic("../Game/NobodySkindred.ogg");
 
-	App->camera->Move(vec3(0.0f, 0.0f, 0.0f));
-	App->camera->LookAt(vec3(0, 1, 0));
-	
 	//Scene Checkpoints ========================================
 	checkpoints.PushBack({ -0.04f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,-0.04f,0.0f,		-0.3f,122.0f,0.4f,1.0f });
 	checkpoints.PushBack({ 0.95f,0.0f,0.32f,0.0f,		0.0f,1.0f,0.0f,0.0f,		-0.32f,0.0f,0.95f,0.0f,		575.5f,63.0f,290.5f,1.0f });
@@ -39,13 +41,13 @@ bool ModuleSceneIntro::Start()
 	start_floor.SetPos(0, start_floor.size.y + 120, 0);
 	start_floor.SetColor(Checkpoint_Color);
 	AddCentralColumns(&start_floor, start_floor.size.x, 12.0f, 10.0f);
-	AddSceneObject(&start_floor, STATIC_CUBE);
+	AddMapObject(&start_floor, STATIC_CUBE);
 
 	//Start Sec Wall
 	Cube ramp_wall(0.3f, 8.0f, 30.0f);
 	ramp_wall.SetPos(0 - start_floor.size.x * 0.5f + ramp_wall.size.x * 0.5f, start_floor.transform.translation().y + ramp_wall.size.y * 0.5f, 0);
 	ramp_wall.SetColor(Gray);
-	AddSceneObject(&ramp_wall, STATIC_CUBE);
+	AddMapObject(&ramp_wall, STATIC_CUBE);
 
 	//Start Ramp
 	alpha = 25;
@@ -74,7 +76,7 @@ bool ModuleSceneIntro::Start()
 	Cube high_reception(80.0f, 0.2f, 30.0f);
 	high_reception.SetPosFrom((Primitive*)&cube, 0 + cube.size.x * 0.5f + high_reception.size.x * 0.5f + 90.0f, 0, 0);
 	AddExternalColumns(&high_reception, 5.0f, 5.0f, 5.0f);
-	AddSceneObject(&high_reception, STATIC_CUBE);
+	AddMapObject(&high_reception, STATIC_CUBE);
 	// =========================================================
 
 
@@ -87,7 +89,7 @@ bool ModuleSceneIntro::Start()
 	alpha = 90.0f;
 
 	cube.SetPosFrom((Primitive*)&high_reception, 0 + high_reception.size.x * 0.5f + cube.size.x * 0.5f + 20.0f, 10.0f, 0);
-	AddSceneObject(&cube, STATIC_CUBE);
+	AddMapObject(&cube, STATIC_CUBE);
 
 	for (uint k = 0; k < 10; k++) {
 		AddAdjacentBody(&cube,&cube_2, alpha * 0.12f, Y);
@@ -212,7 +214,7 @@ bool ModuleSceneIntro::Start()
 	Cube left_ramp_base = cube;
 	left_ramp_base.ReSize(cube.size.x, cube.size.y, cube.size.z * 0.5f);
 	ramp_base.AddAdjacentBody(&left_ramp_base, -15, Z, 40, -25, cube.size.z * 0.7);
-	AddSceneObject(&left_ramp_base, STATIC_CUBE);
+	AddMapObject(&left_ramp_base, STATIC_CUBE);
 	// =========================================================
 
 	// Left Ramp ===============================================
@@ -433,12 +435,17 @@ update_status ModuleSceneIntro::Update(float dt)
 	//Check for the number of items (phys & graph)
 	uint map_items_num = map_bodies.Count();
 
-	//Update scene items
+	//Update map items
 	for (uint k = 0; k < map_items_num; k++) {
 		map_bodies[k]->GetTransform(&graph_bodies[k]->transform);
 		map_graphs[k]->Render();
 	}
 
+	if (App->player->cabine->GetPos().y < -10)
+	{
+		App->player->vehicle->SetTransform(&checkpoints[App->player->checkpoint_num]);
+	
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -449,9 +456,9 @@ mat4x4 ModuleSceneIntro::GetCheckpoint(uint index) const
 
 void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 {
+	
 
-	//if (body1 == b || body2 == b)sphere->color = Red;
-
+	
 }
 
 void ModuleSceneIntro::AddCentralColumns(Primitive * target, float x, float y, float z)
@@ -498,6 +505,11 @@ void ModuleSceneIntro::AddExternalColumns(Primitive * target, float x, float y, 
 	col_r_down.SetRotation(target->rotations.y, { 0,-1.0f,0 });
 	col_l_up.SetRotation(target->rotations.y, { 0,-1.0f,0 });
 	col_l_down.SetRotation(target->rotations.y, { 0,-1.0f,0 });
+	//Set the color to the columns
+	col_r_up.SetColor(Column_Color);
+	col_r_down.SetColor(Column_Color);
+	col_l_up.SetColor(Column_Color);
+	col_l_down.SetColor(Column_Color);
 	//Add it to the scene
 	AddSceneObject(&col_r_up, STATIC_CUBE);
 	AddSceneObject(&col_r_down, STATIC_CUBE);

@@ -22,9 +22,6 @@ bool ModulePlayer::Start()
 	hydraulic_suspension_fx = App->audio->LoadFx("../Game/hydraulic_suspension_fx.wav");
 
 
-
-
-
 	VehicleInfo car;
 
 	// Car properties ----------------------------------------
@@ -104,7 +101,7 @@ bool ModulePlayer::Start()
 	car.wheels[3].steering = false;
 
 	vehicle = App->physics->AddVehicle(car);
-	vehicle->SetPos(0, 130, 0);
+	vehicle->SetTransform(&App->scene_intro->checkpoints[0]);
 
 	print_cabine.ReSize(6, 2, 1);
 	print_cabine.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x(), vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() + 3.5f);
@@ -163,6 +160,12 @@ bool ModulePlayer::CleanUp()
 	return true;
 }
 
+btRigidBody * ModulePlayer::GetVehicleBody() const
+{
+	if (vehicle != NULL)return vehicle->get_rigid_body();
+	else return nullptr;
+}
+
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
@@ -214,7 +217,7 @@ update_status ModulePlayer::Update(float dt)
 		//Reset the vehicle position
 		if(App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
 		{
-			vehicle->SetTransform(&App->scene_intro->GetCheckpoint(2));
+			vehicle->SetTransform(&App->scene_intro->GetCheckpoint(checkpoint_num));
 		}
 
 

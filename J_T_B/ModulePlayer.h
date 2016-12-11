@@ -24,7 +24,7 @@ public:
 
 
 	bool god = false;
-	uint checkpoint_num;
+	uint checkpoint_num = 0;
 
 public:
 
@@ -54,6 +54,10 @@ public:
 public:
 
 	uint hydraulic_suspension_fx;
+
+public:
+
+	btRigidBody*		GetVehicleBody()const;
 
 };
 

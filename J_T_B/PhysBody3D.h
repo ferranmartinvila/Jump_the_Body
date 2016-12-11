@@ -5,7 +5,7 @@
 
 class btRigidBody;
 class Module;
-
+#include "glmath.h"
 enum OBJECT_TYPE
 {
 	DINAMIC_CUBE,
@@ -24,11 +24,12 @@ public:
 	PhysBody3D(btRigidBody* body);
 	~PhysBody3D();
 
-	void Push(float x, float y, float z);
-	void GetTransform(float* matrix) const;
-	void SetTransform(const float* matrix) const;
-	void SetPos(float x, float y, float z);
-	btRigidBody* get_rigid_body() const;
+	void			Push(float x, float y, float z);
+	void			GetTransform(float* matrix) const;
+	void			SetTransform(const float* matrix) const;
+	void			SetPos(float x, float y, float z);
+	vec3			GetPos()const;
+	btRigidBody*	get_rigid_body() const;
 
 	void SetAsSensor(bool is_sensor);
 	bool IsSensor() const;
