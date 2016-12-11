@@ -21,6 +21,7 @@ bool ModuleSceneIntro::Start()
 	//Regge Rock Hip Hop Music
 	int k = Mix_Volume(-1, 128);
 	App->audio->PlayMusic("../Game/NobodySkindred.ogg");
+	Checkpoint_fx = App->audio->LoadFx("../Game/Checkpoint_fx.wav");
 
 	//Scene Checkpoints ========================================
 	checkpoints.PushBack({ -0.04f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,-0.04f,0.0f,		-0.3f,122.0f,0.4f,1.0f });
@@ -76,7 +77,13 @@ bool ModuleSceneIntro::Start()
 	Cube high_reception(80.0f, 0.2f, 30.0f);
 	high_reception.SetPosFrom((Primitive*)&cube, 0 + cube.size.x * 0.5f + high_reception.size.x * 0.5f + 90.0f, 0, 0);
 	AddExternalColumns(&high_reception, 5.0f, 5.0f, 5.0f);
-	AddMapObject(&high_reception, STATIC_CUBE);
+	AddMapObject(&high_reception, STATIC_CUBE, 1.0f, false, true);
+	// =========================================================
+	
+	//Checkpoint 1 =============================================
+	Cube check(80.0f, 0.5f, 30.0f);
+	check.SetPosFrom((Primitive*)&high_reception, 0, 0.5, 0);
+	check_bodies.PushBack(AddMapObject(&check, SENSOR_CUBE,1.0f,true));
 	// =========================================================
 
 
@@ -102,10 +109,15 @@ bool ModuleSceneIntro::Start()
 	// Low Reception ===========================================
 	Cube low_reception(45.0f, 0.2f, 60.f);
 	low_reception.SetMultiRotation(cube.rotations.x, cube.rotations.y, cube.rotations.z);
-	AddAdjacentBody(&cube,&low_reception, 0, Y, 0, -15, -30);
+	check_graph.PushBack(AddAdjacentBody(&cube,&low_reception, 0, Y, 0, -15, -30));
 	AddExternalColumns(&low_reception, 5.0f, 5.0f, 5.0f);
 	// =========================================================
 	
+	//Checkpoint 2 =============================================
+	check = low_reception;
+	check.SetPosFrom((Primitive*)&low_reception, 0, 4.5, 0);
+	check_bodies.PushBack(AddMapObject(&check, SENSOR_CUBE, 1.0f, true));
+	// =========================================================
 	
 	// Up Half =================================================
 	alpha = -45.0f;
@@ -433,11 +445,10 @@ update_status ModuleSceneIntro::Update(float dt)
 
 
 	//Check for the number of items (phys & graph)
-	uint map_items_num = map_bodies.Count();
+	uint map_items_num = map_graphs.Count();
 
-	//Update map items
+	//Update map items (just paint)
 	for (uint k = 0; k < map_items_num; k++) {
-		map_bodies[k]->GetTransform(&graph_bodies[k]->transform);
 		map_graphs[k]->Render();
 	}
 
@@ -456,9 +467,20 @@ mat4x4 ModuleSceneIntro::GetCheckpoint(uint index) const
 
 void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 {
-	
+	if (body2 == App->player->cabine) {
+		uint num = check_bodies.Count();
 
-	
+		for(uint k = 0; k < num; k++){
+		
+			if (body1 == check_bodies[k])
+			{
+				check_graph[k]->SetColor(Checkpoint_Color);
+				App->player->checkpoint_num = k;
+				App->audio->PlayFx(Checkpoint_fx);
+				break;
+			}
+		}
+	}
 }
 
 void ModuleSceneIntro::AddCentralColumns(Primitive * target, float x, float y, float z)
@@ -480,8 +502,8 @@ void ModuleSceneIntro::AddCentralColumns(Primitive * target, float x, float y, f
 	col_r.SetColor(Column_Color);
 	col_l.SetColor(Column_Color);
 	//Add it to the scene
-	AddSceneObject(&col_r,STATIC_CUBE);
-	AddSceneObject(&col_l, STATIC_CUBE);
+	AddMapObject(&col_r,STATIC_CUBE);
+	AddMapObject(&col_l, STATIC_CUBE);
 }
 
 void ModuleSceneIntro::AddExternalColumns(Primitive * target, float x, float y, float z)
@@ -511,10 +533,10 @@ void ModuleSceneIntro::AddExternalColumns(Primitive * target, float x, float y, 
 	col_l_up.SetColor(Column_Color);
 	col_l_down.SetColor(Column_Color);
 	//Add it to the scene
-	AddSceneObject(&col_r_up, STATIC_CUBE);
-	AddSceneObject(&col_r_down, STATIC_CUBE);
-	AddSceneObject(&col_l_up, STATIC_CUBE);
-	AddSceneObject(&col_l_down, STATIC_CUBE);
+	AddMapObject(&col_r_up, STATIC_CUBE);
+	AddMapObject(&col_r_down, STATIC_CUBE);
+	AddMapObject(&col_l_up, STATIC_CUBE);
+	AddMapObject(&col_l_down, STATIC_CUBE);
 }
 
 PhysBody3D* ModuleSceneIntro::AddSceneObject(Primitive* object, OBJECT_TYPE object_type, float mass)
@@ -540,22 +562,28 @@ PhysBody3D* ModuleSceneIntro::AddSceneObject(Primitive* object, OBJECT_TYPE obje
 	return phys;
 }
 
-PhysBody3D * ModuleSceneIntro::AddMapObject(Primitive * object, OBJECT_TYPE object_type, float mass, bool is_sensor)
+PhysBody3D * ModuleSceneIntro::AddMapObject(Primitive * object, OBJECT_TYPE object_type, float mass, bool is_sensor, bool sensor_check)
 {
-	Primitive* new_object = nullptr;
+	if (is_sensor == false) {
 
-	switch (object_type)
-	{
+		Primitive* new_object = nullptr;
 
-	case OBJECT_TYPE::DINAMIC_CUBE: new_object = new Cube(*(Cube*)object); break;
-	case OBJECT_TYPE::STATIC_CUBE: new_object = new Cube(*(Cube*)object); break;
-	case OBJECT_TYPE::DINAMIC_CYLINDER: new_object = new Cylinder(*(Cylinder*)object); break;
-	case OBJECT_TYPE::DINAMIC_PLANE: new_object = new Plane(*(Plane*)object); break;
-	case OBJECT_TYPE::DINAMIC_SPHERE: new_object = new Sphere(*(Sphere*)object); break;
+		switch (object_type)
+		{
+		case DINAMIC_CUBE:		case STATIC_CUBE:		case SENSOR_CUBE:			new_object = new Cube(*(Cube*)object);					break;
+		case DINAMIC_CYLINDER:	case STATIC_CYLINDER:	case SENSOR_CYLINDER:		new_object = new Cylinder(*(Cylinder*)object);			break;
+		case DINAMIC_PLANE:		case STATIC_PLANE:		case SENSOR_PLANE:			new_object = new Plane(*(Plane*)object);				break;
+		case DINAMIC_SPHERE:	case STATIC_SPHERE:		case SENSOR_SPHERE:			new_object = new Sphere(*(Sphere*)object);				break;
+		}
+
+		map_graphs.PushBack(new_object);
+
+
+		if (sensor_check)
+			check_graph.PushBack(new_object);
 
 	}
 
-	map_graphs.PushBack(new_object);
 	PhysBody3D* phys = App->physics->AddBody(object, object_type, mass);
 
 	if (is_sensor)
@@ -567,7 +595,7 @@ PhysBody3D * ModuleSceneIntro::AddMapObject(Primitive * object, OBJECT_TYPE obje
 	return phys;
 }
 
-void ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * target, float angle, AXIS axis, float x, float y, float z)
+Primitive* ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * target, float angle, AXIS axis, float x, float y, float z)
 {
 	//Calculate the point of the parent object
 	vec3 Apoint;
@@ -694,6 +722,8 @@ void ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * target, f
 	target->SetPosFrom(origin, Apoint.x + vector.x, Apoint.y + vector.y, Apoint.z + vector.z);
 
 	AddMapObject(target, STATIC_CUBE);
+
+	return  target;
 }
 
 

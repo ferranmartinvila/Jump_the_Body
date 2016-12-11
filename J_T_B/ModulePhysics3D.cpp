@@ -225,29 +225,13 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 {
 	btCollisionShape* colShape = nullptr;
 
-	switch (object_type) {
-	
-		case OBJECT_TYPE::DINAMIC_CUBE: 
-				colShape = new btBoxShape(btVector3(((Cube*)primitive)->size.x / 2.0f, ((Cube*)primitive)->size.y / 2.0f, ((Cube*)primitive)->size.z / 2.0f));
-				break;
-
-		case OBJECT_TYPE::STATIC_CUBE:
-			colShape = new btBoxShape(btVector3(((Cube*)primitive)->size.x / 2.0f, ((Cube*)primitive)->size.y / 2.0f, ((Cube*)primitive)->size.z / 2.0f));
-			break;
-
-		case OBJECT_TYPE::DINAMIC_CYLINDER:
-			colShape = new btCylinderShape(btVector3(((Cylinder*)primitive)->radius, ((Cylinder*)primitive)->height, ((Cylinder*)primitive)->radius));
-			break;
-
-		case OBJECT_TYPE::DINAMIC_PLANE:
-			colShape = new btStaticPlaneShape(btVector3(((Plane*)primitive)->normal.x, ((Plane*)primitive)->normal.y, ((Plane*)primitive)->normal.z), ((Plane*)primitive)->constant);
-			break;
-		case OBJECT_TYPE::DINAMIC_SPHERE:
-			colShape = new btSphereShape(((Sphere*)primitive)->radius);
-			break;
-
+	switch (object_type)
+	{
+	case DINAMIC_CUBE:		case STATIC_CUBE:		case SENSOR_CUBE:		colShape = new btBoxShape(btVector3(((Cube*)primitive)->size.x / 2.0f, ((Cube*)primitive)->size.y / 2.0f, ((Cube*)primitive)->size.z / 2.0f));								break;
+	case DINAMIC_CYLINDER:	case STATIC_CYLINDER:	case SENSOR_CYLINDER:	colShape = new btCylinderShape(btVector3(((Cylinder*)primitive)->radius, ((Cylinder*)primitive)->height, ((Cylinder*)primitive)->radius));									break;
+	case DINAMIC_PLANE:		case STATIC_PLANE:		case SENSOR_PLANE:		colShape = new btStaticPlaneShape(btVector3(((Plane*)primitive)->normal.x, ((Plane*)primitive)->normal.y, ((Plane*)primitive)->normal.z), ((Plane*)primitive)->constant);	break;
+	case DINAMIC_SPHERE:	case STATIC_SPHERE:		case SENSOR_SPHERE:		colShape = new btSphereShape(((Sphere*)primitive)->radius);		break;
 	}
-
 
 	//Set body transform matrix
 	btTransform startTransform;
@@ -267,13 +251,15 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 	// ======
 	body->setRestitution(1.0f);
 	
-	if (object_type == STATIC_CUBE || object_type == STATIC_SPHERE || object_type == STAIC_CYLINDER || object_type == STATIC_PLANE) {
+	if (object_type == STATIC_CUBE || object_type == STATIC_SPHERE || object_type == STATIC_CYLINDER || object_type == STATIC_PLANE ||
+		object_type == SENSOR_CUBE || object_type == SENSOR_SPHERE || object_type == SENSOR_CYLINDER || object_type == SENSOR_PLANE) {
 		body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
 		body->setMassProps(0, btVector3(0, 0, 0));
 	}
 
 	// ======
 	PhysBody3D* pbody = new PhysBody3D(body);
+	if (object_type == SENSOR_CUBE || object_type == SENSOR_SPHERE || object_type == SENSOR_CYLINDER || object_type == SENSOR_PLANE)pbody->SetAsSensor(true);
 	bodies.add(pbody);
 	//Put body pointers in user & world data
 	body->setUserPointer(pbody);

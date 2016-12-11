@@ -137,6 +137,8 @@
     <ClCompile Include="ModulePlayer.cpp">
       <Filter>Sources\Modules\Game</Filter>
     </ClCompile>
-    <ClCompile Include="PhysVehicle3D.cpp" />
+    <ClCompile Include="PhysVehicle3D.cpp">
+      <Filter>Sources\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

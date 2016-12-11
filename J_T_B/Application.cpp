@@ -71,7 +71,6 @@ bool Application::Init()
 // ---------------------------------------------
 void Application::PrepareUpdate()
 {
-	LOG("%f", dt);
 	dt = (float)ms_timer.Read() / 1000.0f;
 	ms_timer.Start();
 }

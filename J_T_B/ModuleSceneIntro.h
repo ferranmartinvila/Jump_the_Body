@@ -31,8 +31,9 @@ public:
 
 	//Scene Checkpoints
 	p2DynArray<mat4x4>			checkpoints;
-	//p2DynArray<PhysBody3D*>		check_bodies;
-	//p2DynArray<Primitive*>		check_graph;
+	p2DynArray<PhysBody3D*>		check_bodies;
+	p2DynArray<Primitive*>		check_graph;
+	uint						Checkpoint_fx;
 
 public:
 
@@ -44,6 +45,6 @@ public:
 	void			AddExternalColumns(Primitive* target, float x, float y, float z);
 	
 	PhysBody3D*		AddSceneObject(Primitive* object, OBJECT_TYPE object_type, float mass = 1.0f);
-	PhysBody3D*		AddMapObject(Primitive* object, OBJECT_TYPE object_type, float mass = 1.0f, bool is_sensor = false);
-	void			AddAdjacentBody(Primitive* origin, Primitive* target, float angle, AXIS axis, float x = 0, float y = 0, float z = 0);
+	PhysBody3D*		AddMapObject(Primitive* object, OBJECT_TYPE object_type, float mass = 1.0f, bool is_sensor = false, bool sensor_check = false);
+	Primitive*		AddAdjacentBody(Primitive* origin, Primitive* target, float angle, AXIS axis, float x = 0, float y = 0, float z = 0);
 };
