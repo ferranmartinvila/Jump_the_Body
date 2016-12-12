@@ -33,8 +33,11 @@ bool ModuleSceneIntro::Start()
 	//Checkpoint 3 (half down)
 	checkpoints.PushBack({ -0.95f,0.0f,-0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		0.3f,0.0f,-0.95f,0.0f,		772.0f,63.0f,404.5f,1.0f });
 	//Checkpoint 4 (stairs end)
-	
-	
+	checkpoints.PushBack({ -0.95f,0.0f,-0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		0.31f,0.0f,-0.95f,0.0f,		955.3f,129.0f,-154.7f,1.0f });
+	//Checkpoint 5 (giant curve end)
+	checkpoints.PushBack({ 0.95f,0.0f,0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		-0.3f,0.0f,0.95f,0.0f,		383.5f,129.0f,-359.5f,1.0f });
+	//Checkpoint 6 (pre final ramp)
+	checkpoints.PushBack({ 0.1f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,0.1f,0.0f,		-853.2f,31.0f,-72.7f,1.0f });
 	
 	//Scene Objects ============================================
 	// Initial Ramp ============================================
@@ -88,7 +91,7 @@ bool ModuleSceneIntro::Start()
 	//Checkpoint 1 =============================================
 	Cube check(80.0f, 0.5f, 30.0f);
 	check.SetPosFrom((Primitive*)&high_reception, 0, 0.5, 0);
-	check_bodies.PushBack(AddMapObject(&check, SENSOR_CUBE,1.0f,true));
+	AddMapObject(&check, SENSOR_CUBE,1.0f,true);
 	// =========================================================
 
 
@@ -114,14 +117,16 @@ bool ModuleSceneIntro::Start()
 	// Low Reception ===========================================
 	Cube low_reception(45.0f, 0.2f, 60.f);
 	low_reception.SetMultiRotation(cube.rotations.x, cube.rotations.y, cube.rotations.z);
-	AddAdjacentBody(&cube,&low_reception, 0, Y, 0, -15, -30,true);
+	AddAdjacentBody(&cube, &low_reception, 0, Y, 0, -15, -30, false, true);
 	AddExternalColumns(&low_reception, 5.0f, 5.0f, 5.0f);
 	// =========================================================
 	
 	//Checkpoint 2 =============================================
 	check = low_reception;
-	check.SetPosFrom((Primitive*)&low_reception, 0, 4.5, 0);
-	check_bodies.PushBack(AddMapObject(&check, SENSOR_CUBE, 1.0f, true));
+	check.ReSize(80.0f, 1.0f, 40.f);
+	check.SetPosFrom((Primitive*)&low_reception, 0, 20.0f, 0);
+	check.SetRotation(90, { 1,0,0 });
+	AddMapObject(&check, SENSOR_CUBE, 1.0f, true);
 	// =========================================================
 	
 	// Up Half =================================================
@@ -141,11 +146,19 @@ bool ModuleSceneIntro::Start()
 	// =========================================================
 
 
-	// Down Half ================================================
+	// Down Half Base ==========================================
 	cube.ReSize(35.0f, 0.2f, 60.0f);
 	cube.rotations = low_reception.rotations;
 	cube.SetColor(White);
-	AddAdjacentBody(&low_reception,&cube, 0, Y, -20 * cos(alpha * 0.1 * DEGTORAD), 0, -cube.size.z - cube_2.size.z - low_reception.size.z);
+	AddAdjacentBody(&low_reception, &cube, 0, Y, -20 * cos(alpha * 0.1 * DEGTORAD), 0, -cube.size.z - cube_2.size.z - low_reception.size.z, false, true);
+	// =========================================================
+
+	//Checkpoint 3 =============================================
+	check = cube;
+	AddAdjacentBody(&cube, &check, -90, Z, 0.0f, 20.0f, 0.0f, true);
+	// =========================================================
+	
+	// Down Half ===============================================
 	cube.SetColor(Gray);
 	cube_2 = cube;
 	
@@ -189,9 +202,15 @@ bool ModuleSceneIntro::Start()
 	// Post Stairs Curve Base ==================================
 	Cube stairs_curve_start = cube;
 	stairs_curve_start.ReSize(35.0f, cube.size.y, cube.size.z);
-	stairs_curve_start.SetPosFrom(&cube, 0.0f, 7.0f, 0.0f);
-	AddAdjacentBody(&cube,&stairs_curve_start, 0, Z, -50, 15, 0);
-	AddExternalColumns(&stairs_curve_start, 5.0f, 0.0f, 5.0f);
+	stairs_curve_start.SetPosFrom(&cube, 0.0f, 5.0f, 0.0f);
+	stairs_curve_start.SetColor(White);
+	AddAdjacentBody(&cube, &stairs_curve_start, 0, Z, -50, 15, 0, false, true);
+	AddExternalColumns(&stairs_curve_start, 5.0f, 15.0f, 5.0f);
+	// =========================================================
+
+
+	//Checkpoint 4 =============================================
+	AddAdjacentBody(&stairs_curve_start, &cube, 90, Z, 0.0f, 20.0f, 0.0f, true);
 	// =========================================================
 
 
@@ -210,11 +229,14 @@ bool ModuleSceneIntro::Start()
 	// =========================================================
 
 
-	// Two Ways Ramp ===========================================
+	// Two Ways Ramp & Checkpoint 5 ============================
 	alpha = 20;
 
 	Cube two_ways_ramp = cube;
-	AddAdjacentBody(&cube,&two_ways_ramp, alpha * 0.1f, Z, 0, 0, 0);
+	two_ways_ramp.SetColor(White);
+	AddAdjacentBody(&cube,&two_ways_ramp, alpha * 0.1f, Z, 0, 0, 0,false,true);
+	cube_2 = cube;
+	AddAdjacentBody(&two_ways_ramp, &cube_2, -90, Z, 0.0f, 20.0f, 0.0f, true);
 
 	for (int k = 0; k < 9; k++) {
 
@@ -388,11 +410,17 @@ bool ModuleSceneIntro::Start()
 	//Super Ramp ==========================================
 	alpha = -15;
 	int mark = (cube_2.size.z - start_floor.size.z + 18) * 0.06666;
-	cube_2.ReSize(cube_2.size.x * 0.8f, cube.size.y, cube.size.z);
-	for (int k = 0; k < 15; k++) {
+	cube_2.SetColor(White);
+	AddAdjacentBody(&cube, &cube_2, alpha * 0.0666, Z, 0, 0,0, false, true);
+	check = cube_2;
+	AddAdjacentBody(&cube_2, &check, -90, Z, 0.0f, 20.0f, 0.0f, true);
+	cube_2.SetColor(Gray);
+	cube = cube_2;
+
+	for (int k = 0; k < 14; k++) {
 
 		cube_2.ReSize(cube.size.x, cube.size.y, cube.size.z - mark);
-		AddAdjacentBody(&cube, &cube_2, alpha * 0.0666, Z, 0, 0, +mark * 0.5f);
+		AddAdjacentBody(&cube, &cube_2, alpha * 0.0666, Z, 0, 0, + mark * 0.5f);
 		if (k % 3)AddCentralColumns(&cube, 2.0f, 2.0f, 2.0f);
 		cube = cube_2;
 
@@ -595,8 +623,10 @@ PhysBody3D * ModuleSceneIntro::AddMapObject(Primitive * object, OBJECT_TYPE obje
 
 	PhysBody3D* phys = App->physics->AddBody(object, object_type, mass);
 
-	if (is_sensor)
+	if (is_sensor) {
 		phys->SetAsSensor(is_sensor);
+		check_bodies.PushBack(phys);
+	}
 
 	phys->collision_listeners.add(this);
 	map_bodies.PushBack(phys);
@@ -604,7 +634,7 @@ PhysBody3D * ModuleSceneIntro::AddMapObject(Primitive * object, OBJECT_TYPE obje
 	return phys;
 }
 
-Primitive* ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * target, float angle, AXIS axis, float x, float y, float z, bool is_check)
+Primitive* ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * target, float angle, AXIS axis, float x, float y, float z, bool is_sensor, bool sensor_check)
 {
 	//Calculate the point of the parent object
 	vec3 Apoint;
@@ -730,7 +760,7 @@ Primitive* ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * tar
 	//Set the data calculated
 	target->SetPosFrom(origin, Apoint.x + vector.x, Apoint.y + vector.y, Apoint.z + vector.z);
 
-	AddMapObject(target, STATIC_CUBE,1.0f,false,is_check);
+	AddMapObject(target, STATIC_CUBE,1.0f,is_sensor, sensor_check);
 
 	return  target;
 }
