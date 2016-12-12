@@ -34,6 +34,7 @@ public:
 	p2DynArray<PhysBody3D*>		check_bodies;
 	p2DynArray<Primitive*>		check_graph;
 	uint						Checkpoint_fx;
+	uint						Loop_Complete_fx;
 
 public:
 

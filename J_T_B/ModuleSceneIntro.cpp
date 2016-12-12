@@ -22,6 +22,7 @@ bool ModuleSceneIntro::Start()
 	int k = Mix_Volume(-1, 128);
 	App->audio->PlayMusic("../Game/NobodySkindred.ogg");
 	Checkpoint_fx = App->audio->LoadFx("../Game/Checkpoint_fx.wav");
+	Loop_Complete_fx = App->audio->LoadFx("../Game/loop_complete_fx.wav");
 
 	//Scene Checkpoints ========================================
 	//Checkpoint 0 (init)
@@ -38,19 +39,22 @@ bool ModuleSceneIntro::Start()
 	checkpoints.PushBack({ 0.95f,0.0f,0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		-0.3f,0.0f,0.95f,0.0f,		383.5f,129.0f,-359.5f,1.0f });
 	//Checkpoint 6 (pre final ramp)
 	checkpoints.PushBack({ 0.1f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,0.1f,0.0f,		-853.2f,31.0f,-72.7f,1.0f });
-	
+	//Checkpoint 7 (loop end)
+
 	//Scene Objects ============================================
 	// Initial Ramp ============================================
 	float alpha = 0;
 	Cube cube;
 	Cube cube_2;
 
-	//Start Floor
+	//Start Floor & Checkpoint 0
 	Cube start_floor(30.0f, 0.2f, 30.0f);
 	start_floor.SetPos(0, start_floor.size.y + 120, 0);
-	start_floor.SetColor(Checkpoint_Color);
+	start_floor.SetColor(White);
 	AddCentralColumns(&start_floor, start_floor.size.x, 12.0f, 10.0f);
-	AddMapObject(&start_floor, STATIC_CUBE);
+	AddMapObject(&start_floor, STATIC_CUBE, 1.0f, false, true);
+	Cube check = { start_floor.size.x * 2,start_floor.size.y,start_floor.size.z };
+	AddAdjacentBody(&start_floor, &check, -90, Z, start_floor.size.y * 0.5f, 0, 0.0f, true);
 
 	//Start Sec Wall
 	Cube ramp_wall(0.3f, 8.0f, 30.0f);
@@ -89,8 +93,8 @@ bool ModuleSceneIntro::Start()
 	// =========================================================
 	
 	//Checkpoint 1 =============================================
-	Cube check(80.0f, 0.5f, 30.0f);
-	check.SetPosFrom((Primitive*)&high_reception, 0, 0.5, 0);
+	check = { 80.0f, 0.5f, 30.0f };
+	check.SetPosFrom((Primitive*)&high_reception, 0, 2.5, 0);
 	AddMapObject(&check, SENSOR_CUBE,1.0f,true);
 	// =========================================================
 
@@ -504,15 +508,23 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 	if (body2 == App->player->cabine) {
 		uint num = check_bodies.Count();
 
-		for(uint k = 0; k < num; k++){
+		for(int k = 0; k < num; k++){
 		
 			if (body1 == check_bodies[k])
 			{
-				if (App->player->checkpoint_num < (k + 1)) {
+				if (App->player->checkpoint_num < k && (k - App->player->checkpoint_num) == 1)
+				{
 					check_graph[k]->SetColor(Checkpoint_Color);
-					App->player->checkpoint_num = k + 1;
+					App->player->checkpoint_num = k;
 					App->audio->PlayFx(Checkpoint_fx);
-					
+				}
+				if (k == 0 && App->player->checkpoint_num == 6)
+				{
+					App->audio->PlayFx(Loop_Complete_fx);
+					App->player->checkpoint_num = 0;
+					for (int j = 1; j < num; j++) {
+						check_graph[j]->SetColor(White);
+					}
 				}
 				break;
 			}

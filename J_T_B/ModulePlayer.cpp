@@ -233,7 +233,7 @@ update_status ModulePlayer::Update(float dt)
 		//Reset the vehicle position
 		if(App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
 		{
-			vehicle->SetTransform(&App->scene_intro->GetCheckpoint(6));
+			vehicle->SetTransform(&App->scene_intro->GetCheckpoint(checkpoint_num));
 		}
 
 
