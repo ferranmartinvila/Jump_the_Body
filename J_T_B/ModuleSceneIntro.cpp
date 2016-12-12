@@ -24,10 +24,15 @@ bool ModuleSceneIntro::Start()
 	Checkpoint_fx = App->audio->LoadFx("../Game/Checkpoint_fx.wav");
 
 	//Scene Checkpoints ========================================
+	//Checkpoint 0 (init)
 	checkpoints.PushBack({ -0.04f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,-0.04f,0.0f,		-0.3f,122.0f,0.4f,1.0f });
+	//Checkpoint 1 (ramp reception)
+	checkpoints.PushBack({ 0.0f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,0.0f,0.0f,		262.0f,67.0f,0.0f,1.0f });
+	//Checkpoint 2 (half up)
 	checkpoints.PushBack({ 0.95f,0.0f,0.32f,0.0f,		0.0f,1.0f,0.0f,0.0f,		-0.32f,0.0f,0.95f,0.0f,		575.5f,63.0f,290.5f,1.0f });
+	//Checkpoint 3 (half down)
 	checkpoints.PushBack({ -0.95f,0.0f,-0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		0.3f,0.0f,-0.95f,0.0f,		772.0f,63.0f,404.5f,1.0f });
-	
+	//Checkpoint 4 (stairs end)
 	
 	
 	
@@ -109,7 +114,7 @@ bool ModuleSceneIntro::Start()
 	// Low Reception ===========================================
 	Cube low_reception(45.0f, 0.2f, 60.f);
 	low_reception.SetMultiRotation(cube.rotations.x, cube.rotations.y, cube.rotations.z);
-	check_graph.PushBack(AddAdjacentBody(&cube,&low_reception, 0, Y, 0, -15, -30));
+	AddAdjacentBody(&cube,&low_reception, 0, Y, 0, -15, -30,true);
 	AddExternalColumns(&low_reception, 5.0f, 5.0f, 5.0f);
 	// =========================================================
 	
@@ -167,7 +172,7 @@ bool ModuleSceneIntro::Start()
 
 
 	// Super Stairs ============================================
-	cube_2.ReSize(15.0f, cube_2.size.y, cube_2.size.z);
+	cube_2.ReSize(13.0f, cube_2.size.y, cube_2.size.z);
 
 	for (int k = 0; k < 4; k++) {
 
@@ -184,6 +189,7 @@ bool ModuleSceneIntro::Start()
 	// Post Stairs Curve Base ==================================
 	Cube stairs_curve_start = cube;
 	stairs_curve_start.ReSize(35.0f, cube.size.y, cube.size.z);
+	stairs_curve_start.SetPosFrom(&cube, 0.0f, 7.0f, 0.0f);
 	AddAdjacentBody(&cube,&stairs_curve_start, 0, Z, -50, 15, 0);
 	AddExternalColumns(&stairs_curve_start, 5.0f, 0.0f, 5.0f);
 	// =========================================================
@@ -474,9 +480,12 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 		
 			if (body1 == check_bodies[k])
 			{
-				check_graph[k]->SetColor(Checkpoint_Color);
-				App->player->checkpoint_num = k;
-				App->audio->PlayFx(Checkpoint_fx);
+				if (App->player->checkpoint_num < (k + 1)) {
+					check_graph[k]->SetColor(Checkpoint_Color);
+					App->player->checkpoint_num = k + 1;
+					App->audio->PlayFx(Checkpoint_fx);
+					
+				}
 				break;
 			}
 		}
@@ -595,7 +604,7 @@ PhysBody3D * ModuleSceneIntro::AddMapObject(Primitive * object, OBJECT_TYPE obje
 	return phys;
 }
 
-Primitive* ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * target, float angle, AXIS axis, float x, float y, float z)
+Primitive* ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * target, float angle, AXIS axis, float x, float y, float z, bool is_check)
 {
 	//Calculate the point of the parent object
 	vec3 Apoint;
@@ -721,7 +730,7 @@ Primitive* ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * tar
 	//Set the data calculated
 	target->SetPosFrom(origin, Apoint.x + vector.x, Apoint.y + vector.y, Apoint.z + vector.z);
 
-	AddMapObject(target, STATIC_CUBE);
+	AddMapObject(target, STATIC_CUBE,1.0f,false,is_check);
 
 	return  target;
 }
