@@ -491,9 +491,14 @@ update_status ModuleSceneIntro::Update(float dt)
 	}
 
 	
-	if (App->player->chasis_loc[13] < -10)
+	//Reset car to the last checkpoint when fall of the map
+	if (App->player->chasis_loc[13] < 0)
 	{
-		App->player->vehicle->SetTransform(&checkpoints[App->player->checkpoint_num]);
+		if(App->player->checkpoint_num > 0)App->player->vehicle->SetTransform(&checkpoints[App->player->checkpoint_num]);
+		else App->player->vehicle->SetTransform(&checkpoints[0]);
+
+		App->player->vehicle->get_rigid_body()->setLinearVelocity({ 0,0,0 });
+		App->player->vehicle->get_rigid_body()->setAngularVelocity({ 0,0,0 });
 	
 	}
 	return UPDATE_CONTINUE;
@@ -506,13 +511,13 @@ mat4x4 ModuleSceneIntro::GetCheckpoint(uint index) const
 
 void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 {
-	if (body2 == (PhysBody3D*)App->player->vehicle)
+	if (body1 == (PhysBody3D*)App->player->vehicle)
 	{
 		uint num = check_bodies.Count();
 
 		for(int k = 0; k < num; k++){
 		
-			if (body1 == check_bodies[k])
+			if (body2 == check_bodies[k])
 			{
 				if (App->player->checkpoint_num < k && (k - App->player->checkpoint_num) == 1)
 				{
