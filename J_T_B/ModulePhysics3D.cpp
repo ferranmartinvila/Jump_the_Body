@@ -221,7 +221,7 @@ bool ModulePhysics3D::CleanUp()
 }
 
 // ---------------------------------------------------------
-PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE object_type, float mass)
+PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE object_type, float mass, BODY_MASK I_am)
 {
 	btCollisionShape* colShape = nullptr;
 
@@ -258,12 +258,31 @@ PhysBody3D * ModulePhysics3D::AddBody(const Primitive* primitive, OBJECT_TYPE ob
 	}
 
 	// ======
+/*
+	int collide_with = 0;
+	switch (I_am)
+	{
+	case CAR:
+		collide_with = MAP | SENSOR;
+		break;
+
+	case MAP:
+		collide_with = CAR;
+		break;
+
+	case SENSOR:
+		collide_with = CAR;
+		break;
+	}
+	*/
+
 	PhysBody3D* pbody = new PhysBody3D(body);
 	if (object_type == SENSOR_CUBE || object_type == SENSOR_SPHERE || object_type == SENSOR_CYLINDER || object_type == SENSOR_PLANE)pbody->SetAsSensor(true);
 	bodies.add(pbody);
 	//Put body pointers in user & world data
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);
+
 
 	return pbody;
 }

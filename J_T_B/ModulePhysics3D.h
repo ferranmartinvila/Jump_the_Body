@@ -14,6 +14,14 @@ struct PhysBody3D;
 struct PhysVehicle3D;
 struct VehicleInfo;
 
+enum BODY_MASK
+{
+	NOTHING = 1,
+	CAR = 2,
+	MAP = 4,
+	SENSOR = 8
+};
+
 class ModulePhysics3D : public Module
 {
 public:
@@ -28,7 +36,7 @@ public:
 	bool CleanUp();
 
 	//Methods to add bodies to the world
-	PhysBody3D* AddBody(const Primitive* primitive, enum OBJECT_TYPE object_type, float mass = 1.0f);
+	PhysBody3D* AddBody(const Primitive* primitive, enum OBJECT_TYPE object_type, float mass = 1.0f, BODY_MASK I_am = NOTHING);
 	PhysVehicle3D* AddVehicle(const VehicleInfo& info);
 
 	//Methods for constrains

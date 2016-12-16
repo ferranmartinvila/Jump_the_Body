@@ -19,7 +19,7 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 	//Regge Rock Hip Hop Music
-	int k = Mix_Volume(-1, 128);
+	//int k = Mix_Volume(-1, 128);
 	App->audio->PlayMusic("../Game/NobodySkindred.ogg");
 	Checkpoint_fx = App->audio->LoadFx("../Game/Checkpoint_fx.wav");
 	Loop_Complete_fx = App->audio->LoadFx("../Game/loop_complete_fx.wav");
@@ -490,7 +490,8 @@ update_status ModuleSceneIntro::Update(float dt)
 		map_graphs[k]->Render();
 	}
 
-	if (App->player->cabine->GetPos().y < -10)
+	
+	if (App->player->chasis_loc[13] < -10)
 	{
 		App->player->vehicle->SetTransform(&checkpoints[App->player->checkpoint_num]);
 	
@@ -505,7 +506,8 @@ mat4x4 ModuleSceneIntro::GetCheckpoint(uint index) const
 
 void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 {
-	if (body2 == App->player->cabine) {
+	if (body2 == (PhysBody3D*)App->player->vehicle)
+	{
 		uint num = check_bodies.Count();
 
 		for(int k = 0; k < num; k++){

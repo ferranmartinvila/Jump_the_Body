@@ -22,6 +22,7 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
+	mat4x4 chasis_loc;
 
 	bool god = false;
 	int checkpoint_num = -1;
@@ -33,7 +34,6 @@ public:
 	PhysBody3D* door_1;
 	PhysBody3D* door_2;
 	PhysBody3D* Back_Door;
-	PhysBody3D* Back;
 	PhysBody3D* Back_1;
 	PhysBody3D* Back_2;
 	PhysBody3D* roof;
@@ -42,7 +42,6 @@ public:
 	Cube print_door_1;
 	Cube print_door_2;
 	Cube print_Back_Door;
-	Cube print_Back;
 	Cube print_Back_1;
 	Cube print_Back_2;
 	Cube print_roof;
@@ -51,10 +50,10 @@ public:
 	btHingeConstraint* door_1_constrain;
 	btHingeConstraint* door_2_constrain;
 	btHingeConstraint* Back_Door_constrain;
-	btHingeConstraint* Back_constrain;
 	btHingeConstraint* Back_1_constrain;
 	btHingeConstraint* Back_2_constrain;
 	btHingeConstraint* roof_constrain;
+	btHingeConstraint* roof_constrain_2;
 
 	float turn;
 	float acceleration;
