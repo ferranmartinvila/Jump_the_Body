@@ -19,11 +19,19 @@ ModulePlayer::~ModulePlayer()
 bool ModulePlayer::Start()
 {
 	LOG("Loading player");
-	hydraulic_suspension_fx = App->audio->LoadFx("../Game/hydraulic_suspension_fx.wav");
-	car_reset_fx = App->audio->LoadFx("../Game/reset.wav");
+	hydraulic_suspension_fx = App->audio->LoadFx("../Game/Audio/hydraulic_suspension_fx.wav");
+	car_reset_fx = App->audio->LoadFx("../Game/Audio/reset.wav");
+
+	engine_low_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_low_rpm.wav");
+	engine_mid_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_mid_rpm.wav");
+	engine_high_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_high_rpm.wav");
+	engine_max_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_max_rpm.wav");
 
 	VehicleInfo car;
-
+	//Car engine Build
+	engine_loop = 330;
+	Mix_Volume(2, engine_low_vol);
+	
 	// Car properties ----------------------------------------
 	car.chassis_size.Set(6, 1, 8);
 	car.chassis_offset.Set(0, 1.5f, 0);
@@ -32,7 +40,7 @@ bool ModulePlayer::Start()
 	car.suspensionCompression = 1.6f;
 	car.suspensionDamping = 6.88f;
 	car.maxSuspensionTravelCm = 10000.0f;
-	car.frictionSlip = 12.5;
+	car.frictionSlip = 50.5;
 	car.maxSuspensionForce = 6000.0f;
 
 	// Wheel properties ---------------------------------------
@@ -185,6 +193,7 @@ void ModulePlayer::ResetPlayer()
 	vehicle->SetTransform(&App->scene_intro->GetCheckpoint(0));
 	checkpoint_num = -1;
 	InLap = false;
+	engine_current_vol = engine_low_vol;
 	chronometer.Start();
 	chronometer.Stop();
 	vehicle->get_rigid_body()->setLinearVelocity({ 0,0,0 });
@@ -198,6 +207,23 @@ update_status ModulePlayer::Update(float dt)
 	turn = acceleration = brake = 0.0f;
 	bool contact = vehicle->vehicle->m_wheelInfo[0].m_raycastInfo.m_isInContact;
 
+	//Car engine ---------
+	if (engine_timer.Read() > engine_loop)
+	{
+		Mix_Volume(2, engine_current_vol);
+		if(engine_rpm < 105)App->audio->PlayFx(engine_low_rpm_fx,2);
+		else if (engine_rpm < 200)App->audio->PlayFx(engine_mid_rpm_fx,2);
+		else if(engine_rpm < 320)App->audio->PlayFx(engine_high_rpm_fx, 2);
+		else App->audio->PlayFx(engine_max_rpm_fx, 2);
+		engine_timer.Start();
+	}
+	if (contact)engine_rpm = vehicle->GetKmh();
+	// -------------------
+
+
+
+	
+
 	//Test Zone
 	btVector3 chasis_ang_vel = vehicle->get_rigid_body()->getAngularVelocity();
 	btVector3 test(0, 0, 0.04f);
@@ -208,8 +234,16 @@ update_status ModulePlayer::Update(float dt)
 	//Car Mechanics --------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
-		if(contact)acceleration = MAX_ACCELERATION;
-		else vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX() + t.getX(),chasis_ang_vel.getY() + t.getY(),chasis_ang_vel.getZ() + t.getZ() });
+		if (contact)
+		{
+			acceleration = MAX_ACCELERATION;
+			if(engine_current_vol < engine_high_vol)engine_current_vol+=0.3f;
+		}
+		else
+		{
+			vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX() + t.getX(),chasis_ang_vel.getY() + t.getY(),chasis_ang_vel.getZ() + t.getZ() });
+			if (engine_current_vol < engine_high_vol)engine_current_vol += 1.0f;
+		}
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
@@ -218,16 +252,20 @@ update_status ModulePlayer::Update(float dt)
 		{
 			if (vehicle->GetKmh() < 0.4f)acceleration = -MAX_ACCELERATION;
 			else brake = BRAKE_POWER;
+			if(engine_current_vol > engine_low_vol)engine_current_vol-=0.7f;
 		}
-		else vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX() - t.getX(),chasis_ang_vel.getY() - t.getY(),chasis_ang_vel.getZ() - t.getZ() });
+		else
+		{
+			vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX() - t.getX(),chasis_ang_vel.getY() - t.getY(),chasis_ang_vel.getZ() - t.getZ() });
+			if (engine_current_vol > engine_low_vol)engine_current_vol -= 1.5f;
+		}
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 	{
 		if (contact)
 		{
-			if (turn < TURN_DEGREES)
-				turn += TURN_DEGREES;
+			if (turn < TURN_DEGREES)	turn += TURN_DEGREES;
 		}
 		else vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() + 0.04f,chasis_ang_vel.getZ()});
 	}
@@ -236,8 +274,7 @@ update_status ModulePlayer::Update(float dt)
 	{
 		if (contact)
 		{
-			if (turn > -TURN_DEGREES)
-				turn -= TURN_DEGREES;
+			if (turn > -TURN_DEGREES)	turn -= TURN_DEGREES;
 		}
 		else vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() - 0.04f,chasis_ang_vel.getZ()});
 	}

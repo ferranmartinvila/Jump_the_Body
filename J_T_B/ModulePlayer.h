@@ -67,6 +67,18 @@ public:
 	uint hydraulic_suspension_fx;
 	uint car_reset_fx;
 
+	uint engine_low_rpm_fx;
+	uint engine_mid_rpm_fx;
+	uint engine_high_rpm_fx;
+	uint engine_max_rpm_fx;
+
+	Timer	engine_timer;
+	uint	engine_loop;
+	float	engine_rpm = 0;
+	uint	engine_low_vol = 20;
+	uint	engine_high_vol = 35;
+	float	engine_current_vol = engine_low_vol;
+
 public:
 
 	btRigidBody*		GetVehicleBody()const;

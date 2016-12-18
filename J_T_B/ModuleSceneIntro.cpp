@@ -20,10 +20,10 @@ bool ModuleSceneIntro::Start()
 	bool ret = true;
 	//Regge Rock Hip Hop Music
 	//int k = Mix_Volume(-1, 128);
-	App->audio->PlayMusic("../Game/NobodySkindred.ogg");
-	Checkpoint_fx = App->audio->LoadFx("../Game/Checkpoint_fx.wav");
-	Loop_Complete_fx = App->audio->LoadFx("../Game/loop_complete_fx.wav");
-	car_fall_fx = App->audio->LoadFx("../Game/fall_fx.wav");
+	App->audio->PlayMusic("../Game/Audio/NobodySkindred.ogg");
+	Checkpoint_fx = App->audio->LoadFx("../Game/Audio/Checkpoint_fx.wav");
+	Loop_Complete_fx = App->audio->LoadFx("../Game/Audio/loop_complete_fx.wav");
+	car_fall_fx = App->audio->LoadFx("../Game/Audio/fall_fx.wav");
 
 	//Scene Checkpoints ========================================
 	//Checkpoint 0 (init)
@@ -519,6 +519,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		App->player->vehicle->get_rigid_body()->setLinearVelocity({ 0,0,0 });
 		App->player->vehicle->get_rigid_body()->setAngularVelocity({ 0,0,0 });
 		App->audio->PlayFx(car_fall_fx);
+		App->player->engine_current_vol = App->player->engine_low_vol;
 	
 	}
 	return UPDATE_CONTINUE;
