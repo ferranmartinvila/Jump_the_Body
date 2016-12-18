@@ -26,6 +26,8 @@ bool ModulePlayer::Start()
 	engine_mid_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_mid_rpm.wav");
 	engine_high_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_high_rpm.wav");
 	engine_max_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_max_rpm.wav");
+	turbo_fx = App->audio->LoadFx("../Game/Audio/turbo_fx.wav");
+
 
 	VehicleInfo car;
 	//Car engine Build
@@ -234,7 +236,8 @@ update_status ModulePlayer::Update(float dt)
 		vehicle->lights[0].color = Red;
 		vehicle->lights[1].color = Red;
 	}
-	else
+
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
 	{
 		vehicle->lights[0].color = White;
 		vehicle->lights[1].color = White;
@@ -257,6 +260,14 @@ update_status ModulePlayer::Update(float dt)
 		}
 		else vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() - 0.04f,chasis_ang_vel.getZ()});
 	}
+
+
+	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_UP && engine_rpm > 275 && contact && turbo_timer.Read() > turbo_rate)
+	{
+		App->audio->PlayFx(turbo_fx, 1);
+		turbo_timer.Start();
+	}
+
 
 	// Car Jump ------------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)

@@ -79,6 +79,11 @@ public:
 	uint	engine_high_vol = 35;
 	float	engine_current_vol = engine_low_vol;
 
+	Timer	turbo_timer;
+	uint	turbo_rate = 1000;
+	uint	turbo_fx;
+
+
 public:
 
 	btRigidBody*		GetVehicleBody()const;
