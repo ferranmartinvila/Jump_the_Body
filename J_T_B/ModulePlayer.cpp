@@ -197,13 +197,6 @@ update_status ModulePlayer::Update(float dt)
 
 	
 
-	//Test Zone
-	btVector3 chasis_ang_vel = vehicle->get_rigid_body()->getAngularVelocity();
-	btVector3 test(0, 0, 0.04f);
-	btQuaternion orientation = vehicle->get_rigid_body()->getWorldTransform().getRotation();
-	btVector3 rot(orientation.getX(), orientation.getY(), orientation.getZ());
-	btVector3 t = rot * test;
-
 	//Car Mechanics --------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
@@ -212,22 +205,15 @@ update_status ModulePlayer::Update(float dt)
 			acceleration = MAX_ACCELERATION;
 			if(engine_current_vol < engine_high_vol)engine_current_vol+=0.3f;
 		}
-		{
-			vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX() + t.getX(),chasis_ang_vel.getY() + t.getY(),chasis_ang_vel.getZ() + t.getZ() });
-		}
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
 		if (contact)
 		{
-			if (vehicle->GetKmh() < 0.4f)acceleration = -MAX_ACCELERATION;
+			if (vehicle->GetKmh() < 2.5f)acceleration = -MAX_ACCELERATION;
 			else brake = BRAKE_POWER;
 			if(engine_current_vol > engine_low_vol)engine_current_vol-=0.7f;
-		}
-		else
-		{
-			vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX() - t.getX(),chasis_ang_vel.getY() - t.getY(),chasis_ang_vel.getZ() - t.getZ() });
 		}
 
 		if (vehicle->vehicle_lights[0].color.r < 1.5f && break_timer.Read() > break_rate)
@@ -244,13 +230,18 @@ update_status ModulePlayer::Update(float dt)
 		vehicle->vehicle_lights[1].color = Gray;
 	}
 
+	btVector3 chasis_ang_vel = vehicle->get_rigid_body()->getAngularVelocity();
+
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 	{
 		if (contact)
 		{
 			if (turn < TURN_DEGREES)	turn += TURN_DEGREES;
 		}
-		else vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() + 0.04f,chasis_ang_vel.getZ()});
+		else
+		{
+			vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() + 0.04f,chasis_ang_vel.getZ() });
+		}
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
@@ -259,7 +250,10 @@ update_status ModulePlayer::Update(float dt)
 		{
 			if (turn > -TURN_DEGREES)	turn -= TURN_DEGREES;
 		}
-		else vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() - 0.04f,chasis_ang_vel.getZ()});
+		else
+		{
+			vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() - 0.04f,chasis_ang_vel.getZ() });
+		}
 	}
 
 
@@ -269,8 +263,7 @@ update_status ModulePlayer::Update(float dt)
 		turbo_timer.Start();
 	}
 
-	//Open doors
-
+	//Open doors -----------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
 	{
 		door_1->get_rigid_body()->applyCentralForce(btVector3(10000, 0, 0));
@@ -278,7 +271,7 @@ update_status ModulePlayer::Update(float dt)
 		Back_Door->get_rigid_body()->applyCentralForce(btVector3(0, 0, 30000));
 	}
 
-	//Lights ON
+	//Lights ON ------------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN)
 	{
 		if (lights_on)
@@ -310,7 +303,6 @@ update_status ModulePlayer::Update(float dt)
 			if (vehicle->vehicle_lights[4].color.g < 0.5f)up_light_on = true;
 		}
 		lights_timer.Start();
-		LOG("R %f", vehicle->vehicle_lights[4].color.r);
 	}
 
 	// Car Jump ------------------------------------------------

@@ -54,6 +54,31 @@ public:
 	void Turn(float degrees);
 	float GetKmh() const;
 
+private:
+
+	//Vehicle parts location
+	btVector3 offset;
+	btVector3 cabine_position;
+	btVector3 print_Back_1_position;
+	btVector3 print_Back_2_position;
+	btVector3 roof_position;
+	btVector3 back_light_1_position;
+	btVector3 back_light_2_position;
+	btVector3 front_light_1_position;
+	btVector3 front_light_2_position;
+	btVector3 Up_light_1_position;
+	btVector3 Up_light_2_position;
+
+	//Vehicle parts
+	Cube chassis;
+	Cube Cabine;
+	Cube print_Back_1;
+	Cube print_Back_2;
+	Cube roof;
+	Cylinder wheel;
+
+	void RePlaceVehicle();
+
 public:
 
 	VehicleInfo info;

@@ -137,7 +137,7 @@ bool ModuleSceneIntro::Start()
 	// =========================================================
 	
 	// Up Half =================================================
-	alpha = -45.0f;
+	alpha = -35.0f;
 
 	cube.ReSize(15.0f, 0.2f, 60.0f);
 	AddAdjacentBody(&low_reception,&cube, 0, Y, 0, 0, 0);

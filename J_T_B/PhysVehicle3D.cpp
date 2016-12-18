@@ -15,6 +15,18 @@ VehicleInfo::~VehicleInfo()
 // ----------------------------------------------------------------------------
 PhysVehicle3D::PhysVehicle3D(btRigidBody* body, btRaycastVehicle* vehicle, const VehicleInfo& info) : PhysBody3D(body), vehicle(vehicle), info(info)
 {
+
+	chassis = Cube(info.chassis_size.x, 1, info.chassis_size.z);
+	chassis.SetColor(Orange);
+	Cabine = Cube(6, 2, 1);
+	Cabine.SetColor(Orange);
+	print_Back_1 = Cube(1, 4, 3);
+	print_Back_1.SetColor(Orange);
+	print_Back_2 = Cube(1, 4, 3);
+	print_Back_2.SetColor(Orange);
+	roof = Cube(6, 0.25f, 8);
+	roof.SetColor(Orange);
+
 	Cube back_light_1(1, 1, 0.5f);
 	back_light_1.SetColor(Gray);
 	Cube back_light_2(1, 1, 0.5f);
@@ -33,7 +45,10 @@ PhysVehicle3D::PhysVehicle3D(btRigidBody* body, btRaycastVehicle* vehicle, const
 	vehicle_lights.PushBack(front_light_2);
 	vehicle_lights.PushBack(Up_light_1);
 	vehicle_lights.PushBack(Up_light_2);
+	
 
+
+	RePlaceVehicle();
 }
 
 // ----------------------------------------------------------------------------
@@ -45,9 +60,8 @@ PhysVehicle3D::~PhysVehicle3D()
 // ----------------------------------------------------------------------------
 void PhysVehicle3D::Render()
 {
-	Cylinder wheel;
-	wheel.color = Blue;
-
+	//Wheels render -------------------
+	wheel.color = Pink;
 	for (int i = 0; i < vehicle->getNumWheels(); ++i)
 	{
 		wheel.radius = info.wheels[0].radius;
@@ -59,12 +73,7 @@ void PhysVehicle3D::Render()
 		wheel.Render();
 	}
 
-	Cube chassis(info.chassis_size.x, 1, info.chassis_size.z);
-	Cube Cabine(6, 2, 1);
-	Cube print_Back_1(1, 4, 3);
-	Cube print_Back_2(1, 4, 3);
-	Cube roof(6, 0.25f, 8);
-
+	//Parts transform update ----------
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&chassis.transform);
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&Cabine.transform);
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&print_Back_1.transform);
@@ -78,18 +87,6 @@ void PhysVehicle3D::Render()
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[5].transform);
 
 	btQuaternion q = vehicle->getChassisWorldTransform().getRotation();
-
-	btVector3 offset(info.chassis_offset.x, 1.5, info.chassis_offset.z);
-	btVector3 cabine_position(0, 2.5f, 3.5f);
-	btVector3 print_Back_1_position(2.5f, 4, -2.5f);
-	btVector3 print_Back_2_position(-2.5f, 4, -2.5f);
-	btVector3 roof_position(0, 6.0f, 0);
-	btVector3 back_light_1_position(2.5, 2, -4);
-	btVector3 back_light_2_position(-2.5, 2, -4);
-	btVector3 front_light_1_position(2.5, 2.5, 4);
-	btVector3 front_light_2_position(-2.5, 2.5, 4);
-	btVector3 Up_light_1_position(-1, 6.5f, 2);
-	btVector3 Up_light_2_position( 1, 6.5f, 2);
 
 	offset = offset.rotate(q.getAxis(), q.getAngle());
 	cabine_position = cabine_position.rotate(q.getAxis(), q.getAngle());
@@ -156,7 +153,7 @@ void PhysVehicle3D::Render()
 	for (int i = 0; i < vehicle_lights.Count(); i++)
 		vehicle_lights[i].Render();
 	
-
+	RePlaceVehicle();
 }
 
 // ----------------------------------------------------------------------------
@@ -199,4 +196,19 @@ void PhysVehicle3D::Turn(float degrees)
 float PhysVehicle3D::GetKmh() const
 {
 	return vehicle->getCurrentSpeedKmHour();
+}
+
+void PhysVehicle3D::RePlaceVehicle()
+{
+	offset = btVector3(info.chassis_offset.x, 1.5, info.chassis_offset.z);
+	cabine_position = btVector3(0, 2.5f, 3.5f);
+	print_Back_1_position = btVector3(2.5f, 4, -2.5f);
+	print_Back_2_position = btVector3(-2.5f, 4, -2.5f);
+	roof_position = btVector3(0, 6.0f, 0);
+	back_light_1_position = btVector3(2.5, 2, -4);
+	back_light_2_position = btVector3(-2.5, 2, -4);
+	front_light_1_position = btVector3(2.5, 2.5, 4);
+	front_light_2_position = btVector3(-2.5, 2.5, 4);
+	Up_light_1_position = btVector3(-1, 6.5f, 2);
+	Up_light_2_position = btVector3(1, 6.5f, 2);
 }
