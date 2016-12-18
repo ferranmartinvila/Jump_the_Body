@@ -185,35 +185,55 @@ update_status ModulePlayer::Update(float dt)
 {
 	vehicle->get_rigid_body()->getWorldTransform().getOpenGLMatrix(&chasis_loc);
 	turn = acceleration = brake = 0.0f;
+	bool contact = vehicle->vehicle->m_wheelInfo[0].m_raycastInfo.m_isInContact;
+
+	//Test Zone
+	btVector3 chasis_ang_vel = vehicle->get_rigid_body()->getAngularVelocity();
+	btVector3 test(0, 0, 0.04f);
+	btQuaternion orientation = vehicle->get_rigid_body()->getWorldTransform().getRotation();
+	btVector3 rot(orientation.getX(), orientation.getY(), orientation.getZ());
+	btVector3 t = rot * test;
 
 	//Car Mechanics --------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
-		acceleration = MAX_ACCELERATION;
+		if(contact)acceleration = MAX_ACCELERATION;
+		else vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX() + t.getX(),chasis_ang_vel.getY() + t.getY(),chasis_ang_vel.getZ() + t.getZ() });
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
-		if(vehicle->GetKmh() < 0.4f)acceleration = -MAX_ACCELERATION;
-		else brake = BRAKE_POWER;
+		if (contact)
+		{
+			if (vehicle->GetKmh() < 0.4f)acceleration = -MAX_ACCELERATION;
+			else brake = BRAKE_POWER;
+		}
+		else vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX() - t.getX(),chasis_ang_vel.getY() - t.getY(),chasis_ang_vel.getZ() - t.getZ() });
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 	{
-		if (turn < TURN_DEGREES)
-			turn += TURN_DEGREES;
+		if (contact)
+		{
+			if (turn < TURN_DEGREES)
+				turn += TURN_DEGREES;
+		}
+		else vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() + 0.04f,chasis_ang_vel.getZ()});
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 	{
-		if (turn > -TURN_DEGREES)
-			turn -= TURN_DEGREES;
+		if (contact)
+		{
+			if (turn > -TURN_DEGREES)
+				turn -= TURN_DEGREES;
+		}
+		else vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() - 0.04f,chasis_ang_vel.getZ()});
 	}
 
 	// Car Jump ------------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
-		bool contact = vehicle->vehicle->m_wheelInfo[0].m_raycastInfo.m_isInContact;
 		if (contact) {
 			mat4x4 trans;
 			this->vehicle->GetTransform(&trans);

@@ -93,8 +93,10 @@ bool ModuleSceneIntro::Start()
 	// =========================================================
 	
 	//Checkpoint 1 =============================================
-	check = { 80.0f, 0.5f, 30.0f };
-	check.SetPosFrom((Primitive*)&high_reception, 0, 2.5, 0);
+	check = { 50.0f, 0.5f, 30.0f };
+	check.SetRotation(90, { 0,0,1 });
+	check.SetPosFrom((Primitive*)&high_reception, 0, 25.0f, 0);
+	
 	AddMapObject(&check, SENSOR_CUBE,1.0f,true);
 	// =========================================================
 
@@ -141,8 +143,11 @@ bool ModuleSceneIntro::Start()
 	cube_2 = cube;
 	
 	for (int k = 0; k < 20; k++) {
-		if (k < 15)cube_2.ReSize(cube_2.size.x, cube_2.size.y, cube_2.size.z + k*0.5f);
-		if (k < 15)AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z,0.0f,0.0f,-k);
+		if (k < 15)
+		{
+			cube_2.ReSize(cube_2.size.x, cube_2.size.y, cube_2.size.z + k*0.5f);
+			AddAdjacentBody(&cube, &cube_2, alpha * 0.1, Z, 0.0f, 0.0f, -k);
+		}
 		else AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z, 0.0f, 0.0f, 0.0f);
 		if(k % 2 == 0 && k < 15)AddCentralColumns(&cube_2, 5.0f, 4.0f, 5.0f);
 		cube = cube_2;
@@ -217,17 +222,31 @@ bool ModuleSceneIntro::Start()
 	AddAdjacentBody(&stairs_curve_start, &cube, 90, Z, 0.0f, 20.0f, 0.0f, true);
 	// =========================================================
 
+	Cube fix(5, 5, 5);
+	fix.SetColor(Black);
+	PhysBody3D* base;
+	Cube stick(1.5f, 95.0f, 3.5f);
+	stick.SetColor(Column_Color);
+	PhysBody3D* helix;
 
 	// Post Stairs Curve =======================================
 	alpha = -180.0f;
-	cube.ReSize(20.0f, cube.size.y, cube.size.z);
+	cube.ReSize(20.0f, 0.02f , 30.0f);
 	cube_2 = cube;
 
 	AddAdjacentBody(&stairs_curve_start,&cube, 0, Y, 0, 0, 0);
 
 	for (int k = 0; k < 50; k++) {
 		AddAdjacentBody(&cube,&cube_2, alpha * 0.02f, Y);
-		if(k % 4 == 0)AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
+		if (k % 4 == 0) AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
+		if (k % 15 == 0)
+		{
+			fix.rotations = cube.rotations;
+			if(cube.rotations.y > 180)base = AddAdjacentBody(&cube, &fix, 0, Y, cube.size.x * 0.5f, 50, -cube.size.z * 0.5f);
+			else base = AddAdjacentBody(&cube, &fix, 180, Y, cube.size.x * 0.5f, 50, -cube.size.z * 0.5f);
+			helix = AddSceneObject((Primitive*)&stick, OBJECT_TYPE::DINAMIC_CUBE);
+			App->physics->Add_EnginedHinge_Constraint(*base->get_rigid_body(), *helix->get_rigid_body(), btVector3(0, 0, 0), btVector3(0, 0, 0), btVector3(1, 0, 0), btVector3(1, 0, 0));
+		}
 		cube = cube_2;
 	}
 	// =========================================================
@@ -489,7 +508,6 @@ update_status ModuleSceneIntro::Update(float dt)
 	for (uint k = 0; k < map_items_num; k++) {
 		map_graphs[k]->Render();
 	}
-
 	
 	//Reset car to the last checkpoint when fall of the map
 	if (App->player->chasis_loc[13] < 0)
@@ -653,7 +671,7 @@ PhysBody3D * ModuleSceneIntro::AddMapObject(Primitive * object, OBJECT_TYPE obje
 	return phys;
 }
 
-Primitive* ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * target, float angle, AXIS axis, float x, float y, float z, bool is_sensor, bool sensor_check)
+PhysBody3D* ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * target, float angle, AXIS axis, float x, float y, float z, bool is_sensor, bool sensor_check)
 {
 	//Calculate the point of the parent object
 	vec3 Apoint;
@@ -779,9 +797,9 @@ Primitive* ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * tar
 	//Set the data calculated
 	target->SetPosFrom(origin, Apoint.x + vector.x, Apoint.y + vector.y, Apoint.z + vector.z);
 
-	AddMapObject(target, STATIC_CUBE,1.0f,is_sensor, sensor_check);
+	PhysBody3D* taget_body = AddMapObject(target, STATIC_CUBE,1.0f,is_sensor, sensor_check);
 
-	return  target;
+	return  taget_body;
 }
 
 

@@ -355,10 +355,23 @@ btPoint2PointConstraint* ModulePhysics3D::Add_P2P_Constraint(btRigidBody& rbA, b
 	return constrain;
 }
 
-btHingeConstraint* ModulePhysics3D::Add_Hinge_Constraint(btRigidBody& rbA, btRigidBody& rbB, const btVector3& pivotInA, const btVector3& pivotInB, btVector3& axisInA, btVector3& axisInB)
+btHingeConstraint* ModulePhysics3D::Add_Hinge_Constraint(btRigidBody & rbA, btRigidBody & rbB, const btVector3& pivotInA, const btVector3& pivotInB, btVector3& axisInA, btVector3& axisInB)
 {
 	btHingeConstraint* constrain = new btHingeConstraint(rbA, rbB, pivotInA, pivotInB, axisInA, axisInB);
 	world->addConstraint(constrain);
+	constrains.add(constrain);
+	return constrain;
+}
+
+btHingeConstraint * ModulePhysics3D::Add_EnginedHinge_Constraint(btRigidBody & rbA, btRigidBody & rbB, const btVector3 & pivotInA, const btVector3 & pivotInB, btVector3 & axisInA, btVector3 & axisInB)
+{
+	btHingeConstraint* constrain = new btHingeConstraint(rbA, rbB, pivotInA, pivotInB, axisInA, axisInB);
+	constrain->enableAngularMotor(true, 2,10);
+	constrain->setMaxMotorImpulse(1000);
+	constrain->setaccMotorImpulse(1000);
+	//constrain-
+	constrain->setDbgDrawSize(2.0f);
+	world->addConstraint(constrain, true);
 	constrains.add(constrain);
 	return constrain;
 }

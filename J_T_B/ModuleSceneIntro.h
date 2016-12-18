@@ -47,5 +47,5 @@ public:
 	
 	PhysBody3D*		AddSceneObject(Primitive* object, OBJECT_TYPE object_type, float mass = 1.0f);
 	PhysBody3D*		AddMapObject(Primitive* object, OBJECT_TYPE object_type, float mass = 1.0f, bool is_sensor = false, bool sensor_check = false);
-	Primitive*		AddAdjacentBody(Primitive* origin, Primitive* target, float angle, AXIS axis, float x = 0, float y = 0, float z = 0, bool is_sensor = false, bool sensor_check = false);
+	PhysBody3D*		AddAdjacentBody(Primitive* origin, Primitive* target, float angle, AXIS axis, float x = 0, float y = 0, float z = 0, bool is_sensor = false, bool sensor_check = false);
 };
