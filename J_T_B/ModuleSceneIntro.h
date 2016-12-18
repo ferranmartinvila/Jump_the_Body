@@ -35,11 +35,12 @@ public:
 	p2DynArray<Primitive*>		check_graph;
 	uint						Checkpoint_fx;
 	uint						Loop_Complete_fx;
+	uint						car_fall_fx;
 
 public:
 
 	mat4x4			GetCheckpoint(uint index)const;
-
+	void			ResetCheckpoints();
 
 	void			OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 	void			AddCentralColumns(Primitive* target, float x, float y, float z);

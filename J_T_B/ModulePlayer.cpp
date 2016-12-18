@@ -9,6 +9,7 @@
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled), vehicle(NULL)
 {
 	turn = acceleration = brake = 0.0f;
+	chronometer.Stop();
 }
 
 ModulePlayer::~ModulePlayer()
@@ -18,9 +19,8 @@ ModulePlayer::~ModulePlayer()
 bool ModulePlayer::Start()
 {
 	LOG("Loading player");
-
 	hydraulic_suspension_fx = App->audio->LoadFx("../Game/hydraulic_suspension_fx.wav");
-
+	car_reset_fx = App->audio->LoadFx("../Game/reset.wav");
 
 	VehicleInfo car;
 
@@ -180,6 +180,17 @@ btRigidBody * ModulePlayer::GetVehicleBody() const
 	else return nullptr;
 }
 
+void ModulePlayer::ResetPlayer()
+{
+	vehicle->SetTransform(&App->scene_intro->GetCheckpoint(0));
+	checkpoint_num = -1;
+	InLap = false;
+	chronometer.Start();
+	chronometer.Stop();
+	vehicle->get_rigid_body()->setLinearVelocity({ 0,0,0 });
+	vehicle->get_rigid_body()->setAngularVelocity({ 0,0,0 });
+}
+
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
@@ -250,13 +261,12 @@ update_status ModulePlayer::Update(float dt)
 	if (god) {
 
 		//Reset the vehicle position
-		if(App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
 		{
-			vehicle->SetTransform(&App->scene_intro->GetCheckpoint(0));
-			vehicle->get_rigid_body()->setLinearVelocity({ 0,0,0 });
-			vehicle->get_rigid_body()->setAngularVelocity({ 0,0,0 });
+			App->audio->PlayFx(car_reset_fx);
+			ResetPlayer();
+			App->scene_intro->ResetCheckpoints();
 		}
-
 
 	}
 	vehicle->ApplyEngineForce(acceleration);
@@ -266,7 +276,7 @@ update_status ModulePlayer::Update(float dt)
 	vehicle->Render();
 
 	char title[80];
-	sprintf_s(title, "%.1f Km/h", vehicle->GetKmh());
+	sprintf_s(title, "Current Lap: %i || Record Lap: %i || %.1f Km/h", chronometer.Read(), record, vehicle->GetKmh());
 	App->window->SetTitle(title);
 
 

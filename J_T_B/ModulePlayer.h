@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "p2Point.h"
 #include "ModulePhysics3D.h"
+#include "Timer.h"
 
 struct PhysVehicle3D;
 
@@ -59,14 +60,17 @@ public:
 	float acceleration;
 	float brake;
 
-public:
+	Timer	chronometer;
+	uint	record = 1000000;
+	bool	InLap = false;
 
 	uint hydraulic_suspension_fx;
+	uint car_reset_fx;
 
 public:
 
 	btRigidBody*		GetVehicleBody()const;
-
+	void				ResetPlayer();
 };
 
 #endif;

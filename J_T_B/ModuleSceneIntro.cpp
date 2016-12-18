@@ -23,6 +23,7 @@ bool ModuleSceneIntro::Start()
 	App->audio->PlayMusic("../Game/NobodySkindred.ogg");
 	Checkpoint_fx = App->audio->LoadFx("../Game/Checkpoint_fx.wav");
 	Loop_Complete_fx = App->audio->LoadFx("../Game/loop_complete_fx.wav");
+	car_fall_fx = App->audio->LoadFx("../Game/fall_fx.wav");
 
 	//Scene Checkpoints ========================================
 	//Checkpoint 0 (init)
@@ -517,6 +518,7 @@ update_status ModuleSceneIntro::Update(float dt)
 
 		App->player->vehicle->get_rigid_body()->setLinearVelocity({ 0,0,0 });
 		App->player->vehicle->get_rigid_body()->setAngularVelocity({ 0,0,0 });
+		App->audio->PlayFx(car_fall_fx);
 	
 	}
 	return UPDATE_CONTINUE;
@@ -525,6 +527,14 @@ update_status ModuleSceneIntro::Update(float dt)
 mat4x4 ModuleSceneIntro::GetCheckpoint(uint index) const
 {
 	return checkpoints[index];
+}
+
+void ModuleSceneIntro::ResetCheckpoints()
+{
+	uint num = check_graph.Count();
+	for (int j = 0; j < num; j++) {
+		check_graph[j]->SetColor(White);
+	}
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
@@ -537,6 +547,10 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 		
 			if (body2 == check_bodies[k])
 			{
+				if (k == 0 && App->player->checkpoint_num == 0 && App->player->InLap == false) {
+					App->player->chronometer.Start();
+					App->player->InLap = true;
+				}
 				if (App->player->checkpoint_num < k && (k - App->player->checkpoint_num) == 1)
 				{
 					check_graph[k]->SetColor(Checkpoint_Color);
@@ -546,10 +560,10 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 				if (k == 0 && App->player->checkpoint_num == 6)
 				{
 					App->audio->PlayFx(Loop_Complete_fx);
-					App->player->checkpoint_num = 0;
-					for (int j = 1; j < num; j++) {
-						check_graph[j]->SetColor(White);
-					}
+					App->player->chronometer.Stop();
+					if (App->player->chronometer.Read() < App->player->record)App->player->record = App->player->chronometer.Read();
+					App->player->ResetPlayer();
+					ResetCheckpoints();
 				}
 				break;
 			}
