@@ -33,8 +33,8 @@ bool ModulePlayer::Start()
 	Mix_Volume(2, engine_low_vol);
 	
 	// Car properties ----------------------------------------
-	car.chassis_size.Set(6, 1, 8);
-	car.chassis_offset.Set(0, 1.5f, 0);
+	car.chassis_size.Set(6, 5, 8);
+	car.chassis_offset.Set(0, 3.5f, 0);
 	car.mass = 1000.0f;
 	car.suspensionStiffness = 5.88f;
 	car.suspensionCompression = 1.6f;
@@ -111,65 +111,36 @@ bool ModulePlayer::Start()
 	vehicle = App->physics->AddVehicle(car);
 	vehicle->SetTransform(&App->scene_intro->checkpoints[0]);
 
-	print_cabine.ReSize(6, 2, 1);
-	print_cabine.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x(), vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() + 3.5f);
-
 	print_door_1.ReSize(1, 2, 3);
 	print_door_1.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() + 1.0f);
 
 	print_door_2.ReSize(1, 2, 3);
 	print_door_2.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x() - 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() + 1.0f);
 
-	print_Back_Door.ReSize(3.5, 3, 1);
-	print_Back_Door.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x(), vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() - 3.5f);
-
-	print_Back_1.ReSize(1, 4, 3);
-	print_Back_1.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 1.0f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() - 2.5f);
-
-	print_Back_2.ReSize(1, 4, 3);
-	print_Back_2.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x() - 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 1.0f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() - 2.5f);
-
-	print_roof.ReSize(6, 0.25, 8);
-	print_roof.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x(), vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 4.6f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z());
+	print_Back_Door.ReSize(4, 4, 1);
+	print_Back_Door.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x(), vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 4.0f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() - 3.5f);
 
 
 	//Setting up the car elements
-	/*
-	cabine = App->physics->AddBody(&print_cabine, OBJECT_TYPE::DINAMIC_CUBE);
+
 	door_1 = App->physics->AddBody(&print_door_1, OBJECT_TYPE::DINAMIC_CUBE);
 	door_2 = App->physics->AddBody(&print_door_2, OBJECT_TYPE::DINAMIC_CUBE);
-	Back_1 = App->physics->AddBody(&print_Back_1, OBJECT_TYPE::DINAMIC_CUBE);
-	Back_2 = App->physics->AddBody(&print_Back_2, OBJECT_TYPE::DINAMIC_CUBE);
 	Back_Door = App->physics->AddBody(&print_Back_Door, OBJECT_TYPE::DINAMIC_CUBE);
-	roof = App->physics->AddBody(&print_roof, OBJECT_TYPE::DINAMIC_CUBE);
-	*/
-	//Setting hinges
-	/*
-	cabine_to_vehicle = App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *cabine->get_rigid_body(), { 0,3.0f,3.5f }, { 0,0,0 }, btVector3(0, 1, 0), btVector3(0, 1, 0));
-	cabine_to_vehicle->setLimit(0, ((2 * 3.1416) / 360));
 
+	door_1->get_rigid_body()->setIgnoreCollisionCheck(vehicle->get_rigid_body(), true);
+	door_2->get_rigid_body()->setIgnoreCollisionCheck(vehicle->get_rigid_body(), true);
+	Back_Door->get_rigid_body()->setIgnoreCollisionCheck(vehicle->get_rigid_body(), true);
+	//Setting hinges
+	
 	door_1_constrain = App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *door_1->get_rigid_body(), { 2.5f, 3.0f, 2.5f }, { 0,0,-1.5f }, btVector3(0, 1, 0), btVector3(0, 1, 0));
-	door_1_constrain->setLimit(-3.1416, 0);
+	door_1_constrain->setLimit((3.1416f), (3 * (3.1416f / 2)));
 
 	door_2_constrain = App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *door_2->get_rigid_body(), { -2.5f, 3.0f, 2.5f }, { 0,0,-1.5f }, btVector3(0, 1, 0), btVector3(0, 1, 0));
-	door_2_constrain->setLimit(0, 3.1416);
+	door_2_constrain->setLimit((3.1416f / 2), 3.1416f);
 
-	Back_1_constrain = App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *Back_1->get_rigid_body(), { 2.5, 4.0f, -2.5f }, { 0,0,0 }, btVector3(0, 1, 0), btVector3(0, 1, 0));
-	Back_1_constrain->setLimit(0, ((2 * 3.1416) / 360));
+	Back_Door_constrain = App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *Back_Door->get_rigid_body(), { 0, 6.0f, -3.5f }, { 0,2,0 }, btVector3(1, 0, 0), btVector3(1, 0, 0));
+	Back_Door_constrain->setLimit((3 * (3.1416f / 2)), (3.1416f * 2));
 
-	Back_2_constrain = App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *Back_2->get_rigid_body(), { -2.5, 4.0f, -2.5f }, { 0,0,0 }, btVector3(0, 1, 0), btVector3(0, 1, 0));
-	Back_2_constrain->setLimit(0, ((2 * 3.1416) / 360));
-
-	
-	Back_Door_constrain = App->physics->Add_Hinge_Constraint(*Back_1->get_rigid_body(), *Back_Door->get_rigid_body(), { -2.5f, 2.0f, -1 }, { 0, 1.5f ,0 }, btVector3(1, 0, 0), btVector3(1, 0, 0));
-	Back_Door_constrain->setLimit((3.1416f), (2* 3.1416));
-
-	roof_constrain = App->physics->Add_Hinge_Constraint(*Back_1->get_rigid_body(), *roof->get_rigid_body(), { 0, 2.125f, 0 }, { 2.5f, 0, -2.5f }, btVector3(0, 1, 0), btVector3(0, 1, 0));
-	roof_constrain->setLimit(0, ((3.1416) / 360));
-
-	roof_constrain_2 = App->physics->Add_Hinge_Constraint(*Back_2->get_rigid_body(), *roof->get_rigid_body(), { 0, 2.125f, 0 }, { -2.5f, 0, -2.5f }, btVector3(0, 1, 0), btVector3(0, 1, 0));
-	roof_constrain_2->setLimit(0, ((3.1416) / 360));
-	*/
 
 	return true;
 }
@@ -317,15 +288,13 @@ update_status ModulePlayer::Update(float dt)
 	App->window->SetTitle(title);
 
 
-	vehicle->GetTransform(print_cabine.transform.M);
+	door_1->GetTransform(print_door_1.transform.M);
+	door_2->GetTransform(print_door_2.transform.M);
+	Back_Door->GetTransform(print_Back_Door.transform.M);
 
-	print_cabine.Render();
 	print_door_1.Render();
 	print_door_2.Render();
-	print_Back_1.Render();
-	print_Back_2.Render();
 	print_Back_Door.Render();
-	print_roof.Render();
 
 	return UPDATE_CONTINUE;
 }
