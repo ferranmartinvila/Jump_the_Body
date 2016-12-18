@@ -277,6 +277,43 @@ update_status ModulePlayer::Update(float dt)
 		Back_Door->get_rigid_body()->applyCentralForce(btVector3(0, 0, 30000));
 	}
 
+	//lights ON, party hard
+
+	int current_time = SDL_GetTicks();
+	if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN)
+	{
+		if (shit_just_got_real)
+		{
+			shit_just_got_real = false;
+			vehicle->vehicle_lights[4].color = White;
+			vehicle->vehicle_lights[5].color = White;
+		}
+		else
+		{
+			shit_just_got_real = true;
+			last_time = current_time;
+		}
+	}
+
+	if (shit_just_got_real)
+	{
+		if (current_time >= light_delay + last_time)
+		{
+			if (vehicle->vehicle_lights[4].color.b == 1)
+			{
+				vehicle->vehicle_lights[4].color = Orange;
+				vehicle->vehicle_lights[5].color = White;
+			}
+			else
+			{
+				vehicle->vehicle_lights[4].color = White;
+				vehicle->vehicle_lights[5].color = Orange;
+			}
+
+			last_time = current_time;
+		}
+	}
+
 	// Car Jump ------------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
