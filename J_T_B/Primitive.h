@@ -50,7 +50,10 @@ public:
 	vec3 rotations;
 	bool axis,wire;
 
+	void	FadeColor(float r, float g, float b);
+
 protected:
+
 	PrimitiveTypes type;
 };
 

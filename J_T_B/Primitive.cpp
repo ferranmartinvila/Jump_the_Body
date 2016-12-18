@@ -24,6 +24,13 @@ PrimitiveTypes Primitive::GetType() const
 	return type;
 }
 
+void Primitive::FadeColor(float r, float g, float b)
+{
+	color.r += r;
+	color.g += g;
+	color.b += b;
+}
+
 // ------------------------------------------------------------
 void Primitive::Render() const
 {

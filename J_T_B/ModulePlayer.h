@@ -83,10 +83,13 @@ public:
 	uint	turbo_rate = 1000;
 	uint	turbo_fx;
 
-	bool shit_just_got_real = false;
-	int light_delay = 500;
-	int last_time;
-	
+	Timer	lights_timer;
+	bool	lights_on = false;
+	bool	up_light_on = false;
+	bool	back_light_on = false;
+	uint	lights_rate = 20;
+	Timer	break_timer;
+	uint	break_rate = 65;
 
 public:
 

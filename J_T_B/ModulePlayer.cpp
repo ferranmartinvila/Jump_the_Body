@@ -212,10 +212,8 @@ update_status ModulePlayer::Update(float dt)
 			acceleration = MAX_ACCELERATION;
 			if(engine_current_vol < engine_high_vol)engine_current_vol+=0.3f;
 		}
-		else
 		{
 			vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX() + t.getX(),chasis_ang_vel.getY() + t.getY(),chasis_ang_vel.getZ() + t.getZ() });
-			if (engine_current_vol < engine_high_vol)engine_current_vol += 1.0f;
 		}
 	}
 
@@ -230,17 +228,20 @@ update_status ModulePlayer::Update(float dt)
 		else
 		{
 			vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX() - t.getX(),chasis_ang_vel.getY() - t.getY(),chasis_ang_vel.getZ() - t.getZ() });
-			if (engine_current_vol > engine_low_vol)engine_current_vol -= 1.5f;
 		}
 
-		vehicle->vehicle_lights[0].color = Red;
-		vehicle->vehicle_lights[1].color = Red;
+		if (vehicle->vehicle_lights[0].color.r < 1.5f && break_timer.Read() > break_rate)
+		{
+			vehicle->vehicle_lights[0].FadeColor(0.35f, 0, 0);
+			vehicle->vehicle_lights[1].FadeColor(0.35f, 0, 0);
+			break_timer.Start();
+		}
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
 	{
-		vehicle->vehicle_lights[0].color = White;
-		vehicle->vehicle_lights[1].color = White;
+		vehicle->vehicle_lights[0].color = Gray;
+		vehicle->vehicle_lights[1].color = Gray;
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
@@ -268,7 +269,7 @@ update_status ModulePlayer::Update(float dt)
 		turbo_timer.Start();
 	}
 
-	//open doors lol 
+	//Open doors
 
 	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
 	{
@@ -277,41 +278,39 @@ update_status ModulePlayer::Update(float dt)
 		Back_Door->get_rigid_body()->applyCentralForce(btVector3(0, 0, 30000));
 	}
 
-	//lights ON, party hard
-
-	int current_time = SDL_GetTicks();
+	//Lights ON
 	if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN)
 	{
-		if (shit_just_got_real)
+		if (lights_on)
 		{
-			shit_just_got_real = false;
+			lights_on = false;
+			up_light_on = false;
 			vehicle->vehicle_lights[4].color = White;
 			vehicle->vehicle_lights[5].color = White;
 		}
 		else
 		{
-			shit_just_got_real = true;
-			last_time = current_time;
+			lights_on = true;
+			up_light_on = true;
 		}
 	}
 
-	if (shit_just_got_real)
+	if (lights_on && lights_timer.Read() > lights_rate)
 	{
-		if (current_time >= light_delay + last_time)
+		if (up_light_on)
 		{
-			if (vehicle->vehicle_lights[4].color.b == 1)
-			{
-				vehicle->vehicle_lights[4].color = Orange;
-				vehicle->vehicle_lights[5].color = White;
-			}
-			else
-			{
-				vehicle->vehicle_lights[4].color = White;
-				vehicle->vehicle_lights[5].color = Orange;
-			}
-
-			last_time = current_time;
+			vehicle->vehicle_lights[4].FadeColor(0, 0.05f, 0.2);
+			vehicle->vehicle_lights[5].FadeColor(0, -0.05f, -0.2);
+			if (vehicle->vehicle_lights[4].color.g > 1.5f)up_light_on = false;
 		}
+		else if(up_light_on == false)
+		{
+			vehicle->vehicle_lights[4].FadeColor(0, -0.05f, -0.2);
+			vehicle->vehicle_lights[5].FadeColor(0, 0.05f, 0.2);
+			if (vehicle->vehicle_lights[4].color.g < 0.5f)up_light_on = true;
+		}
+		lights_timer.Start();
+		LOG("R %f", vehicle->vehicle_lights[4].color.r);
 	}
 
 	// Car Jump ------------------------------------------------

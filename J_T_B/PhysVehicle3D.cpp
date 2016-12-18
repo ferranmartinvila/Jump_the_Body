@@ -16,9 +16,13 @@ VehicleInfo::~VehicleInfo()
 PhysVehicle3D::PhysVehicle3D(btRigidBody* body, btRaycastVehicle* vehicle, const VehicleInfo& info) : PhysBody3D(body), vehicle(vehicle), info(info)
 {
 	Cube back_light_1(1, 1, 0.5f);
+	back_light_1.SetColor(Gray);
 	Cube back_light_2(1, 1, 0.5f);
+	back_light_2.SetColor(Gray);
 	Cube front_light_1(1, 1, 1);
+	front_light_1.SetColor(Yellow);
 	Cube front_light_2(1, 1, 1);
+	front_light_2.SetColor(Yellow);
 	Cube Up_light_1(2, 1, 1);
 	Cube Up_light_2(2, 1, 1);
 
