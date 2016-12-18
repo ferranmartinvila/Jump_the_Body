@@ -58,7 +58,7 @@ public:
 
 	VehicleInfo info;
 	btRaycastVehicle* vehicle;
-	p2DynArray<Cube> lights;
+	p2DynArray<Cube> vehicle_lights;
 
 };
 

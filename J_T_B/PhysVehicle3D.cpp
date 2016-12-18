@@ -20,10 +20,10 @@ PhysVehicle3D::PhysVehicle3D(btRigidBody* body, btRaycastVehicle* vehicle, const
 	Cube front_light_1(1, 1, 1);
 	Cube front_light_2(1, 1, 1);
 
-	lights.PushBack(back_light_1);
-	lights.PushBack(back_light_2);
-	lights.PushBack(front_light_1);
-	lights.PushBack(front_light_2);
+	vehicle_lights.PushBack(back_light_1);
+	vehicle_lights.PushBack(back_light_2);
+	vehicle_lights.PushBack(front_light_1);
+	vehicle_lights.PushBack(front_light_2);
 
 }
 
@@ -61,10 +61,10 @@ void PhysVehicle3D::Render()
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&print_Back_1.transform);
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&print_Back_2.transform);
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&roof.transform);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&lights[0].transform);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&lights[1].transform);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&lights[2].transform);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&lights[3].transform);
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[0].transform);
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[1].transform);
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[2].transform);
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[3].transform);
 
 	btQuaternion q = vehicle->getChassisWorldTransform().getRotation();
 
@@ -109,21 +109,21 @@ void PhysVehicle3D::Render()
 	roof.transform[13] += roof_position.getY();
 	roof.transform[14] += roof_position.getZ();
 
-	lights[0].transform[12] += back_light_1_position.getX();
-	lights[0].transform[13] += back_light_1_position.getY();
-	lights[0].transform[14] += back_light_1_position.getZ();
+	vehicle_lights[0].transform[12] += back_light_1_position.getX();
+	vehicle_lights[0].transform[13] += back_light_1_position.getY();
+	vehicle_lights[0].transform[14] += back_light_1_position.getZ();
 
-	lights[1].transform[12] += back_light_2_position.getX();
-	lights[1].transform[13] += back_light_2_position.getY();
-	lights[1].transform[14] += back_light_2_position.getZ();
+	vehicle_lights[1].transform[12] += back_light_2_position.getX();
+	vehicle_lights[1].transform[13] += back_light_2_position.getY();
+	vehicle_lights[1].transform[14] += back_light_2_position.getZ();
 
-	lights[2].transform[12] += front_light_1_position.getX();
-	lights[2].transform[13] += front_light_1_position.getY();
-	lights[2].transform[14] += front_light_1_position.getZ();
+	vehicle_lights[2].transform[12] += front_light_1_position.getX();
+	vehicle_lights[2].transform[13] += front_light_1_position.getY();
+	vehicle_lights[2].transform[14] += front_light_1_position.getZ();
 
-	lights[3].transform[12] += front_light_2_position.getX();
-	lights[3].transform[13] += front_light_2_position.getY();
-	lights[3].transform[14] += front_light_2_position.getZ();
+	vehicle_lights[3].transform[12] += front_light_2_position.getX();
+	vehicle_lights[3].transform[13] += front_light_2_position.getY();
+	vehicle_lights[3].transform[14] += front_light_2_position.getZ();
 
 	Cabine.Render();
 	print_Back_2.Render();
@@ -131,9 +131,9 @@ void PhysVehicle3D::Render()
 	roof.Render();
 	chassis.Render();
 
-	for (int i = 0; i < lights.Count(); i++)
+	for (int i = 0; i < vehicle_lights.Count(); i++)
 	{
-		lights[i].Render();
+		vehicle_lights[i].Render();
 	}
 
 }

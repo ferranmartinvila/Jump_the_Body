@@ -233,14 +233,14 @@ update_status ModulePlayer::Update(float dt)
 			if (engine_current_vol > engine_low_vol)engine_current_vol -= 1.5f;
 		}
 
-		vehicle->lights[0].color = Red;
-		vehicle->lights[1].color = Red;
+		vehicle->vehicle_lights[0].color = Red;
+		vehicle->vehicle_lights[1].color = Red;
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
 	{
-		vehicle->lights[0].color = White;
-		vehicle->lights[1].color = White;
+		vehicle->vehicle_lights[0].color = White;
+		vehicle->vehicle_lights[1].color = White;
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)

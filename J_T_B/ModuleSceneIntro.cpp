@@ -175,9 +175,9 @@ bool ModuleSceneIntro::Start()
 	Cube stairs_base = cube;
 
 	for (int k = 0; k < 20; k++) {
-		cube_2.ReSize(15.0f, 0.2f, 60.0f + k * 3.0f);
+		cube_2.ReSize(15.0f, 0.2f, 60.0f + k * 4.5f);
 		AddAdjacentBody(&cube,&cube_2, alpha * 0.1, Z, 0.0f, 0.0f,0);
-		if (k % 2 == 0 && k < 15)AddCentralColumns(&cube_2, 5.0f, 4.0f, 5.0f);
+		if (k % 2 == 0 && k < 13)AddCentralColumns(&cube_2, 5.0f, 4.0f, 5.0f);
 		cube = cube_2;
 	}
 	// =========================================================
