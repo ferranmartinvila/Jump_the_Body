@@ -2,6 +2,8 @@
 #define _PHYS_VEHICLE_
 
 #include "PhysBody3D.h"
+#include "p2DynArray.h"
+#include "ModulePhysics3D.h"
 #include "glmath.h"
 
 class btRaycastVehicle;
@@ -51,10 +53,13 @@ public:
 	void Brake(float force);
 	void Turn(float degrees);
 	float GetKmh() const;
+
 public:
 
 	VehicleInfo info;
 	btRaycastVehicle* vehicle;
+	p2DynArray<Cube> lights;
+
 };
 
 #endif

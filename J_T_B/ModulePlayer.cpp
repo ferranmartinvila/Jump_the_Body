@@ -230,6 +230,14 @@ update_status ModulePlayer::Update(float dt)
 			vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX() - t.getX(),chasis_ang_vel.getY() - t.getY(),chasis_ang_vel.getZ() - t.getZ() });
 			if (engine_current_vol > engine_low_vol)engine_current_vol -= 1.5f;
 		}
+
+		vehicle->lights[0].color = Red;
+		vehicle->lights[1].color = Red;
+	}
+	else
+	{
+		vehicle->lights[0].color = White;
+		vehicle->lights[1].color = White;
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
@@ -286,6 +294,9 @@ update_status ModulePlayer::Update(float dt)
 	char title[80];
 	sprintf_s(title, "Current Lap: %i || Record Lap: %i || %.1f Km/h", chronometer.Read(), record, vehicle->GetKmh());
 	App->window->SetTitle(title);
+
+
+	
 
 
 	door_1->GetTransform(print_door_1.transform.M);
