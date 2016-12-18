@@ -38,10 +38,10 @@ bool ModulePlayer::Start()
 	car.chassis_size.Set(6, 5, 8);
 	car.chassis_offset.Set(0, 3.5f, 0);
 	car.mass = 1000.0f;
-	car.suspensionStiffness = 5.88f;
-	car.suspensionCompression = 1.6f;
-	car.suspensionDamping = 6.88f;
-	car.maxSuspensionTravelCm = 10000.0f;
+	car.suspensionStiffness = 10.0f;
+	car.suspensionCompression = 0.0f;
+	car.suspensionDamping = 8.88f;
+	car.maxSuspensionTravelCm = 200.0f;
 	car.frictionSlip = 50.5;
 	car.maxSuspensionForce = 6000.0f;
 
@@ -49,7 +49,7 @@ bool ModulePlayer::Start()
 	float connection_height = 1.2f;
 	float wheel_radius = 0.6f;
 	float wheel_width = 0.5f;
-	float suspensionRestLength = 1.2f;
+	float suspensionRestLength = 2.2f;
 
 	// Don't change anything below this line ------------------
 
@@ -268,6 +268,14 @@ update_status ModulePlayer::Update(float dt)
 		turbo_timer.Start();
 	}
 
+	//open doors lol 
+
+	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
+	{
+		door_1->get_rigid_body()->applyCentralForce(btVector3(10000, 0, 0));
+		door_2->get_rigid_body()->applyCentralForce(btVector3(10000, 0, 0));
+		Back_Door->get_rigid_body()->applyCentralForce(btVector3(0, 0, 30000));
+	}
 
 	// Car Jump ------------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
