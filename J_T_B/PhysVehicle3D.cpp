@@ -212,3 +212,11 @@ void PhysVehicle3D::RePlaceVehicle()
 	Up_light_1_position = btVector3(-1, 6.5f, 2);
 	Up_light_2_position = btVector3(1, 6.5f, 2);
 }
+
+void PhysVehicle3D::LocateVehicle(float x, float y, float z)
+{
+
+	this->SetPos(x, y, z);
+	this->print_Back_1.SetPos(x + print_Back_1_position.getX(), y + print_Back_1_position.getY(), z + print_Back_1_position.getZ());
+
+}

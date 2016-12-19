@@ -31,7 +31,6 @@ bool ModulePlayer::Start()
 
 	VehicleInfo car;
 	//Car engine Build
-	engine_loop = 330;
 	Mix_Volume(2, engine_low_vol);
 	
 	// Car properties ----------------------------------------
@@ -111,7 +110,6 @@ bool ModulePlayer::Start()
 	car.wheels[3].steering = false;
 
 	vehicle = App->physics->AddVehicle(car);
-	vehicle->SetTransform(&App->scene_intro->checkpoints[0]);
 
 	print_door_1.ReSize(1, 2, 3);
 	print_door_1.SetPos(vehicle->get_rigid_body()->getWorldTransform().getOrigin().x() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().y() + 2.5f, vehicle->get_rigid_body()->getWorldTransform().getOrigin().z() + 1.0f);
@@ -124,16 +122,23 @@ bool ModulePlayer::Start()
 
 
 	//Setting up the car elements
-
 	door_1 = App->physics->AddBody(&print_door_1, OBJECT_TYPE::DINAMIC_CUBE);
 	door_2 = App->physics->AddBody(&print_door_2, OBJECT_TYPE::DINAMIC_CUBE);
 	Back_Door = App->physics->AddBody(&print_Back_Door, OBJECT_TYPE::DINAMIC_CUBE);
 
 	door_1->get_rigid_body()->setIgnoreCollisionCheck(vehicle->get_rigid_body(), true);
+	door_1->get_rigid_body()->setIgnoreCollisionCheck(door_2->get_rigid_body(), true);
+	door_1->get_rigid_body()->setIgnoreCollisionCheck(Back_Door->get_rigid_body(), true);
+
 	door_2->get_rigid_body()->setIgnoreCollisionCheck(vehicle->get_rigid_body(), true);
+	door_2->get_rigid_body()->setIgnoreCollisionCheck(door_2->get_rigid_body(), true);
+	door_2->get_rigid_body()->setIgnoreCollisionCheck(Back_Door->get_rigid_body(), true);
+
 	Back_Door->get_rigid_body()->setIgnoreCollisionCheck(vehicle->get_rigid_body(), true);
+	Back_Door->get_rigid_body()->setIgnoreCollisionCheck(door_2->get_rigid_body(), true);
+	Back_Door->get_rigid_body()->setIgnoreCollisionCheck(Back_Door->get_rigid_body(), true);
+
 	//Setting hinges
-	
 	door_1_constrain = App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *door_1->get_rigid_body(), { 2.5f, 3.0f, 2.5f }, { 0,0,-1.5f }, btVector3(0, 1, 0), btVector3(0, 1, 0));
 	door_1_constrain->setLimit((3.1416f), (3 * (3.1416f / 2)));
 
@@ -143,6 +148,8 @@ bool ModulePlayer::Start()
 	Back_Door_constrain = App->physics->Add_Hinge_Constraint(*vehicle->get_rigid_body(), *Back_Door->get_rigid_body(), { 0, 6.0f, -3.5f }, { 0,2,0 }, btVector3(1, 0, 0), btVector3(1, 0, 0));
 	Back_Door_constrain->setLimit((3 * (3.1416f / 2)), (3.1416f * 2));
 
+	//Player Init Location
+	RespawnPlayer();
 
 	return true;
 }
@@ -163,14 +170,37 @@ btRigidBody * ModulePlayer::GetVehicleBody() const
 
 void ModulePlayer::ResetPlayer()
 {
-	vehicle->SetTransform(&App->scene_intro->GetCheckpoint(0));
 	checkpoint_num = -1;
 	InLap = false;
 	engine_current_vol = engine_low_vol;
 	chronometer.Start();
 	chronometer.Stop();
+}
+
+void ModulePlayer::RespawnPlayer()
+{
+	uint spawn;
+	if (checkpoint_num >= 0)spawn = checkpoint_num;
+	else spawn = 0;
+	mat4x4 transform;
+	vehicle->SetTransform(&App->scene_intro->checkpoints[spawn]);
+	vehicle->get_rigid_body()->getWorldTransform().getOpenGLMatrix(&transform);
+
+	//Base
 	vehicle->get_rigid_body()->setLinearVelocity({ 0,0,0 });
 	vehicle->get_rigid_body()->setAngularVelocity({ 0,0,0 });
+	//Left
+	door_1->SetTransform(&transform);
+	door_1->get_rigid_body()->setAngularVelocity({ 0,0,0 });
+	door_1->get_rigid_body()->setLinearVelocity({ 0,0,0 });
+	//Right
+	door_2->SetTransform(&transform);
+	door_2->get_rigid_body()->setAngularVelocity({ 0,0,0 });
+	door_2->get_rigid_body()->setLinearVelocity({ 0,0,0 });
+	//Back
+	Back_Door->SetTransform(&transform);
+	Back_Door->get_rigid_body()->setAngularVelocity({ 0,0,0 });
+	Back_Door->get_rigid_body()->setLinearVelocity({ 0,0,0 });
 }
 
 // Update: draw background
@@ -318,38 +348,35 @@ update_status ModulePlayer::Update(float dt)
 		}
 	}
 
-	//Good Mode ------------------------------------------------
-	if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)god = !god;
-
-	if (god) {
-
-		//Reset the vehicle position
-		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
-		{
-			App->audio->PlayFx(car_reset_fx);
-			ResetPlayer();
-			App->scene_intro->ResetCheckpoints();
-		}
-
+	//Vehicle Respawn ------------------------------------------
+	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN && App->camera->camera_debug == false)
+	{
+		App->audio->PlayFx(car_reset_fx);
+		RespawnPlayer();
 	}
+
+	//Reset the vehicle position -------------------------------
+	else if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
+	{
+		App->audio->PlayFx(car_reset_fx);
+		ResetPlayer();
+		RespawnPlayer();
+		App->scene_intro->ResetCheckpoints();
+	}
+
 	vehicle->ApplyEngineForce(acceleration);
 	vehicle->Turn(turn);
 	vehicle->Brake(brake);
-
-	vehicle->Render();
 
 	char title[80];
 	sprintf_s(title, "Current Lap: %i || Record Lap: %i || %.1f Km/h", chronometer.Read(), record, vehicle->GetKmh());
 	App->window->SetTitle(title);
 
-
-	
-
-
 	door_1->GetTransform(print_door_1.transform.M);
 	door_2->GetTransform(print_door_2.transform.M);
 	Back_Door->GetTransform(print_Back_Door.transform.M);
 
+	vehicle->Render();
 	print_door_1.Render();
 	print_door_2.Render();
 	print_Back_Door.Render();

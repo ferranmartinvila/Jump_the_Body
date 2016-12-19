@@ -29,18 +29,17 @@ bool ModuleSceneIntro::Start()
 	//Checkpoint 0 (init)
 	checkpoints.PushBack({ -0.04f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,-0.04f,0.0f,		-0.3f,122.0f,0.4f,1.0f });
 	//Checkpoint 1 (ramp reception)
-	checkpoints.PushBack({ 0.0f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,0.0f,0.0f,		262.0f,67.0f,0.0f,1.0f });
+	checkpoints.PushBack({ 0.0f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,0.0f,0.0f,		290.0f,99.0f,0.0f,1.0f });
 	//Checkpoint 2 (half up)
-	checkpoints.PushBack({ 0.95f,0.0f,0.32f,0.0f,		0.0f,1.0f,0.0f,0.0f,		-0.32f,0.0f,0.95f,0.0f,		575.5f,63.0f,290.5f,1.0f });
+	checkpoints.PushBack({ 0.95f,0.0f,0.32f,0.0f,		0.0f,1.0f,0.0f,0.0f,		-0.32f,0.0f,0.95f,0.0f,		595.5f,93.0f,290.5f,1.0f });
 	//Checkpoint 3 (half down)
-	checkpoints.PushBack({ -0.95f,0.0f,-0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		0.3f,0.0f,-0.95f,0.0f,		772.0f,63.0f,404.5f,1.0f });
+	checkpoints.PushBack({ -0.95f,0.0f,-0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		0.3f,0.0f,-0.95f,0.0f,		792.0f,93.0f,406.5f,1.0f });
 	//Checkpoint 4 (stairs end)
-	checkpoints.PushBack({ -0.95f,0.0f,-0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		0.31f,0.0f,-0.95f,0.0f,		955.3f,129.0f,-154.7f,1.0f });
+	checkpoints.PushBack({ -0.95f,0.0f,-0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		0.31f,0.0f,-0.95f,0.0f,		976.3f,162.0f,-154.7f,1.0f });
 	//Checkpoint 5 (giant curve end)
-	checkpoints.PushBack({ 0.95f,0.0f,0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		-0.3f,0.0f,0.95f,0.0f,		383.5f,129.0f,-359.5f,1.0f });
+	checkpoints.PushBack({ 0.95f,0.0f,0.3f,0.0f,		0.0f,1.0f,0.0f,0.0f,		-0.3f,0.0f,0.95f,0.0f,		403.5f,160.0f,-348.5f,1.0f });
 	//Checkpoint 6 (pre final ramp)
-	checkpoints.PushBack({ 0.1f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,0.1f,0.0f,		-853.2f,31.0f,-72.7f,1.0f });
-	//Checkpoint 7 (loop end)
+	checkpoints.PushBack({ 0.1f,0.0f,-1.0f,0.0f,		0.0f,1.0f,0.0f,0.0f,		1.0f,0.0f,0.1f,0.0f,		-836.2f,63.5f,-74.7f,1.0f });
 
 	//Scene Objects ============================================
 	// Initial Ramp ============================================
@@ -64,7 +63,7 @@ bool ModuleSceneIntro::Start()
 	AddMapObject(&ramp_wall, STATIC_CUBE);
 
 	//Start Ramp
-	alpha = 25;
+	alpha = 15;
 	cube.ReSize(10.0f, .02f, 30.0f);
 	cube_2.ReSize(10.0f, .02f, 30.0f);
 	cube.SetColor(Gray);
@@ -83,12 +82,18 @@ bool ModuleSceneIntro::Start()
 		AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
 		cube = cube_2;
 	}
+
+	for (uint k = 0; k < 6; k++) {
+		AddAdjacentBody(&cube, &cube_2, alpha * 0.15f, Z);
+		if(k < 4)AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
+		cube = cube_2;
+	}
 	// =========================================================
 	
 	
 	// High Reception ==========================================
 	Cube high_reception(80.0f, 0.2f, 30.0f);
-	high_reception.SetPosFrom((Primitive*)&cube, 0 + cube.size.x * 0.5f + high_reception.size.x * 0.5f + 90.0f, 0, 0);
+	high_reception.SetPosFrom((Primitive*)&cube, 0 + cube.size.x * 0.5f + high_reception.size.x * 0.5f + 40.0f, 0, 0);
 	AddExternalColumns(&high_reception, 5.0f, 5.0f, 5.0f);
 	AddMapObject(&high_reception, STATIC_CUBE, 1.0f, false, true);
 	// =========================================================
@@ -513,11 +518,7 @@ update_status ModuleSceneIntro::Update(float dt)
 	//Reset car to the last checkpoint when fall of the map
 	if (App->player->chasis_loc[13] < 0)
 	{
-		if(App->player->checkpoint_num > 0)App->player->vehicle->SetTransform(&checkpoints[App->player->checkpoint_num]);
-		else App->player->vehicle->SetTransform(&checkpoints[0]);
-
-		App->player->vehicle->get_rigid_body()->setLinearVelocity({ 0,0,0 });
-		App->player->vehicle->get_rigid_body()->setAngularVelocity({ 0,0,0 });
+		App->player->RespawnPlayer();
 		App->audio->PlayFx(car_fall_fx);
 		App->player->engine_current_vol = App->player->engine_low_vol;
 	

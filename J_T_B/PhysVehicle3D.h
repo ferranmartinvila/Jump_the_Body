@@ -85,6 +85,8 @@ public:
 	btRaycastVehicle* vehicle;
 	p2DynArray<Cube> vehicle_lights;
 
+	void LocateVehicle(float x, float y, float z);
+
 };
 
 #endif

@@ -119,7 +119,7 @@ update_status ModulePhysics3D::Update(float dt)
 
 
 
-	if(!debug == true)
+	if(debug)
 	{
 		world->debugDrawWorld();
 

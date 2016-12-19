@@ -23,11 +23,11 @@ public:
 private:
 
 	void	CalculateViewMatrix();
-	bool	camera_debug = false;
 	float	camera_speed;
 
 public:
 	
+	bool	camera_debug = false;
 	vec3 X, Y, Z, Position, Reference;
 
 private:

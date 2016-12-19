@@ -73,14 +73,14 @@ public:
 	uint engine_max_rpm_fx;
 
 	Timer	engine_timer;
-	uint	engine_loop;
+	uint	engine_loop = 330;
 	float	engine_rpm = 0;
 	uint	engine_low_vol = 20;
 	uint	engine_high_vol = 35;
 	float	engine_current_vol = engine_low_vol;
 
 	Timer	turbo_timer;
-	uint	turbo_rate = 1000;
+	uint	turbo_rate = 2500;
 	uint	turbo_fx;
 
 	Timer	lights_timer;
@@ -95,6 +95,7 @@ public:
 
 	btRigidBody*		GetVehicleBody()const;
 	void				ResetPlayer();
+	void				RespawnPlayer();
 };
 
 #endif;
