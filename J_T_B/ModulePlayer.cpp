@@ -203,14 +203,45 @@ void ModulePlayer::RespawnPlayer()
 	Back_Door->get_rigid_body()->setLinearVelocity({ 0,0,0 });
 }
 
+bool ModulePlayer::CheckRecord()
+{
+	if ((minutes * 60 + decimes * 10 + seconds) < (record_min * 60 + record_dec * 10 + record_sec))
+	{
+		record_min = minutes;
+		record_dec = decimes;
+		record_sec = seconds;
+		return true;
+	}
+	return false;
+}
+
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
+	//Player Chronometer ---------------------------------------
+	if (chronometer.Read() > 1000)
+	{
+		seconds++;
+
+		if (seconds > 9)
+		{
+			seconds = 0;
+			++decimes;
+		}
+
+		if (decimes > 5)
+		{
+			decimes = 0;
+			++minutes;
+		}
+		chronometer.Start();
+	}
+	//Vehicle Data ---------------------------------------------
 	vehicle->get_rigid_body()->getWorldTransform().getOpenGLMatrix(&chasis_loc);
 	turn = acceleration = brake = 0.0f;
 	bool contact = vehicle->vehicle->m_wheelInfo[0].m_raycastInfo.m_isInContact;
 
-	//Car engine ---------
+	//Car engine --------------------
 	if (engine_timer.Read() > engine_loop)
 	{
 		Mix_Volume(2, engine_current_vol);
@@ -369,7 +400,7 @@ update_status ModulePlayer::Update(float dt)
 	vehicle->Brake(brake);
 
 	char title[80];
-	sprintf_s(title, "Current Lap: %i || Record Lap: %i || %.1f Km/h", chronometer.Read(), record, vehicle->GetKmh());
+	sprintf_s(title, "Current Lap: %i:%i%i || Record Lap: %i:%i%i || %.1f Km/h", minutes,decimes,seconds,record_min,record_dec,record_sec, vehicle->GetKmh() * 0.1f);
 	App->window->SetTitle(title);
 
 	door_1->GetTransform(print_door_1.transform.M);

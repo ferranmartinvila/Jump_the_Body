@@ -60,10 +60,6 @@ public:
 	float acceleration;
 	float brake;
 
-	Timer	chronometer;
-	uint	record = 1000000;
-	bool	InLap = false;
-
 	uint hydraulic_suspension_fx;
 	uint car_reset_fx;
 
@@ -91,11 +87,22 @@ public:
 	Timer	break_timer;
 	uint	break_rate = 65;
 
+	Timer	chronometer;
+	uint	seconds = 0;
+	uint	decimes = 0;
+	uint	minutes = 0;
+	uint	record_sec = 0;
+	uint	record_dec = 0;
+	uint	record_min = 0;
+
+	bool	InLap = false;
+
 public:
 
 	btRigidBody*		GetVehicleBody()const;
 	void				ResetPlayer();
 	void				RespawnPlayer();
+	bool				CheckRecord();
 };
 
 #endif;

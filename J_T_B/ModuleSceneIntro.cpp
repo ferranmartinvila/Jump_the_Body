@@ -570,7 +570,7 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 				{
 					App->audio->PlayFx(Loop_Complete_fx);
 					App->player->chronometer.Stop();
-					if (App->player->chronometer.Read() < App->player->record)App->player->record = App->player->chronometer.Read();
+					App->player->CheckRecord();
 					App->player->ResetPlayer();
 					ResetCheckpoints();
 				}
