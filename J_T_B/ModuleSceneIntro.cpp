@@ -231,27 +231,34 @@ bool ModuleSceneIntro::Start()
 	Cube fix(5, 5, 5);
 	fix.SetColor(Black);
 	PhysBody3D* base;
-	Cube stick(1.5f, 95.0f, 3.5f);
+	Cube stick(1.5f, 95.0f, 10.5f);
 	stick.SetColor(Column_Color);
 	PhysBody3D* helix;
 
 	// Post Stairs Curve =======================================
 	alpha = -180.0f;
-	cube.ReSize(20.0f, 0.02f , 30.0f);
+	cube.ReSize(20.0f, 0.02f, 30.0f);
 	cube_2 = cube;
 
-	AddAdjacentBody(&stairs_curve_start,&cube, 0, Y, 0, 0, 0);
+	AddAdjacentBody(&stairs_curve_start, &cube, 0, Y, 0, 0, 0);
 
 	for (int k = 0; k < 50; k++) {
-		AddAdjacentBody(&cube,&cube_2, alpha * 0.02f, Y);
+		AddAdjacentBody(&cube, &cube_2, alpha * 0.02f, Y);
 		if (k % 4 == 0) AddCentralColumns(&cube, 5.0f, 4.0f, 5.0f);
-		if (k % 15 == 0)
+		if (k % 17 == 0)
 		{
 			fix.rotations = cube.rotations;
-			if(cube.rotations.y > 180)base = AddAdjacentBody(&cube, &fix, 0, Y, cube.size.x * 0.5f, 50, -cube.size.z * 0.5f);
+
+			if (cube.rotations.y > 180) base = AddAdjacentBody(&cube, &fix, 0, Y, cube.size.x * 0.5f, 50, -cube.size.z * 0.5f);
 			else base = AddAdjacentBody(&cube, &fix, 180, Y, cube.size.x * 0.5f, 50, -cube.size.z * 0.5f);
+
 			helix = AddSceneObject((Primitive*)&stick, OBJECT_TYPE::DINAMIC_CUBE);
-			App->physics->Add_EnginedHinge_Constraint(*base->get_rigid_body(), *helix->get_rigid_body(), btVector3(0, 0, 0), btVector3(0, 0, 0), btVector3(1, 0, 0), btVector3(1, 0, 0));
+
+			helix->get_rigid_body()->setWorldTransform(base->get_rigid_body()->getWorldTransform());
+			helix->SetPos(base->get_rigid_body()->getWorldTransform().getOrigin().x(), base->get_rigid_body()->getWorldTransform().getOrigin().y(), base->get_rigid_body()->getWorldTransform().getOrigin().z());
+			App->physics->Add_EnginedHinge_Constraint(*helix->get_rigid_body(), *base->get_rigid_body(), btVector3(0, 0, 0), btVector3(0, 0, 0), btVector3(0, 0, 1), btVector3(1, 0, 0));
+
+			Wind_mills.PushBack(helix);
 		}
 		cube = cube_2;
 	}
@@ -571,6 +578,19 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 			}
 		}
 	}
+
+
+	if ((body1 == (PhysBody3D*)App->player->vehicle || body1 == App->player->door_1) && body2 == Wind_mills[2])
+		body1->get_rigid_body()->applyCentralForce(btVector3(0, 0, -2000000));
+
+	if ((body1 == (PhysBody3D*)App->player->vehicle || body1 == App->player->door_2) && body2 == Wind_mills[1])
+		body1->get_rigid_body()->applyCentralForce(btVector3(0, 0, 2000000));
+
+	if ((body1 == (PhysBody3D*)App->player->vehicle || body1 == App->player->door_2) && body2 == Wind_mills[0])
+		body1->get_rigid_body()->applyCentralForce(btVector3(-2000000, 0, 0));
+
+
+
 }
 
 void ModuleSceneIntro::AddCentralColumns(Primitive * target, float x, float y, float z)
