@@ -9,7 +9,7 @@
 VehicleInfo::~VehicleInfo()
 {
 	//if(wheels != NULL)
-	//delete wheels;
+		//delete wheels;
 }
 
 // ----------------------------------------------------------------------------
@@ -17,15 +17,15 @@ PhysVehicle3D::PhysVehicle3D(btRigidBody* body, btRaycastVehicle* vehicle, const
 {
 
 	chassis = Cube(info.chassis_size.x, 1, info.chassis_size.z);
-	chassis.SetColor(Orange);
+	chassis.SetColor(Red);
 	Cabine = Cube(6, 2, 1);
-	Cabine.SetColor(Orange);
+	Cabine.SetColor(Red);
 	print_Back_1 = Cube(1, 4, 3);
-	print_Back_1.SetColor(Orange);
+	print_Back_1.SetColor(Red);
 	print_Back_2 = Cube(1, 4, 3);
-	print_Back_2.SetColor(Orange);
+	print_Back_2.SetColor(Red);
 	roof = Cube(6, 0.25f, 8);
-	roof.SetColor(Orange);
+	roof.SetColor(Red);
 
 	Cube back_light_1(1, 1, 0.5f);
 	back_light_1.SetColor(Gray);

@@ -424,7 +424,7 @@ update_status ModulePlayer::Update(float dt)
 			current_time = Respawn_time.Read();
 			start_count = false;
 		}
-		if (Respawn_time.Read() > 1000 + current_time)
+		if (Respawn_time.Read() > 1500 + current_time)
 		{
 			App->audio->PlayFx(car_reset_fx);
 			RespawnPlayer();
