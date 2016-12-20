@@ -27,7 +27,7 @@ bool ModulePlayer::Start()
 	engine_high_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_high_rpm.wav");
 	engine_max_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_max_rpm.wav");
 	turbo_fx = App->audio->LoadFx("../Game/Audio/turbo_fx.wav");
-
+	doors_crash_fx = App->audio->LoadFx("../Game/Audio/doors_crash_fx.wav");
 
 	VehicleInfo car;
 	//Car engine Build

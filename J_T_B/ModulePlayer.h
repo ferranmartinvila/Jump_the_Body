@@ -55,6 +55,7 @@ public:
 	uint engine_mid_rpm_fx;
 	uint engine_high_rpm_fx;
 	uint engine_max_rpm_fx;
+	uint doors_crash_fx;
 
 	Timer	engine_timer;
 	uint	engine_loop = 330;

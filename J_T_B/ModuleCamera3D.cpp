@@ -35,7 +35,7 @@ bool ModuleCamera3D::Start()
 	CameraLocation = vec3(0.0f, 15.0f, 0.0f);
 	ViewVector = vec3(0.0f,10.05f, 0.0f);
 	camera_dist = 27;
-	camera_fx = App->audio->LoadFx("../Game/camera_fx.wav");
+	camera_fx = App->audio->LoadFx("../Game/Audio/camera_fx.wav");
 	return ret;
 }
 
@@ -119,21 +119,11 @@ update_status ModuleCamera3D::Update(float dt)
 	{
 		// Change Camera Prespective ===============================
 		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN) {
-
-			if (camera_dist == 3) {
-				CameraLocation = vec3(0.0f, 15.0f, 0.0f);
-				ViewVector = vec3(0.0f, 10.05f, 0.0f);
+			if (camera_dist == 27)camera_dist += 24;
+			else
+			{
+				camera_dist -= 24;
 			}
-
-			if (camera_dist < 50)camera_dist += 24;
-
-			else{
-
-				CameraLocation = vec3(0.0f, 5.5f, 0.0f);
-				ViewVector = vec3(0.0f, 5.5f, 0.0f);
-				camera_dist = 3;
-			}
-
 			App->audio->PlayFx(camera_fx);
 
 		}

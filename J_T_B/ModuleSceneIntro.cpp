@@ -628,6 +628,7 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 
 	if ((App->player->Is_Vehicle_part(body1) && Is_Wind_Mill(body2)) || (Is_Wind_Mill(body1) && App->player->Is_Vehicle_part(body2)))
 	{
+		App->audio->PlayFx(App->player->doors_crash_fx);
 		App->player->door_1_constrain->setEnabled(false);
 		App->player->door_2_constrain->setEnabled(false);
 		App->player->Back_Door_constrain->setEnabled(false);

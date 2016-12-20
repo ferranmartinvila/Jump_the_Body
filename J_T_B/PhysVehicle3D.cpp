@@ -79,12 +79,10 @@ void PhysVehicle3D::Render()
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&print_Back_1.transform);
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&print_Back_2.transform);
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&roof.transform);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[0].transform);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[1].transform);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[2].transform);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[3].transform);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[4].transform);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[5].transform);
+
+	uint k = vehicle_lights.Count();
+	for(uint h = 0; h < k; h++)
+		vehicle->getChassisWorldTransform().getOpenGLMatrix(&vehicle_lights[h].transform);
 
 	btQuaternion q = vehicle->getChassisWorldTransform().getRotation();
 
@@ -150,8 +148,8 @@ void PhysVehicle3D::Render()
 	roof.Render();
 	chassis.Render();
 
-	for (int i = 0; i < vehicle_lights.Count(); i++)
-		vehicle_lights[i].Render();
+	for (uint h = 0; h < k; h++)
+		vehicle_lights[h].Render();
 	
 	RePlaceVehicle();
 }
