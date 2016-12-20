@@ -366,7 +366,7 @@ btHingeConstraint* ModulePhysics3D::Add_Hinge_Constraint(btRigidBody & rbA, btRi
 btHingeConstraint * ModulePhysics3D::Add_EnginedHinge_Constraint(btRigidBody & rbA, btRigidBody & rbB, const btVector3 & pivotInA, const btVector3 & pivotInB, btVector3 & axisInA, btVector3 & axisInB)
 {
 	btHingeConstraint* constrain = new btHingeConstraint(rbA, rbB, pivotInA, pivotInB, axisInA, axisInB);
-	constrain->enableAngularMotor(true, 5, 100); 
+	constrain->enableAngularMotor(true, 4, 100); 
 	//constrain-
 	constrain->setDbgDrawSize(2.0f);
 	world->addConstraint(constrain, true);

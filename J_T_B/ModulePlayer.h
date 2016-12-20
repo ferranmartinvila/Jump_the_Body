@@ -31,31 +31,19 @@ public:
 public:
 
 	PhysVehicle3D* vehicle;
-	PhysBody3D* cabine;
+	
 	PhysBody3D* door_1;
 	PhysBody3D* door_2;
 	PhysBody3D* Back_Door;
-	PhysBody3D* Back_1;
-	PhysBody3D* Back_2;
-	PhysBody3D* roof;
-
-	Cube print_cabine;
+	
 	Cube print_door_1;
 	Cube print_door_2;
 	Cube print_Back_Door;
-	Cube print_Back_1;
-	Cube print_Back_2;
-	Cube print_roof;
-
-	btHingeConstraint* cabine_to_vehicle;
+	
 	btHingeConstraint* door_1_constrain;
 	btHingeConstraint* door_2_constrain;
 	btHingeConstraint* Back_Door_constrain;
-	btHingeConstraint* Back_1_constrain;
-	btHingeConstraint* Back_2_constrain;
-	btHingeConstraint* roof_constrain;
-	btHingeConstraint* roof_constrain_2;
-
+	
 	float turn;
 	float acceleration;
 	float brake;
@@ -97,12 +85,18 @@ public:
 
 	bool	InLap = false;
 
+	bool alive;
+	bool start_count;
+	int current_time;
+	Timer Respawn_time;
+
 public:
 
 	btRigidBody*		GetVehicleBody()const;
 	void				ResetPlayer();
 	void				RespawnPlayer();
 	bool				CheckRecord();
+	bool				Is_Vehicle_part(PhysBody3D* body);
 };
 
 #endif;

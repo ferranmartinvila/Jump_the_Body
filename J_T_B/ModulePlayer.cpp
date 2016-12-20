@@ -201,6 +201,17 @@ void ModulePlayer::RespawnPlayer()
 	Back_Door->SetTransform(&transform);
 	Back_Door->get_rigid_body()->setAngularVelocity({ 0,0,0 });
 	Back_Door->get_rigid_body()->setLinearVelocity({ 0,0,0 });
+
+	if (door_1_constrain->isEnabled() == false)
+		door_1_constrain->setEnabled(true);
+
+	if (door_2_constrain->isEnabled() == false)
+		door_2_constrain->setEnabled(true);
+
+	if (Back_Door_constrain->isEnabled() == false)
+		Back_Door_constrain->setEnabled(true);
+
+	alive = true;
 }
 
 bool ModulePlayer::CheckRecord()
@@ -213,6 +224,11 @@ bool ModulePlayer::CheckRecord()
 		return true;
 	}
 	return false;
+}
+
+bool ModulePlayer::Is_Vehicle_part(PhysBody3D * body)
+{
+	return (body == door_1 || body == door_2 || body == Back_Door || body == vehicle);
 }
 
 // Update: draw background
@@ -255,67 +271,83 @@ update_status ModulePlayer::Update(float dt)
 	// -------------------
 
 
-
-	
-
 	//Car Mechanics --------------------------------------------
-	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+
+	if (alive)
 	{
-		if (contact)
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		{
-			acceleration = MAX_ACCELERATION;
-			if(engine_current_vol < engine_high_vol)engine_current_vol+=0.3f;
+			if (contact)
+			{
+				acceleration = MAX_ACCELERATION;
+				if (engine_current_vol < engine_high_vol)engine_current_vol += 0.3f;
+			}
 		}
+
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+		{
+			if (contact)
+			{
+				if (vehicle->GetKmh() < 2.5f)acceleration = -MAX_ACCELERATION;
+				else brake = BRAKE_POWER;
+				if (engine_current_vol > engine_low_vol)engine_current_vol -= 0.7f;
+			}
+
+			if (vehicle->vehicle_lights[0].color.r < 1.5f && break_timer.Read() > break_rate)
+			{
+				vehicle->vehicle_lights[0].FadeColor(0.35f, 0, 0);
+				vehicle->vehicle_lights[1].FadeColor(0.35f, 0, 0);
+				break_timer.Start();
+			}
+		}
+
+		// Car Jump ------------------------------------------------
+		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			if (contact) {
+				mat4x4 trans;
+				this->vehicle->GetTransform(&trans);
+				vec3 PushVector(trans[4], trans[5], trans[6]);
+				PushVector *= 24000;
+				vehicle->Push(PushVector.x, PushVector.y, PushVector.z);
+				App->audio->PlayFx(hydraulic_suspension_fx);
+			}
+		}
+
+
+		btVector3 chasis_ang_vel = vehicle->get_rigid_body()->getAngularVelocity();
+
+		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+		{
+			if (contact)
+			{
+				if (turn < TURN_DEGREES)	turn += TURN_DEGREES;
+			}
+			else
+			{
+				vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() + 0.04f,chasis_ang_vel.getZ() });
+			}
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+		{
+			if (contact)
+			{
+				if (turn > -TURN_DEGREES)	turn -= TURN_DEGREES;
+			}
+			else
+			{
+				vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() - 0.04f,chasis_ang_vel.getZ() });
+			}
+		}
+
 	}
-
-	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-	{
-		if (contact)
-		{
-			if (vehicle->GetKmh() < 2.5f)acceleration = -MAX_ACCELERATION;
-			else brake = BRAKE_POWER;
-			if(engine_current_vol > engine_low_vol)engine_current_vol-=0.7f;
-		}
-
-		if (vehicle->vehicle_lights[0].color.r < 1.5f && break_timer.Read() > break_rate)
-		{
-			vehicle->vehicle_lights[0].FadeColor(0.35f, 0, 0);
-			vehicle->vehicle_lights[1].FadeColor(0.35f, 0, 0);
-			break_timer.Start();
-		}
-	}
-
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
 	{
 		vehicle->vehicle_lights[0].color = Gray;
 		vehicle->vehicle_lights[1].color = Gray;
 	}
 
-	btVector3 chasis_ang_vel = vehicle->get_rigid_body()->getAngularVelocity();
-
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-	{
-		if (contact)
-		{
-			if (turn < TURN_DEGREES)	turn += TURN_DEGREES;
-		}
-		else
-		{
-			vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() + 0.04f,chasis_ang_vel.getZ() });
-		}
-	}
-
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-	{
-		if (contact)
-		{
-			if (turn > -TURN_DEGREES)	turn -= TURN_DEGREES;
-		}
-		else
-		{
-			vehicle->get_rigid_body()->setAngularVelocity({ chasis_ang_vel.getX(),chasis_ang_vel.getY() - 0.04f,chasis_ang_vel.getZ() });
-		}
-	}
 
 
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_UP && engine_rpm > 275 && contact && turbo_timer.Read() > turbo_rate)
@@ -366,18 +398,7 @@ update_status ModulePlayer::Update(float dt)
 		lights_timer.Start();
 	}
 
-	// Car Jump ------------------------------------------------
-	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-	{
-		if (contact) {
-			mat4x4 trans;
-			this->vehicle->GetTransform(&trans);
-			vec3 PushVector(trans[4], trans[5], trans[6]);
-			PushVector *= 24000;
-			vehicle->Push(PushVector.x, PushVector.y, PushVector.z);
-			App->audio->PlayFx(hydraulic_suspension_fx);
-		}
-	}
+	
 
 	//Vehicle Respawn ------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN && App->camera->camera_debug == false)
@@ -394,6 +415,23 @@ update_status ModulePlayer::Update(float dt)
 		RespawnPlayer();
 		App->scene_intro->ResetCheckpoints();
 	}
+
+	if (alive == false)
+	{
+		if (start_count)
+		{
+			Respawn_time.Start();
+			current_time = Respawn_time.Read();
+			start_count = false;
+		}
+		if (Respawn_time.Read() > 1000 + current_time)
+		{
+			App->audio->PlayFx(car_reset_fx);
+			RespawnPlayer();
+		}
+	}
+
+
 
 	vehicle->ApplyEngineForce(acceleration);
 	vehicle->Turn(turn);

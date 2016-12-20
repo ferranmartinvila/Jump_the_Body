@@ -580,14 +580,15 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 	}
 
 
-	if ((body1 == (PhysBody3D*)App->player->vehicle || body1 == App->player->door_1) && body2 == Wind_mills[2])
-		body1->get_rigid_body()->applyCentralForce(btVector3(0, 0, -2000000));
-
-	if ((body1 == (PhysBody3D*)App->player->vehicle || body1 == App->player->door_2) && body2 == Wind_mills[1])
-		body1->get_rigid_body()->applyCentralForce(btVector3(0, 0, 2000000));
-
-	if ((body1 == (PhysBody3D*)App->player->vehicle || body1 == App->player->door_2) && body2 == Wind_mills[0])
-		body1->get_rigid_body()->applyCentralForce(btVector3(-2000000, 0, 0));
+	if ((App->player->Is_Vehicle_part(body1) && Is_Wind_Mill(body2)) || (Is_Wind_Mill(body1) && App->player->Is_Vehicle_part(body2)))
+	{
+		App->player->door_1_constrain->setEnabled(false);
+		App->player->door_2_constrain->setEnabled(false);
+		App->player->Back_Door_constrain->setEnabled(false);
+		App->player->alive = false;
+		App->player->start_count = true;
+	}
+	
 
 
 
@@ -836,6 +837,18 @@ PhysBody3D* ModuleSceneIntro::AddAdjacentBody(Primitive * origin, Primitive * ta
 	PhysBody3D* taget_body = AddMapObject(target, STATIC_CUBE,1.0f,is_sensor, sensor_check);
 
 	return  taget_body;
+}
+
+bool ModuleSceneIntro::Is_Wind_Mill(PhysBody3D * body)
+{
+	int wind_count = Wind_mills.Count();
+
+	for (int i = 0; i < wind_count; i++)
+	{
+		if (body == Wind_mills[i])
+			return true;
+	}
+	return false;
 }
 
 
