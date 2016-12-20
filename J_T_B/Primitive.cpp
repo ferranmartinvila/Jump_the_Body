@@ -268,6 +268,17 @@ Cube::Cube() : Primitive(), size(1.0f, 1.0f, 1.0f)
 	type = PrimitiveTypes::Primitive_Cube;
 }
 
+Cube::Cube(const Cube * copy)
+{
+	this->transform = copy->transform;
+	this->type = copy->type;
+	this->axis = copy->axis;
+	this->color = copy->color;
+	this->rotations = copy->rotations;
+	this->size = copy->size;
+	this->wire = copy->wire;
+}
+
 Cube::Cube(float sizeX, float sizeY, float sizeZ) : Primitive(), size(sizeX, sizeY, sizeZ)
 {
 	type = PrimitiveTypes::Primitive_Cube;

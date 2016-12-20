@@ -170,7 +170,7 @@ btRigidBody * ModulePlayer::GetVehicleBody() const
 
 void ModulePlayer::ResetPlayer()
 {
-	checkpoint_num = -1;
+	checkpoint_num = 0;
 	InLap = false;
 	engine_current_vol = engine_low_vol;
 	chronometer.Start();
@@ -221,6 +221,9 @@ bool ModulePlayer::CheckRecord()
 		record_min = minutes;
 		record_dec = decimes;
 		record_sec = seconds;
+		minutes = 0;
+		decimes = 0;
+		seconds = 0;
 		return true;
 	}
 	return false;
@@ -404,6 +407,21 @@ update_status ModulePlayer::Update(float dt)
 	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN && App->camera->camera_debug == false)
 	{
 		App->audio->PlayFx(car_reset_fx);
+		RespawnPlayer();
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_T) == KEY_DOWN)
+	{
+		mat4x4 trans;
+		vehicle->get_rigid_body()->getWorldTransform().getOpenGLMatrix(&trans);
+
+		if (checkpoint_num < App->scene_intro->checkpoints.Count() - 1)
+		{
+			App->scene_intro->check_graph[checkpoint_num]->SetColor(Checkpoint_Color);
+			checkpoint_num++;
+			App->scene_intro->check_graph[checkpoint_num]->SetColor(Checkpoint_Color);
+		}
+		else checkpoint_num = 0;
 		RespawnPlayer();
 	}
 

@@ -26,7 +26,7 @@ public:
 	mat4x4 chasis_loc;
 
 	bool god = false;
-	int checkpoint_num = -1;
+	uint checkpoint_num = 0;
 
 public:
 
@@ -79,9 +79,9 @@ public:
 	uint	seconds = 0;
 	uint	decimes = 0;
 	uint	minutes = 0;
-	uint	record_sec = 0;
-	uint	record_dec = 0;
-	uint	record_min = 0;
+	uint	record_sec = 9;
+	uint	record_dec = 9;
+	uint	record_min = 9;
 
 	bool	InLap = false;
 

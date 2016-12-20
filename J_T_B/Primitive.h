@@ -62,6 +62,7 @@ class Cube : public Primitive
 {
 public :
 	Cube();
+	Cube(const Cube* copy);
 	Cube(float sizeX, float sizeY, float sizeZ);
 	Cube(float sizeX, float sizeY, float sizeZ, float posX, float posY, float posZ);
 
