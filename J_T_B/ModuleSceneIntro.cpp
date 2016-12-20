@@ -83,7 +83,7 @@ bool ModuleSceneIntro::Start()
 		cube = cube_2;
 	}
 
-	for (uint k = 0; k < 6; k++) {
+	for (uint k = 0; k < 10; k++) {
 		AddAdjacentBody(&cube, &cube_2, alpha * 0.15f, Z);
 		if(k < 4)AddCentralColumns(&cube, 2.0f, 4.0f, 2.0f);
 		cube = cube_2;
@@ -93,7 +93,7 @@ bool ModuleSceneIntro::Start()
 	
 	// High Reception ==========================================
 	Cube high_reception(80.0f, 0.2f, 30.0f);
-	high_reception.SetPosFrom((Primitive*)&cube, 0 + cube.size.x * 0.5f + high_reception.size.x * 0.5f + 40.0f, 0, 0);
+	high_reception.SetPosFrom((Primitive*)&cube, 0 + cube.size.x * 0.5f + high_reception.size.x * 0.5f, 0, 0);
 	AddExternalColumns(&high_reception, 5.0f, 5.0f, 5.0f);
 	AddMapObject(&high_reception, STATIC_CUBE, 1.0f, false, true);
 	// =========================================================
@@ -444,7 +444,7 @@ bool ModuleSceneIntro::Start()
 	cube = cube_2;
 
 	//Super Ramp ==========================================
-	alpha = -15;
+	alpha = -10;
 	int mark = (cube_2.size.z - start_floor.size.z + 18) * 0.06666;
 	cube_2.SetColor(White);
 	AddAdjacentBody(&cube, &cube_2, alpha * 0.0666, Z, 0, 0,0, false, true);
@@ -461,7 +461,7 @@ bool ModuleSceneIntro::Start()
 		cube = cube_2;
 
 	}
-	alpha = 25;
+	alpha = 15;
 	cube_2.ReSize(cube_2.size.x * 0.8f, cube.size.y, cube.size.z);
 	for (int k = 0; k < 11; k++) {
 
