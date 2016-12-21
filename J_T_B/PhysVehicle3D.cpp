@@ -61,7 +61,7 @@ PhysVehicle3D::~PhysVehicle3D()
 void PhysVehicle3D::Render()
 {
 	//Wheels render -------------------
-	wheel.color = Pink;
+	wheel.color = Black;
 	for (int i = 0; i < vehicle->getNumWheels(); ++i)
 	{
 		wheel.radius = info.wheels[0].radius;
@@ -205,8 +205,8 @@ void PhysVehicle3D::RePlaceVehicle()
 	roof_position = btVector3(0, 6.0f, 0);
 	back_light_1_position = btVector3(2.5, 2, -4);
 	back_light_2_position = btVector3(-2.5, 2, -4);
-	front_light_1_position = btVector3(2.5, 2.5, 4);
-	front_light_2_position = btVector3(-2.5, 2.5, 4);
+	front_light_1_position = btVector3(2.4, 2.5, 4);
+	front_light_2_position = btVector3(-2.4, 2.5, 4);
 	Up_light_1_position = btVector3(-1, 6.5f, 2);
 	Up_light_2_position = btVector3(1, 6.5f, 2);
 }

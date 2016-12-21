@@ -29,6 +29,7 @@ public:
 	//Map grahics array
 	p2DynArray<Primitive*>		map_graphs;
 	p2DynArray<PhysBody3D*>		Wind_mills;
+	PhysBody3D*					floor;
 
 	//Scene Checkpoints
 	p2DynArray<mat4x4>			checkpoints;

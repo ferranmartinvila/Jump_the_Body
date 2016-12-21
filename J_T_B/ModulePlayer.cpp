@@ -19,15 +19,15 @@ ModulePlayer::~ModulePlayer()
 bool ModulePlayer::Start()
 {
 	LOG("Loading player");
-	hydraulic_suspension_fx = App->audio->LoadFx("../Game/Audio/hydraulic_suspension_fx.wav");
-	car_reset_fx = App->audio->LoadFx("../Game/Audio/reset.wav");
+	hydraulic_suspension_fx = App->audio->LoadFx("Game/Audio/hydraulic_suspension_fx.wav");
+	car_reset_fx = App->audio->LoadFx("Game/Audio/reset.wav");
 
-	engine_low_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_low_rpm.wav");
-	engine_mid_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_mid_rpm.wav");
-	engine_high_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_high_rpm.wav");
-	engine_max_rpm_fx = App->audio->LoadFx("../Game/Audio/engine_max_rpm.wav");
-	turbo_fx = App->audio->LoadFx("../Game/Audio/turbo_fx.wav");
-	doors_crash_fx = App->audio->LoadFx("../Game/Audio/doors_crash_fx.wav");
+	engine_low_rpm_fx = App->audio->LoadFx("Game/Audio/engine_low_rpm.wav");
+	engine_mid_rpm_fx = App->audio->LoadFx("Game/Audio/engine_mid_rpm.wav");
+	engine_high_rpm_fx = App->audio->LoadFx("Game/Audio/engine_high_rpm.wav");
+	engine_max_rpm_fx = App->audio->LoadFx("Game/Audio/engine_max_rpm.wav");
+	turbo_fx = App->audio->LoadFx("Game/Audio/turbo_fx.wav");
+	doors_crash_fx = App->audio->LoadFx("Game/Audio/doors_crash_fx.wav");
 
 	VehicleInfo car;
 	//Car engine Build
@@ -45,8 +45,8 @@ bool ModulePlayer::Start()
 	car.maxSuspensionForce = 60000.0f;
 
 	// Wheel properties ---------------------------------------
-	float connection_height = 1.0f;
-	float wheel_radius = 0.6f;
+	float connection_height = 1.5f;
+	float wheel_radius = 0.8f;
 	float wheel_width = 0.8f;
 	float suspensionRestLength = 1.2f;
 
@@ -234,6 +234,16 @@ bool ModulePlayer::CheckRecord()
 bool ModulePlayer::Is_Vehicle_part(PhysBody3D * body)
 {
 	return (body == door_1 || body == door_2 || body == Back_Door || body == vehicle);
+}
+
+void ModulePlayer::DestroyCar()
+{
+	App->audio->PlayFx(App->player->doors_crash_fx);
+	door_1_constrain->setEnabled(false);
+	door_2_constrain->setEnabled(false);
+	Back_Door_constrain->setEnabled(false);
+	alive = false;
+	Respawn_time.Start();
 }
 
 // Update: draw background

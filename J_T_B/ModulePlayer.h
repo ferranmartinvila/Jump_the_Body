@@ -97,6 +97,7 @@ public:
 	void				RespawnPlayer();
 	bool				CheckRecord();
 	bool				Is_Vehicle_part(PhysBody3D* body);
+	void				DestroyCar();
 };
 
 #endif;

@@ -20,10 +20,10 @@ bool ModuleSceneIntro::Start()
 	bool ret = true;
 	//Regge Rock Hip Hop Music
 	//int k = Mix_Volume(-1, 128);
-	App->audio->PlayMusic("../Game/Audio/NobodySkindred.ogg");
-	Checkpoint_fx = App->audio->LoadFx("../Game/Audio/Checkpoint_fx.wav");
-	Loop_Complete_fx = App->audio->LoadFx("../Game/Audio/loop_complete_fx.wav");
-	car_fall_fx = App->audio->LoadFx("../Game/Audio/fall_fx.wav");
+	App->audio->PlayMusic("Game/Audio/NobodySkindred.ogg");
+	Checkpoint_fx = App->audio->LoadFx("Game/Audio/Checkpoint_fx.wav");
+	Loop_Complete_fx = App->audio->LoadFx("Game/Audio/loop_complete_fx.wav");
+	car_fall_fx = App->audio->LoadFx("Game/Audio/fall_fx.wav");
 
 	//Scene Checkpoints ========================================
 	//Checkpoint 0 (init)
@@ -42,6 +42,11 @@ bool ModuleSceneIntro::Start()
 	checkpoints.PushBack({ 0.5f,0.0f,-0.8f,0.0f,		0.0f,1.0f,0.0f,0.0f,		0.8f,0.0f,0.5f,0.0f,		-560.2f,68.5f,-348.0f,1.0f });
 
 	//Scene Objects ============================================
+	//Scene Floor
+	Cube* floor_cube = new Cube(2500.0f, 1.0f, 2500.0f);
+	floor_cube->SetColor(Green);
+	floor = AddMapObject(floor_cube, STATIC_CUBE, 1.0f);
+
 	// Initial Ramp ============================================
 	float alpha = 0;
 	Cube* cube = new Cube(0, 0, 0);
@@ -565,14 +570,6 @@ update_status ModuleSceneIntro::Update(float dt)
 		map_graphs[k]->Render();
 	}
 	
-	//Reset car to the last checkpoint when fall of the map
-	if (App->player->chasis_loc[13] < 0)
-	{
-		App->player->RespawnPlayer();
-		App->audio->PlayFx(car_fall_fx);
-		App->player->engine_current_vol = App->player->engine_low_vol;
-	
-	}
 	return UPDATE_CONTINUE;
 }
 
@@ -624,21 +621,18 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 				break;
 			}
 		}
+
+		if(body2 == this->floor)
+		{
+			App->player->DestroyCar();
+		}
 	}
 
 
 	if ((App->player->Is_Vehicle_part(body1) && Is_Wind_Mill(body2)) || (Is_Wind_Mill(body1) && App->player->Is_Vehicle_part(body2)))
 	{
-		App->audio->PlayFx(App->player->doors_crash_fx);
-		App->player->door_1_constrain->setEnabled(false);
-		App->player->door_2_constrain->setEnabled(false);
-		App->player->Back_Door_constrain->setEnabled(false);
-		App->player->alive = false;
-		App->player->Respawn_time.Start();
+		App->player->DestroyCar();
 	}
-	
-
-
 
 }
 

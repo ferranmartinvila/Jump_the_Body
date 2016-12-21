@@ -35,7 +35,7 @@ bool ModuleCamera3D::Start()
 	CameraLocation = vec3(0.0f, 15.0f, 0.0f);
 	ViewVector = vec3(0.0f,10.05f, 0.0f);
 	camera_dist = 27;
-	camera_fx = App->audio->LoadFx("../Game/Audio/camera_fx.wav");
+	camera_fx = App->audio->LoadFx("Game/Audio/camera_fx.wav");
 	return ret;
 }
 
