@@ -591,6 +591,7 @@ void ModuleSceneIntro::ResetCheckpoints()
 
 void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 {
+	
 	if (body1 == (PhysBody3D*)App->player->vehicle)
 	{
 		uint num = check_bodies.Count();
@@ -633,7 +634,7 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 		App->player->door_2_constrain->setEnabled(false);
 		App->player->Back_Door_constrain->setEnabled(false);
 		App->player->alive = false;
-		App->player->start_count = true;
+		App->player->Respawn_time.Start();
 	}
 	
 
@@ -662,6 +663,7 @@ void ModuleSceneIntro::AddCentralColumns(Primitive * target, float x, float y, f
 	//Add it to the scene
 	AddMapObject(col_r, STATIC_CUBE);
 	AddMapObject(col_l, STATIC_CUBE);
+	
 }
 
 void ModuleSceneIntro::AddExternalColumns(Primitive * target, float x, float y, float z)

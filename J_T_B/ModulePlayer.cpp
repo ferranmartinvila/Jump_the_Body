@@ -151,6 +151,8 @@ bool ModulePlayer::Start()
 	//Player Init Location
 	RespawnPlayer();
 
+	Respawn_time.Stop();
+
 	return true;
 }
 
@@ -434,20 +436,17 @@ update_status ModulePlayer::Update(float dt)
 		App->scene_intro->ResetCheckpoints();
 	}
 
-	if (alive == false)
+	
+		
+	 if (Respawn_time.Read() > 1500)
 	{
-		if (start_count)
-		{
-			Respawn_time.Start();
-			current_time = Respawn_time.Read();
-			start_count = false;
-		}
-		if (Respawn_time.Read() > 1500 + current_time)
-		{
-			App->audio->PlayFx(car_reset_fx);
-			RespawnPlayer();
-		}
+		App->audio->PlayFx(car_reset_fx);
+		RespawnPlayer();
+		Respawn_time.Start();
+		Respawn_time.Stop();
 	}
+	
+	
 
 
 
@@ -456,7 +455,7 @@ update_status ModulePlayer::Update(float dt)
 	vehicle->Brake(brake);
 
 	char title[80];
-	sprintf_s(title, "Current Lap: %i:%i%i || Record Lap: %i:%i%i || %.1f Km/h", minutes,decimes,seconds,record_min,record_dec,record_sec, vehicle->GetKmh() * 0.1f);
+	sprintf_s(title, "Current Lap: %i:%i%i || Record Lap: %i:%i%i || %.1f Km/h || %f", minutes,decimes,seconds,record_min,record_dec,record_sec, vehicle->GetKmh() * 0.1f, dt);
 	App->window->SetTitle(title);
 
 	door_1->GetTransform(print_door_1.transform.M);

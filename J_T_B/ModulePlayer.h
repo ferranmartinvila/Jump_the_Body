@@ -87,7 +87,6 @@ public:
 	bool	InLap = false;
 
 	bool alive;
-	bool start_count;
 	int current_time;
 	Timer Respawn_time;
 
