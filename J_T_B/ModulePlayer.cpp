@@ -270,7 +270,15 @@ update_status ModulePlayer::Update(float dt)
 	//Vehicle Data ---------------------------------------------
 	vehicle->get_rigid_body()->getWorldTransform().getOpenGLMatrix(&chasis_loc);
 	turn = acceleration = brake = 0.0f;
-	bool contact = vehicle->vehicle->m_wheelInfo[0].m_raycastInfo.m_isInContact;
+	bool contact = false;
+	for (uint k = 0; k < 4; k++)
+	{
+		if (vehicle->vehicle->m_wheelInfo[k].m_raycastInfo.m_isInContact)
+		{
+			contact = true;
+			break;
+		}
+	}
 
 	//Car engine --------------------
 	if (engine_timer.Read() > engine_loop)

@@ -622,14 +622,14 @@ void ModuleSceneIntro::OnCollision(PhysBody3D * body1, PhysBody3D * body2)
 			}
 		}
 
-		if(body2 == this->floor)
+		if(body2 == this->floor && App->player->alive)
 		{
 			App->player->DestroyCar();
 		}
 	}
 
 
-	if ((App->player->Is_Vehicle_part(body1) && Is_Wind_Mill(body2)) || (Is_Wind_Mill(body1) && App->player->Is_Vehicle_part(body2)))
+	if (((App->player->Is_Vehicle_part(body1) && Is_Wind_Mill(body2)) || (Is_Wind_Mill(body1) && App->player->Is_Vehicle_part(body2))) && App->player->alive)
 	{
 		App->player->DestroyCar();
 	}
