@@ -179,6 +179,13 @@ void ModulePlayer::ResetPlayer()
 	chronometer.Stop();
 }
 
+void ModulePlayer::ResetPlayerTime()
+{
+	seconds = 0;
+	decimes = 0;
+	minutes = 0;
+}
+
 void ModulePlayer::RespawnPlayer()
 {
 	uint spawn;
@@ -450,6 +457,7 @@ update_status ModulePlayer::Update(float dt)
 	{
 		App->audio->PlayFx(car_reset_fx);
 		ResetPlayer();
+		ResetPlayerTime();
 		RespawnPlayer();
 		App->scene_intro->ResetCheckpoints();
 	}

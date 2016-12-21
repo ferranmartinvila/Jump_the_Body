@@ -38,6 +38,7 @@ public:
 	uint						Checkpoint_fx;
 	uint						Loop_Complete_fx;
 	uint						car_fall_fx;
+	uint						game_over_fx;
 
 public:
 

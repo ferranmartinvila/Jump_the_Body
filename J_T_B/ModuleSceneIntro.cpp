@@ -20,10 +20,11 @@ bool ModuleSceneIntro::Start()
 	bool ret = true;
 	//Regge Rock Hip Hop Music
 	//int k = Mix_Volume(-1, 128);
-	App->audio->PlayMusic("Game/Audio/NobodySkindred.ogg");
+	App->audio->PlayMusic("Game/Audio/OMFG_Hello.ogg");
 	Checkpoint_fx = App->audio->LoadFx("Game/Audio/Checkpoint_fx.wav");
 	Loop_Complete_fx = App->audio->LoadFx("Game/Audio/loop_complete_fx.wav");
 	car_fall_fx = App->audio->LoadFx("Game/Audio/fall_fx.wav");
+	game_over_fx = App->audio->LoadFx("Game/Audio/game_over_fx.wav");
 
 	//Scene Checkpoints ========================================
 	//Checkpoint 0 (init)
@@ -568,6 +569,14 @@ update_status ModuleSceneIntro::Update(float dt)
 	//Update map items (just paint)
 	for (uint k = 0; k < map_items_num; k++) {
 		map_graphs[k]->Render();
+	}
+
+	if (App->player->minutes == 9) {
+		App->player->ResetPlayer();
+		App->player->ResetPlayerTime();
+		ResetCheckpoints();
+		App->player->RespawnPlayer();
+		App->audio->PlayFx(game_over_fx);
 	}
 	
 	return UPDATE_CONTINUE;

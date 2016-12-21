@@ -94,6 +94,7 @@ public:
 
 	btRigidBody*		GetVehicleBody()const;
 	void				ResetPlayer();
+	void				ResetPlayerTime();
 	void				RespawnPlayer();
 	bool				CheckRecord();
 	bool				Is_Vehicle_part(PhysBody3D* body);
