@@ -21,6 +21,8 @@ UP/DOWN arrows -> Accelerate/Brake vehicle
 
 LEFT/RIGHT arrows -> Turn left/right 
 
+LEFT/RIGHT arrows(air) -> Rotate left/right 
+
 SPACE -> Active hydraulic suspension
 
 
