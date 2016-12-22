@@ -225,17 +225,18 @@ void ModulePlayer::RespawnPlayer()
 
 bool ModulePlayer::CheckRecord()
 {
+	bool ret = false;
 	if ((minutes * 60 + decimes * 10 + seconds) < (record_min * 60 + record_dec * 10 + record_sec))
 	{
 		record_min = minutes;
 		record_dec = decimes;
 		record_sec = seconds;
-		minutes = 0;
-		decimes = 0;
-		seconds = 0;
-		return true;
+		ret = true;
 	}
-	return false;
+	minutes = 0;
+	decimes = 0;
+	seconds = 0;
+	return ret;
 }
 
 bool ModulePlayer::Is_Vehicle_part(PhysBody3D * body)
@@ -473,7 +474,7 @@ update_status ModulePlayer::Update(float dt)
 	vehicle->Brake(brake);
 
 	char title[80];
-	sprintf_s(title, "Current Lap: %i:%i%i || Record Lap: %i:%i%i || %.1f Km/h || %f", minutes,decimes,seconds,record_min,record_dec,record_sec, vehicle->GetKmh() * 0.1f, dt);
+	sprintf_s(title, "Current Lap: %i:%i%i || Record Lap: %i:%i%i || %.1f Km/h ", minutes,decimes,seconds,record_min,record_dec,record_sec, vehicle->GetKmh() * 0.1f);
 	App->window->SetTitle(title);
 
 	door_1->GetTransform(print_door_1.transform.M);
