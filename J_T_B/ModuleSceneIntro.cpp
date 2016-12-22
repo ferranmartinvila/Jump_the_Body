@@ -571,7 +571,8 @@ update_status ModuleSceneIntro::Update(float dt)
 		map_graphs[k]->Render();
 	}
 
-	if (App->player->minutes == 9) {
+	if (App->player->minutes == 9)
+	{
 		App->player->ResetPlayer();
 		App->player->ResetPlayerTime();
 		ResetCheckpoints();

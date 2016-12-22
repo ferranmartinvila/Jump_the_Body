@@ -22,6 +22,7 @@ Reach all the checkpoints and complete the circuit under the limited time.
 Q  -> Turn on/off ambulance lights
 UP/DOWN arrows -> Accelerate/Brake vehicle
 LEFT/RIGHT arrows -> Turn left/right 
+LEFT/RIGHT arrows (air) -> Rotate left/Right
 SPACE -> Active hydraulic suspension
 
 ###Game Commands:

@@ -386,14 +386,6 @@ update_status ModulePlayer::Update(float dt)
 		turbo_timer.Start();
 	}
 
-	//Open doors -----------------------------------------------
-	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
-	{
-		door_1->get_rigid_body()->applyCentralForce(btVector3(10000, 0, 0));
-		door_2->get_rigid_body()->applyCentralForce(btVector3(10000, 0, 0));
-		Back_Door->get_rigid_body()->applyCentralForce(btVector3(0, 0, 30000));
-	}
-
 	//Lights ON ------------------------------------------------
 	if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN)
 	{
